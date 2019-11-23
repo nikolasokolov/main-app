@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class Company {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
@@ -26,6 +26,7 @@ public class Company {
     @NotBlank
     private String phoneNumber;
 
+    @JsonIgnore
     @OneToMany
     @JoinColumn(name = "user_id")
     private Set<User> users;
