@@ -27,7 +27,7 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/company/new", method = RequestMethod.POST)
-    public ResponseEntity<?> findAll(@RequestBody CompanyDTO companyDTO) {
+    public ResponseEntity<?> save(@RequestBody CompanyDTO companyDTO) {
         Company company = Company.builder()
                 .name(companyDTO.getName())
                 .address(companyDTO.getAddress())
@@ -42,6 +42,7 @@ public class CompanyResource {
         Optional<Company> company = companyService.findById(companyId);
         if (company.isPresent()) {
             CompanyDTO companyDTO = CompanyDTO.builder()
+                    .id(company.get().getId())
                     .name(company.get().getName())
                     .address(company.get().getAddress())
                     .phoneNumber(company.get().getPhoneNumber())
@@ -50,5 +51,17 @@ public class CompanyResource {
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @RequestMapping(value = "/company/edit", method = RequestMethod.PUT)
+    public ResponseEntity<?> edit(@RequestBody CompanyDTO companyDTO) {
+        Company company = Company.builder()
+                .id(companyDTO.getId())
+                .name(companyDTO.getName())
+                .address(companyDTO.getAddress())
+                .phoneNumber(companyDTO.getPhoneNumber())
+                .build();
+        companyService.save(company);
+        return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 }
