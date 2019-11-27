@@ -2,9 +2,11 @@ package com.graduation.mainapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -25,6 +27,10 @@ public class Company {
 
     @NotBlank
     private String phoneNumber;
+
+    @Lob
+    @JsonIgnore
+    private byte[] logo;
 
     @JsonIgnore
     @OneToMany
