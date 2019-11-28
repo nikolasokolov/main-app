@@ -94,4 +94,15 @@ public class CompanyResource {
         headers.setContentType(MediaType.IMAGE_JPEG);
         return new ResponseEntity<>(imageContent, headers, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/company/{companyId}/delete", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteCompany(@PathVariable Long companyId) {
+        Optional<Company> company = companyService.findById(companyId);
+        if (company.isPresent()) {
+            companyService.delete(company.get());
+            return new ResponseEntity(HttpStatus.OK);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -43,4 +43,9 @@ public class Company {
     @JoinTable(name = "company_restaurant",
             joinColumns = {@JoinColumn(name = "company_id")}, inverseJoinColumns = {@JoinColumn(name = "restaurant_id")})
     private Set<Restaurant> restaurants;
+
+    public void deleteUser(User user) {
+        user.setCompany(null);
+        users.remove(user);
+    }
 }

@@ -14,4 +14,6 @@ public interface CompanyService {
     Optional<Company> findById(Long companyId);
 
     void saveLogo(Company company, MultipartFile logo) throws Exception;
+
+    void delete(Company company);
 }

@@ -50,4 +50,10 @@ public class CompanyServiceImpl implements CompanyService {
         }
         save(company);
     }
+
+    @Override
+    public void delete(Company company) {
+        company.getUsers().forEach(company::deleteUser);
+        companyRepository.delete(company);
+    }
 }
