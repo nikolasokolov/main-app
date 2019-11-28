@@ -44,6 +44,9 @@ public class User implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Authority> authorities = new HashSet<>();
 
+    @OneToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL, mappedBy = "user")
+    private Restaurant restaurant;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
