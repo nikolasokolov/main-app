@@ -1,6 +1,7 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.model.Company;
+import com.graduation.mainapp.web.dto.CompanyDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface CompanyService {
     void saveLogo(Company company, MultipartFile logo) throws Exception;
 
     void delete(Company company);
+
+    List<CompanyDTO> createCompanyDTOs(List<Company> companies);
 }

@@ -31,7 +31,6 @@ public class Restaurant {
     private User user;
 
     @Lob
-    @JsonIgnore
     private byte[] logo;
 
     @JsonIgnore

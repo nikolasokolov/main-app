@@ -3,6 +3,7 @@ package com.graduation.mainapp.service.impl;
 import com.graduation.mainapp.model.Company;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.service.CompanyService;
+import com.graduation.mainapp.web.dto.CompanyDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -55,5 +57,18 @@ public class CompanyServiceImpl implements CompanyService {
     public void delete(Company company) {
         company.getUsers().forEach(company::deleteUser);
         companyRepository.delete(company);
+    }
+
+    @Override
+    public List<CompanyDTO> createCompanyDTOs(List<Company> companies) {
+        return companies.stream().map(company -> {
+            byte[] companyLogo = company.getLogo();
+            return new CompanyDTO(
+                    company.getId(),
+                    company.getName(),
+                    company.getAddress(),
+                    company.getAddress(),
+                    companyLogo);
+        }).collect(Collectors.toList());
     }
 }

@@ -1,10 +1,9 @@
 package com.graduation.mainapp.service.impl;
 
-import com.graduation.mainapp.model.Company;
 import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
 import com.graduation.mainapp.service.RestaurantService;
+import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -57,5 +57,18 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void delete(Restaurant restaurant) {
         // restaurant.getCompanies().forEach(restaurant::deleteCompany);
         restaurantRepository.delete(restaurant);
+    }
+
+    @Override
+    public List<RestaurantDTO> createRestaurantDTOs(List<Restaurant> restaurants) {
+        return restaurants.stream().map(restaurant -> {
+            byte[] restaurantLogo = restaurant.getLogo();
+            return new RestaurantDTO(
+                    restaurant.getId(),
+                    restaurant.getName(),
+                    restaurant.getAddress(),
+                    restaurant.getAddress(),
+                    restaurantLogo);
+        }).collect(Collectors.toList());
     }
 }

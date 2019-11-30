@@ -1,10 +1,7 @@
 package com.graduation.mainapp.web.resource;
 
-import com.graduation.mainapp.model.Company;
 import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
-import com.graduation.mainapp.web.dto.CompanyDTO;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,24 +24,30 @@ public class RestaurantResource {
     private final RestaurantService restaurantService;
 
     @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
-    public ResponseEntity<List<Restaurant>> findAll() {
+    public ResponseEntity<?> findAll() {
+        log.info("Received request for fetching all restaurants");
         List<Restaurant> restaurants = restaurantService.findAll();
-        return ResponseEntity.accepted().body(restaurants);
+        List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurants);
+        log.info("Finished fetching all restaurants [{}]", restaurants.size());
+        return ResponseEntity.accepted().body(restaurantDTOs);
     }
 
     @RequestMapping(value = "/restaurant/new", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody RestaurantDTO restaurantDTO) {
+        log.info("Received request for saving a new restaurant");
         Restaurant restaurant = Restaurant.builder()
                 .name(restaurantDTO.getName())
                 .address(restaurantDTO.getAddress())
                 .phoneNumber(restaurantDTO.getPhoneNumber())
                 .build();
         Restaurant savedRestaurant = restaurantService.save(restaurant);
+        log.info("Successfully saved new company [{}]", restaurant.getName());
         return ResponseEntity.accepted().body(savedRestaurant);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
     public ResponseEntity<?> findById(@PathVariable Long restaurantId) {
+        log.info("Received request for fetching restaurant with ID [{}]", restaurantId);
         Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
         if (restaurant.isPresent()) {
             RestaurantDTO restaurantDTO = RestaurantDTO.builder()
@@ -53,6 +56,7 @@ public class RestaurantResource {
                     .address(restaurant.get().getAddress())
                     .phoneNumber(restaurant.get().getPhoneNumber())
                     .build();
+            log.info("Successfully fetched restaurant with ID [{}]", restaurantId);
             return ResponseEntity.accepted().body(restaurantDTO);
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -61,6 +65,7 @@ public class RestaurantResource {
 
     @RequestMapping(value = "/restaurant/edit", method = RequestMethod.PUT)
     public ResponseEntity<?> edit(@RequestBody RestaurantDTO restaurantDTO) {
+        log.info("Received request for editing restaurant [{}]", restaurantDTO.getName());
         Optional<Restaurant> restaurantFromDatabase = restaurantService.findById(restaurantDTO.getId());
         Restaurant restaurant = Restaurant.builder()
                 .id(restaurantDTO.getId())
@@ -70,15 +75,18 @@ public class RestaurantResource {
                 .logo(restaurantFromDatabase.get().getLogo())
                 .build();
         restaurantService.save(restaurant);
+        log.info("Successfully updated restaurant [{}]", restaurant.getName());
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(path = "/restaurant/{restaurantId}/uploadLogo", method = RequestMethod.POST)
     public ResponseEntity<?> uploadLogo(@PathVariable("restaurantId") Long restaurantId, @RequestParam("file") MultipartFile logo) {
+        log.info("Received request for uploading logo for restaurant with ID [{}]", restaurantId);
         Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
         if (!logo.isEmpty()) {
             try {
                 restaurantService.saveLogo(restaurant.get(), logo);
+                log.info("Successfully uploaded logo for restaurant with ID [{}]", restaurantId);
             } catch (Exception exception) {
                 log.error("Error while trying to save logo for company with id " + restaurantId);
             }
@@ -89,20 +97,25 @@ public class RestaurantResource {
     @RequestMapping(value = "/restaurant/{restaurantId}/logo", method = RequestMethod.GET,
             produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable("restaurantId") Long restaurantId) {
+        log.info("Received request for fetching logo for restaurant with ID [{}]", restaurantId);
         Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
         byte[] imageContent = restaurant.get().getLogo();
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
+        log.info("Successfully fetched logo for restaurant with ID [{}]", restaurantId);
         return new ResponseEntity<>(imageContent, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long restaurantId) {
+        log.info("Received request for deleting restaurant with ID [{}]", restaurantId);
         Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
         if (restaurant.isPresent()) {
+            log.info("Successfully deleted restaurant with ID [{}]", restaurantId);
             restaurantService.delete(restaurant.get());
             return new ResponseEntity(HttpStatus.OK);
         } else {
+            log.warn("Restaurant with ID [{}] is not found", restaurantId);
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }

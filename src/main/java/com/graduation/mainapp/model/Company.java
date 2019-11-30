@@ -29,7 +29,6 @@ public class Company {
     private String phoneNumber;
 
     @Lob
-    @JsonIgnore
     private byte[] logo;
 
     @JsonIgnore
