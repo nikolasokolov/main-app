@@ -3,12 +3,9 @@ package com.graduation.mainapp.web.resource;
 import com.graduation.mainapp.model.Company;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.web.dto.CompanyDTO;
-import com.netflix.ribbon.proxy.annotation.Http;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,13 +46,15 @@ public class CompanyResource {
     @RequestMapping(value = "/company/{companyId}", method = RequestMethod.GET)
     public ResponseEntity<?> findById(@PathVariable Long companyId) {
         log.info("Received request for fetching company with ID [{}]", companyId);
-        Optional<Company> company = companyService.findById(companyId);
-        if (company.isPresent()) {
+        Optional<Company> companyOptional = companyService.findById(companyId);
+        if (companyOptional.isPresent()) {
+            Company company = companyOptional.get();
             CompanyDTO companyDTO = CompanyDTO.builder()
-                    .id(company.get().getId())
-                    .name(company.get().getName())
-                    .address(company.get().getAddress())
-                    .phoneNumber(company.get().getPhoneNumber())
+                    .id(company.getId())
+                    .name(company.getName())
+                    .address(company.getAddress())
+                    .phoneNumber(company.getPhoneNumber())
+                    .logo(company.getLogo())
                     .build();
             log.info("Successfully fetched company with ID [{}]", companyId);
             return ResponseEntity.accepted().body(companyDTO);
@@ -66,47 +65,46 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/company/edit", method = RequestMethod.PUT)
-    public ResponseEntity<?> edit(@RequestBody CompanyDTO companyDTO) {
+    public ResponseEntity<?> update(@RequestBody CompanyDTO companyDTO) {
         log.info("Received request for editing company [{}]", companyDTO.getName());
         Optional<Company> companyFromDatabase = companyService.findById(companyDTO.getId());
-        Company company = Company.builder()
-                .id(companyDTO.getId())
-                .name(companyDTO.getName())
-                .address(companyDTO.getAddress())
-                .phoneNumber(companyDTO.getPhoneNumber())
-                .logo(companyFromDatabase.get().getLogo())
-                .build();
-        companyService.save(company);
-        log.info("Successfully updated company [{}]", company.getName());
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+        if (companyFromDatabase.isPresent()) {
+            Company company = companyFromDatabase.get();
+            Company companyToBeUpdated = Company.builder()
+                    .id(companyDTO.getId())
+                    .name(companyDTO.getName())
+                    .address(companyDTO.getAddress())
+                    .phoneNumber(companyDTO.getPhoneNumber())
+                    .logo(company.getLogo())
+                    .build();
+            companyService.save(companyToBeUpdated);
+            log.info("Successfully updated company [{}]", company.getName());
+            return new ResponseEntity(HttpStatus.ACCEPTED);
+        } else {
+            log.warn("Company with ID [{}] is not found", companyDTO.getId());
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(path = "/company/{companyId}/uploadLogo", method = RequestMethod.POST)
     public ResponseEntity<?> uploadLogo(@PathVariable("companyId") Long companyId, @RequestParam("file") MultipartFile logo) {
         log.info("Received request for uploading logo for company with ID [{}]", companyId);
-        Optional<Company> company = companyService.findById(companyId);
+        Optional<Company> companyOptional = companyService.findById(companyId);
         if (!logo.isEmpty()) {
             try {
-                companyService.saveLogo(company.get(), logo);
-                log.info("Successfully uploaded logo for company with ID [{}]", companyId);
+                if (companyOptional.isPresent()) {
+                    Company company = companyOptional.get();
+                    companyService.saveLogo(company, logo);
+                    log.info("Successfully uploaded logo for company with ID [{}]", companyId);
+                } else {
+                    log.warn("Company with ID [{}] is not found", companyId);
+                    return new ResponseEntity(HttpStatus.NOT_FOUND);
+                }
             } catch (Exception exception) {
                 log.error("Error while trying to save logo for company with ID [{}]", companyId);
             }
         }
         return new ResponseEntity(HttpStatus.ACCEPTED);
-    }
-
-
-    @RequestMapping(value = "/company/{companyId}/logo", method = RequestMethod.GET,
-            produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getImage(@PathVariable("companyId") Long companyId) {
-        log.info("Received request for fetching logo for company with ID [{}]", companyId);
-        Optional<Company> company = companyService.findById(companyId);
-        byte[] imageContent = company.get().getLogo();
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        log.info("Successfully fetched logo for company with ID [{}]", companyId);
-        return new ResponseEntity<>(imageContent, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/company/{companyId}/delete", method = RequestMethod.DELETE)

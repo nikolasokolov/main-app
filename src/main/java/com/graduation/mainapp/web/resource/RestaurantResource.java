@@ -55,6 +55,7 @@ public class RestaurantResource {
                     .name(restaurant.get().getName())
                     .address(restaurant.get().getAddress())
                     .phoneNumber(restaurant.get().getPhoneNumber())
+                    .logo(restaurant.get().getLogo())
                     .build();
             log.info("Successfully fetched restaurant with ID [{}]", restaurantId);
             return ResponseEntity.accepted().body(restaurantDTO);
@@ -92,18 +93,6 @@ public class RestaurantResource {
             }
         }
         return new ResponseEntity(HttpStatus.ACCEPTED);
-    }
-
-    @RequestMapping(value = "/restaurant/{restaurantId}/logo", method = RequestMethod.GET,
-            produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getImage(@PathVariable("restaurantId") Long restaurantId) {
-        log.info("Received request for fetching logo for restaurant with ID [{}]", restaurantId);
-        Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
-        byte[] imageContent = restaurant.get().getLogo();
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        log.info("Successfully fetched logo for restaurant with ID [{}]", restaurantId);
-        return new ResponseEntity<>(imageContent, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
