@@ -34,7 +34,7 @@ public class Restaurant {
     private byte[] logo;
 
     @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "restaurants")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "restaurants", fetch = FetchType.LAZY)
     private Set<Company> companies;
 
     public void addCompany(Company company) {
