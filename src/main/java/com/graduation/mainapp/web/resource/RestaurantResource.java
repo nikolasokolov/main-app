@@ -2,18 +2,18 @@ package com.graduation.mainapp.web.resource;
 
 import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.service.RestaurantService;
+import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -106,6 +106,20 @@ public class RestaurantResource {
         } else {
             log.warn("Restaurant with ID [{}] is not found", restaurantId);
             return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/restaurant/{restaurantId}/account/add", method = RequestMethod.POST)
+    public ResponseEntity<?> addAccountForRestaurant(@PathVariable Long restaurantId, @RequestBody RestaurantAccountDTO restaurantAccountDTO) throws Exception {
+        Restaurant restaurantWithAccount = restaurantService.addAccountForRestaurant(restaurantId, restaurantAccountDTO);
+        if (Objects.nonNull(restaurantWithAccount)) {
+            RestaurantAccountDTO restaurantAccountResponseDTO = RestaurantAccountDTO.builder()
+                    .username(restaurantAccountDTO.getUsername())
+                    .email(restaurantAccountDTO.getEmail())
+                    .build();
+            return ResponseEntity.accepted().body(restaurantAccountResponseDTO);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

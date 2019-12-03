@@ -2,11 +2,9 @@ package com.graduation.mainapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -31,11 +29,6 @@ public class Company {
     @Lob
     private byte[] logo;
 
-    @JsonIgnore
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private Set<User> users;
-
     @ToString.Exclude
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -43,8 +36,13 @@ public class Company {
             joinColumns = {@JoinColumn(name = "company_id")}, inverseJoinColumns = {@JoinColumn(name = "restaurant_id")})
     private Set<Restaurant> restaurants;
 
-    public void deleteUser(User user) {
-        user.setCompany(null);
-        users.remove(user);
+    public void addRestaurant(Restaurant restaurant) {
+        restaurants.add(restaurant);
+        restaurant.getCompanies().add(this);
+    }
+
+    public void removeRestaurant(Restaurant restaurant) {
+        restaurants.remove(restaurant);
+        restaurant.getCompanies().remove(this);
     }
 }

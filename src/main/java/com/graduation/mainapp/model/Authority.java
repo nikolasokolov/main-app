@@ -1,5 +1,7 @@
 package com.graduation.mainapp.model;
 
+import lombok.AllArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,6 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "authority")
+@AllArgsConstructor
 public class Authority {
 
     @Id

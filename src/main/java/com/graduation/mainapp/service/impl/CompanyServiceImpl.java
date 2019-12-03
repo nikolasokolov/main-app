@@ -55,7 +55,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void delete(Company company) {
-        company.getUsers().forEach(company::deleteUser);
+        company.getRestaurants().forEach(company::removeRestaurant);
         companyRepository.delete(company);
     }
 

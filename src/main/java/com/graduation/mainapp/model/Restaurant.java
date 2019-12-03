@@ -37,4 +37,14 @@ public class Restaurant {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "restaurants")
     private Set<Company> companies;
 
+    public void addCompany(Company company) {
+        companies.add(company);
+        company.getRestaurants().add(this);
+    }
+
+    public void removeCompany(Company company) {
+        companies.remove(company);
+        company.getRestaurants().remove(this);
+    }
+
 }
