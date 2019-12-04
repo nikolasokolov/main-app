@@ -1,8 +1,10 @@
 package com.graduation.mainapp.web.resource;
 
 import com.graduation.mainapp.model.Restaurant;
+import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
+import com.graduation.mainapp.web.dto.RestaurantAccountDetails;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,14 +50,22 @@ public class RestaurantResource {
     @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
     public ResponseEntity<?> findById(@PathVariable Long restaurantId) {
         log.info("Received request for fetching restaurant with ID [{}]", restaurantId);
-        Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
-        if (restaurant.isPresent()) {
+        Optional<Restaurant> restaurantOptional = restaurantService.findById(restaurantId);
+        if (restaurantOptional.isPresent()) {
+            Restaurant restaurant = restaurantOptional.get();
+            User user = restaurant.getUser();
+            RestaurantAccountDetails restaurantAccountDetails = null;
+            if (Objects.nonNull(user)) {
+                restaurantAccountDetails = new RestaurantAccountDetails(
+                        user.getUsername(), user.getEmail());
+            }
             RestaurantDTO restaurantDTO = RestaurantDTO.builder()
-                    .id(restaurant.get().getId())
-                    .name(restaurant.get().getName())
-                    .address(restaurant.get().getAddress())
-                    .phoneNumber(restaurant.get().getPhoneNumber())
-                    .logo(restaurant.get().getLogo())
+                    .id(restaurant.getId())
+                    .name(restaurant.getName())
+                    .address(restaurant.getAddress())
+                    .phoneNumber(restaurant.getPhoneNumber())
+                    .logo(restaurant.getLogo())
+                    .restaurantAccountDetails(restaurantAccountDetails)
                     .build();
             log.info("Successfully fetched restaurant with ID [{}]", restaurantId);
             return ResponseEntity.accepted().body(restaurantDTO);
@@ -74,6 +84,7 @@ public class RestaurantResource {
                 .address(restaurantDTO.getAddress())
                 .phoneNumber(restaurantDTO.getPhoneNumber())
                 .logo(restaurantFromDatabase.get().getLogo())
+                .user(restaurantFromDatabase.get().getUser())
                 .build();
         restaurantService.save(restaurant);
         log.info("Successfully updated restaurant [{}]", restaurant.getName());

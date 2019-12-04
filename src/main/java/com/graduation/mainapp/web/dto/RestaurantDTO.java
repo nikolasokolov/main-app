@@ -15,4 +15,5 @@ public class RestaurantDTO {
     private String address;
     private String phoneNumber;
     private byte[] logo;
+    private RestaurantAccountDetails restaurantAccountDetails;
 }

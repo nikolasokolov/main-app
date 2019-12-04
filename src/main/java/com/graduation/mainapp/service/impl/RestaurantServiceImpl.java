@@ -78,7 +78,8 @@ public class RestaurantServiceImpl implements RestaurantService {
                     restaurant.getName(),
                     restaurant.getAddress(),
                     restaurant.getAddress(),
-                    restaurantLogo);
+                    restaurantLogo,
+                    null);
         }).collect(Collectors.toList());
     }
 
