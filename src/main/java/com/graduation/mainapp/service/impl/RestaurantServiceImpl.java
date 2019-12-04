@@ -63,6 +63,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void delete(Restaurant restaurant) {
         restaurant.getCompanies().forEach(restaurant::removeCompany);
         restaurantRepository.delete(restaurant);
+        User user = restaurant.getUser();
+        if (Objects.nonNull(user)) {
+            userService.delete(user);
+        }
     }
 
     @Override
