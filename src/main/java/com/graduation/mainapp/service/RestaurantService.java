@@ -5,6 +5,7 @@ import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ public interface RestaurantService {
 
     void delete(Restaurant restaurant);
 
-    List<RestaurantDTO> createRestaurantDTOs(List<Restaurant> restaurants);
+    List<RestaurantDTO> createRestaurantDTOs(Collection<Restaurant> restaurants);
 
     Restaurant addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception;
 }

@@ -70,7 +70,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<RestaurantDTO> createRestaurantDTOs(List<Restaurant> restaurants) {
+    public List<RestaurantDTO> createRestaurantDTOs(Collection<Restaurant> restaurants) {
         return restaurants.stream().map(restaurant -> {
             byte[] restaurantLogo = restaurant.getLogo();
             return new RestaurantDTO(
