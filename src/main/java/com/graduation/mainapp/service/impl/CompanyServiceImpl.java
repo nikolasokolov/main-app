@@ -1,12 +1,15 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.model.Company;
+import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.service.CompanyService;
+import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.web.dto.CompanyDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
+    private final RestaurantService restaurantService;
 
     @Override
     public List<Company> findAll() {
@@ -70,5 +74,20 @@ public class CompanyServiceImpl implements CompanyService {
                     company.getAddress(),
                     companyLogo);
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void addRestaurantForCompany(Company company, Long restaurantId) {
+        Optional<Restaurant> optionalRestaurant = restaurantService.findById(restaurantId);
+        if (optionalRestaurant.isPresent()) {
+            Restaurant restaurant = optionalRestaurant.get();
+            company.getRestaurants().add(restaurant);
+            restaurant.getCompanies().add(company);
+            companyRepository.save(company);
+            restaurantService.save(restaurant);
+        } else {
+            log.warn("Restaurant with ID [{}] is not found", restaurantId);
+        }
     }
 }

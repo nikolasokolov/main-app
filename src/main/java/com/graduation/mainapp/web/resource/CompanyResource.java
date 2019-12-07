@@ -120,4 +120,17 @@ public class CompanyResource {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
+
+    @RequestMapping(value = "/company/add-restaurant/{restaurantId}", method = RequestMethod.POST)
+    public ResponseEntity<?> addRestaurantForCompany(@RequestBody CompanyDTO companyDTO, @PathVariable Long restaurantId) {
+        Optional<Company> optionalCompany = companyService.findById(companyDTO.getId());
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            companyService.addRestaurantForCompany(company, restaurantId);
+        } else {
+            log.warn("Company with ID [{}] is not found", optionalCompany.get().getId());
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
 }

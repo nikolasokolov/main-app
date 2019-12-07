@@ -19,4 +19,6 @@ public interface CompanyService {
     void delete(Company company);
 
     List<CompanyDTO> createCompanyDTOs(List<Company> companies);
+
+    void addRestaurantForCompany(Company company, Long restaurantId);
 }
