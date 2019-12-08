@@ -10,7 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
@@ -122,14 +127,17 @@ public class RestaurantResource {
 
     @RequestMapping(value = "/restaurant/{restaurantId}/account/add", method = RequestMethod.POST)
     public ResponseEntity<?> addAccountForRestaurant(@PathVariable Long restaurantId, @RequestBody RestaurantAccountDTO restaurantAccountDTO) throws Exception {
+        log.info("Received request for creating account for restaurant with ID [{}]", restaurantId);
         Restaurant restaurantWithAccount = restaurantService.addAccountForRestaurant(restaurantId, restaurantAccountDTO);
         if (Objects.nonNull(restaurantWithAccount)) {
             RestaurantAccountDTO restaurantAccountResponseDTO = RestaurantAccountDTO.builder()
                     .username(restaurantAccountDTO.getUsername())
                     .email(restaurantAccountDTO.getEmail())
                     .build();
+            log.info("Successfully created account for restaurant with ID [{}]", restaurantId);
             return ResponseEntity.accepted().body(restaurantAccountResponseDTO);
         } else {
+            log.info("An error occurred trying to create account for restaurant with ID [{}]", restaurantId);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

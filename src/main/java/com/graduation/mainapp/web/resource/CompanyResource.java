@@ -6,13 +6,17 @@ import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.web.dto.CompanyDTO;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
-import com.netflix.ribbon.proxy.annotation.Http;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
@@ -74,7 +78,7 @@ public class CompanyResource {
     @RequestMapping(value = "/company/edit", method = RequestMethod.PUT)
     public ResponseEntity<?> update(@RequestBody CompanyDTO companyDTO) {
         log.info("Received request for editing company [{}]", companyDTO.getName());
-        Optional<Company> companyFromDatabase = companyService.findById(companyDTO.getId());
+g        Optional<Company> companyFromDatabase = companyService.findById(companyDTO.getId());
         if (companyFromDatabase.isPresent()) {
             Company company = companyFromDatabase.get();
             Company companyToBeUpdated = Company.builder()
@@ -83,6 +87,7 @@ public class CompanyResource {
                     .address(companyDTO.getAddress())
                     .phoneNumber(companyDTO.getPhoneNumber())
                     .logo(company.getLogo())
+                    .restaurants(company.getRestaurants())
                     .build();
             companyService.save(companyToBeUpdated);
             log.info("Successfully updated company [{}]", company.getName());
@@ -146,13 +151,16 @@ public class CompanyResource {
     @RequestMapping(value = "/company/{companyId}/restaurants", method = RequestMethod.GET)
     @Transactional
     public ResponseEntity<?> getRestaurantsForCompany(@PathVariable Long companyId) {
+        log.info("Received request for fetching restaurants for company with ID [{}]", companyId);
         Optional<Company> optionalCompany = companyService.findById(companyId);
         if (optionalCompany.isPresent()) {
             Company company = optionalCompany.get();
             Set<Restaurant> restaurantsForCompany = company.getRestaurants();
             List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurantsForCompany);
+            log.info("Finished fetching restaurants for company with ID [{}]", companyId);
             return ResponseEntity.ok().body(restaurantDTOs);
         } else {
+            log.info("Company with ID [{}] is not found", companyId);
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
