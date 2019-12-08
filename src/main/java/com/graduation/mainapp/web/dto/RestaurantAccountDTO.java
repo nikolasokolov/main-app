@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CompanyDTO {
-    private Long id;
-    private String name;
-    private String address;
-    private String phoneNumber;
-    private byte[] logo;
+public class RestaurantAccountDTO {
+    private String username;
+    private String email;
+    private String password;
+    private String confirmPassword;
 }

@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CompanyDTO {
+public class RestaurantDTO {
     private Long id;
     private String name;
     private String address;
     private String phoneNumber;
     private byte[] logo;
+    private RestaurantAccountDetails restaurantAccountDetails;
 }
