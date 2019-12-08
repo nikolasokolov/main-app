@@ -4,13 +4,11 @@ import com.graduation.mainapp.model.Authority;
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.repository.UserRepository;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.CompanyDTO;
 import com.graduation.mainapp.web.dto.UserAccount;
 import com.graduation.mainapp.web.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -18,8 +16,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -73,6 +71,11 @@ public class UserServiceImpl implements UserService {
             userDTOs.add(userDTO);
         });
         return userDTOs;
+    }
+
+    @Override
+    public Optional<User> findById(Long userId) {
+        return userRepository.findById(userId);
     }
 
     private boolean validateUserAccount(UserAccount userAccount) throws Exception {

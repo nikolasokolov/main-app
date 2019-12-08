@@ -6,6 +6,7 @@ import com.graduation.mainapp.web.dto.UserDTO;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     User save(User user);
@@ -17,4 +18,6 @@ public interface UserService {
     List<User> findAll();
 
     List<UserDTO> createUserDTOs(Collection<User> users);
+
+    Optional<User> findById(Long userId);
 }
