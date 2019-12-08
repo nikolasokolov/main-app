@@ -1,14 +1,18 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.model.Authority;
+import com.graduation.mainapp.model.Company;
 import com.graduation.mainapp.model.User;
+import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.repository.UserRepository;
+import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.UserService;
 import com.graduation.mainapp.web.dto.UserAccount;
 import com.graduation.mainapp.web.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -24,6 +28,7 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CompanyRepository companyRepository;
 
     public User save(User user) {
         return userRepository.save(user);
@@ -39,6 +44,13 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserAccount userAccount) throws Exception {
         boolean userAccountIsValid = validateUserAccount(userAccount);
         if (userAccountIsValid) {
+            Company company = null;
+            if (Objects.nonNull(userAccount.getCompanyId())) {
+                Optional<Company> optionalCompany = companyRepository.findById(userAccount.getCompanyId());
+                if (optionalCompany.isPresent()) {
+                    company = optionalCompany.get();
+                }
+            }
             Set<Authority> authorities = new HashSet<>();
             authorities.add(new Authority(userAccount.getAuthority()));
             User user = User.builder()
@@ -46,6 +58,7 @@ public class UserServiceImpl implements UserService {
                     .email(userAccount.getEmail())
                     .password(passwordEncoder.encode(userAccount.getPassword()))
                     .authorities(authorities)
+                    .company(company)
                     .build();
             return save(user);
         } else {
@@ -76,6 +89,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    @Override
+    @Transactional
+    public List<User> findAllUsersForCompany(Long companyId) {
+        return userRepository.findAllByCompanyId(companyId);
     }
 
     private boolean validateUserAccount(UserAccount userAccount) throws Exception {

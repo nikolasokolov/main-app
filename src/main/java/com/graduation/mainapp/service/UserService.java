@@ -20,4 +20,6 @@ public interface UserService {
     List<UserDTO> createUserDTOs(Collection<User> users);
 
     Optional<User> findById(Long userId);
+
+    List<User> findAllUsersForCompany(Long companyId);
 }
