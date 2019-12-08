@@ -78,7 +78,7 @@ public class CompanyResource {
     @RequestMapping(value = "/company/edit", method = RequestMethod.PUT)
     public ResponseEntity<?> update(@RequestBody CompanyDTO companyDTO) {
         log.info("Received request for editing company [{}]", companyDTO.getName());
-g        Optional<Company> companyFromDatabase = companyService.findById(companyDTO.getId());
+        Optional<Company> companyFromDatabase = companyService.findById(companyDTO.getId());
         if (companyFromDatabase.isPresent()) {
             Company company = companyFromDatabase.get();
             Company companyToBeUpdated = Company.builder()
