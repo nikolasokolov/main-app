@@ -60,6 +60,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Transactional
     public void delete(Restaurant restaurant) {
         restaurant.getCompanies().forEach(restaurant::removeCompany);
         restaurantRepository.delete(restaurant);
