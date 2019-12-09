@@ -1,16 +1,13 @@
 package com.graduation.mainapp.web.resource;
 
 import com.graduation.mainapp.model.User;
-import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.UserService;
 import com.graduation.mainapp.web.dto.UserAccount;
 import com.graduation.mainapp.web.dto.UserDTO;
-import com.netflix.ribbon.proxy.annotation.Http;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,10 +32,10 @@ public class UserResource {
         User user = userService.createUser(userAccount);
         if (Objects.nonNull(user)) {
             log.info("Successfully created a new user");
-            return new ResponseEntity(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             log.info("Could not create a new user");
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -48,7 +45,7 @@ public class UserResource {
         List<User> users = userService.findAll();
         List<UserDTO> userDTOs = userService.createUserDTOs(users);
         log.info("Finished fetching all users");
-        return ResponseEntity.accepted().body(userDTOs);
+        return ResponseEntity.ok().body(userDTOs);
     }
 
     @RequestMapping(value = "/users/delete/{userId}", method = RequestMethod.DELETE)
@@ -58,10 +55,10 @@ public class UserResource {
         if (user.isPresent()) {
             userService.delete(user.get());
             log.info("Successfully deleted user with ID [{}]", userId);
-            return new ResponseEntity(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             log.warn("User with ID [{}] is not found", userId);
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -71,6 +68,6 @@ public class UserResource {
         List<User> users = userService.findAllUsersForCompany(companyId);
         List<UserDTO> userDTOs = userService.createUserDTOs(users);
         log.info("Finished fetching all users");
-        return ResponseEntity.accepted().body(userDTOs);
+        return ResponseEntity.ok().body(userDTOs);
     }
 }

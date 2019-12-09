@@ -90,4 +90,36 @@ public class CompanyServiceImpl implements CompanyService {
             log.warn("Restaurant with ID [{}] is not found", restaurantId);
         }
     }
+
+    @Override
+    public Company createCompanyObjectFromCompanyDTO(CompanyDTO companyDTO) {
+        return Company.builder()
+                .name(companyDTO.getName())
+                .address(companyDTO.getAddress())
+                .phoneNumber(companyDTO.getPhoneNumber())
+                .build();
+    }
+
+    @Override
+    public CompanyDTO createCompanyDTOFromCompanyObject(Company company) {
+        return CompanyDTO.builder()
+                .id(company.getId())
+                .name(company.getName())
+                .address(company.getAddress())
+                .phoneNumber(company.getPhoneNumber())
+                .logo(company.getLogo())
+                .build();
+    }
+
+    @Override
+    public Company createCompanyObjectForUpdate(Company company, CompanyDTO companyDTO) {
+        return Company.builder()
+                .id(companyDTO.getId())
+                .name(companyDTO.getName())
+                .address(companyDTO.getAddress())
+                .phoneNumber(companyDTO.getPhoneNumber())
+                .logo(company.getLogo())
+                .restaurants(company.getRestaurants())
+                .build();
+    }
 }

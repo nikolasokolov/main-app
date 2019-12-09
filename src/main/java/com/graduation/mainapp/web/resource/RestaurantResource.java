@@ -37,7 +37,7 @@ public class RestaurantResource {
         List<Restaurant> restaurants = restaurantService.findAll();
         List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurants);
         log.info("Finished fetching all restaurants [{}]", restaurants.size());
-        return ResponseEntity.accepted().body(restaurantDTOs);
+        return ResponseEntity.ok().body(restaurantDTOs);
     }
 
     @RequestMapping(value = "/restaurant/new", method = RequestMethod.POST)
@@ -50,7 +50,7 @@ public class RestaurantResource {
                 .build();
         Restaurant savedRestaurant = restaurantService.save(restaurant);
         log.info("Successfully saved new company [{}]", restaurant.getName());
-        return ResponseEntity.accepted().body(savedRestaurant);
+        return ResponseEntity.ok().body(savedRestaurant);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
@@ -74,7 +74,7 @@ public class RestaurantResource {
                     .restaurantAccountDetails(restaurantAccountDetails)
                     .build();
             log.info("Successfully fetched restaurant with ID [{}]", restaurantId);
-            return ResponseEntity.accepted().body(restaurantDTO);
+            return ResponseEntity.ok().body(restaurantDTO);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
         }
@@ -96,7 +96,7 @@ public class RestaurantResource {
                     .build();
             restaurantService.save(restaurantToBeUpdated);
             log.info("Successfully updated restaurant [{}]", restaurant.getName());
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
         }
@@ -122,7 +122,7 @@ public class RestaurantResource {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
         }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
@@ -149,7 +149,7 @@ public class RestaurantResource {
                     .email(restaurantAccountDTO.getEmail())
                     .build();
             log.info("Successfully created account for restaurant with ID [{}]", restaurantId);
-            return ResponseEntity.accepted().body(restaurantAccountResponseDTO);
+            return ResponseEntity.ok().body(restaurantAccountResponseDTO);
         } else {
             log.info("An error occurred trying to create account for restaurant with ID [{}]", restaurantId);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
