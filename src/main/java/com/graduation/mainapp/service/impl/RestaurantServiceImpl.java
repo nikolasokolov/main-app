@@ -1,6 +1,7 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.model.Authority;
+import com.graduation.mainapp.model.Company;
 import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.repository.RestaurantRepository;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -83,7 +85,11 @@ public class RestaurantServiceImpl implements RestaurantService {
         Optional<Restaurant> optionalRestaurant = this.findById(restaurantId);
         if (optionalRestaurant.isPresent()) {
             Restaurant restaurant = optionalRestaurant.get();
-            restaurant.getCompanies().forEach(restaurant::removeCompany);
+            Company[] companies = new Company[restaurant.getCompanies().size()];
+            companies = restaurant.getCompanies().toArray(companies);
+            for (Company company : companies) {
+                company.removeRestaurant(restaurant);
+            }
             restaurantRepository.delete(restaurant);
             User user = restaurant.getUser();
             if (Objects.nonNull(user)) {
