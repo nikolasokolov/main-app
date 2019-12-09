@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.graduation.mainapp.util.LogoValidationUtil.validateLogoFormat;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -69,15 +71,6 @@ public class CompanyServiceImpl implements CompanyService {
         } else {
             log.error("Logo not present");
             throw new Exception("Logo not present");
-        }
-    }
-
-    private static void validateLogoFormat(MultipartFile logo) throws Exception {
-        String fileName = logo.getOriginalFilename();
-        int dotIndex = Objects.requireNonNull(fileName).lastIndexOf('.');
-        String extension = fileName.substring(dotIndex + 1);
-        if (!extension.equals("jpg") && !extension.equals("jpeg") && !extension.equals("png")) {
-            throw new Exception("Invalid image format");
         }
     }
 

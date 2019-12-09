@@ -16,11 +16,17 @@ public interface RestaurantService {
 
     Optional<Restaurant> findById(Long restaurantId);
 
-    void saveLogo(Restaurant restaurant, MultipartFile logo) throws Exception;
+    Restaurant saveLogo(Long restaurantId, MultipartFile logo) throws Exception;
 
-    void delete(Restaurant restaurant);
+    boolean delete(Long restaurantId);
 
     List<RestaurantDTO> createRestaurantDTOs(Collection<Restaurant> restaurants);
 
     Restaurant addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception;
+
+    Restaurant createRestaurantObjectFromRestaurantDTO(RestaurantDTO restaurantDTO);
+
+    RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId);
+
+    Restaurant updateRestaurant(RestaurantDTO restaurantDTO);
 }
