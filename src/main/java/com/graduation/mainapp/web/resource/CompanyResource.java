@@ -6,6 +6,7 @@ import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.web.dto.CompanyDTO;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
+import com.netflix.ribbon.proxy.annotation.Http;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -110,72 +111,44 @@ public class CompanyResource {
     @RequestMapping(value = "/company/{companyId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCompany(@PathVariable Long companyId) {
         log.info("Received request for deleting company with ID [{}]", companyId);
-        Optional<Company> company = companyService.findById(companyId);
-        if (company.isPresent()) {
-            companyService.delete(company.get());
+        boolean companyIsDeleted = companyService.delete(companyId);
+        if (companyIsDeleted) {
             log.info("Successfully deleted company with ID [{}]", companyId);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            log.warn("Company with ID [{}] is not found", companyId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @RequestMapping(value = "/company/add-restaurant/{restaurantId}", method = RequestMethod.POST)
     public ResponseEntity<?> addRestaurantForCompany(@RequestBody CompanyDTO companyDTO, @PathVariable Long restaurantId) {
         log.info("Received request for adding restaurant to company with ID [{}]", companyDTO.getId());
-        Optional<Company> optionalCompany = companyService.findById(companyDTO.getId());
-        if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            companyService.addRestaurantForCompany(company, restaurantId);
+        boolean restaurantIsAdded = companyService.addRestaurantForCompany(companyDTO, restaurantId);
+        if (restaurantIsAdded) {
             log.info("Successfully added restaurant to company with ID [{}]", companyDTO.getId());
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            log.warn("Company with ID [{}] is not found", companyDTO.getId());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @RequestMapping(value = "/company/{companyId}/restaurants", method = RequestMethod.GET)
-    @Transactional
     public ResponseEntity<?> getRestaurantsForCompany(@PathVariable Long companyId) {
         log.info("Received request for fetching restaurants for company with ID [{}]", companyId);
-        Optional<Company> optionalCompany = companyService.findById(companyId);
-        if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            Set<Restaurant> restaurantsForCompany = company.getRestaurants();
-            List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurantsForCompany);
-            log.info("Finished fetching restaurants for company with ID [{}]", companyId);
-            return ResponseEntity.ok().body(restaurantDTOs);
-        } else {
-            log.info("Company with ID [{}] is not found", companyId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
-        }
+        List<RestaurantDTO> restaurantDTOs = companyService.getRestaurantsForCompany(companyId);
+        log.info("Finished fetching restaurants for company with ID [{}]", companyId);
+        return ResponseEntity.ok().body(restaurantDTOs);
     }
 
     @RequestMapping(value = "/company/{companyId}/delete-restaurant/{restaurantId}")
-    @Transactional
     public ResponseEntity<?> deleteRestaurantForCompany(@PathVariable Long companyId, @PathVariable Long restaurantId) {
         log.info("Received request for deleting restaurant with ID [{}] to company with ID [{}]", restaurantId, companyId);
-        Optional<Company> optionalCompany = companyService.findById(companyId);
-        if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            Optional<Restaurant> optionalRestaurant = restaurantService.findById(restaurantId);
-            if (optionalRestaurant.isPresent()) {
-                Restaurant restaurant = optionalRestaurant.get();
-                restaurant.removeCompany(company);
-                company.removeRestaurant(restaurant);
-                companyService.save(company);
-                restaurantService.save(restaurant);
-                log.info("Successfully deleted restaurant with ID [{}] to company with ID [{}]", restaurantId, companyId);
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else {
-                log.warn("Restaurant with ID [{}] is not found", restaurantId);
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
-            }
+        boolean restaurantIsDeleted = companyService.deleteRestaurantForCompany(companyId, restaurantId);
+        if (restaurantIsDeleted) {
+            log.info("Successfully deleted restaurant with ID [{}] to company with ID [{}]", restaurantId, companyId);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            log.warn("Company with ID [{}] is not found", companyId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

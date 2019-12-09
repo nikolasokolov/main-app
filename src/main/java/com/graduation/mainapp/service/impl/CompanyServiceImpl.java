@@ -6,17 +6,23 @@ import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.web.dto.CompanyDTO;
+import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +43,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public Optional<Company> findById(Long companyId) {
         return companyRepository.findById(companyId);
     }
@@ -58,13 +65,22 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public void delete(Company company) {
-        company.getRestaurants().forEach(company::removeRestaurant);
-        companyRepository.delete(company);
+    @Transactional
+    public boolean delete(Long companyId) {
+        Optional<Company> optionalCompany = this.findById(companyId);
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            company.getRestaurants().forEach(company::removeRestaurant);
+            companyRepository.delete(company);
+            return true;
+        } else {
+            log.error("Company with ID [{}] is not found", companyId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+        }
     }
 
     @Override
-    public List<CompanyDTO> createCompanyDTOs(List<Company> companies) {
+    public List<CompanyDTO> createCompanyDTOs(Collection<Company> companies) {
         return companies.stream().map(company -> {
             byte[] companyLogo = company.getLogo();
             return new CompanyDTO(
@@ -78,16 +94,25 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public void addRestaurantForCompany(Company company, Long restaurantId) {
-        Optional<Restaurant> optionalRestaurant = restaurantService.findById(restaurantId);
-        if (optionalRestaurant.isPresent()) {
-            Restaurant restaurant = optionalRestaurant.get();
-            company.getRestaurants().add(restaurant);
-            restaurant.getCompanies().add(company);
-            companyRepository.save(company);
-            restaurantService.save(restaurant);
+    public boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) {
+        Optional<Company> optionalCompany = this.findById(companyDTO.getId());
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            Optional<Restaurant> optionalRestaurant = restaurantService.findById(restaurantId);
+            if (optionalRestaurant.isPresent()) {
+                Restaurant restaurant = optionalRestaurant.get();
+                company.getRestaurants().add(restaurant);
+                restaurant.getCompanies().add(company);
+                companyRepository.save(company);
+                restaurantService.save(restaurant);
+                return true;
+            } else {
+                log.warn("Restaurant with ID [{}] is not found", restaurantId);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+            }
         } else {
-            log.warn("Restaurant with ID [{}] is not found", restaurantId);
+            log.warn("Company with ID [{}] is not found", companyDTO.getId());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
         }
     }
 
@@ -121,5 +146,43 @@ public class CompanyServiceImpl implements CompanyService {
                 .logo(company.getLogo())
                 .restaurants(company.getRestaurants())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) {
+        Optional<Company> optionalCompany = this.findById(companyId);
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            Optional<Restaurant> optionalRestaurant = restaurantService.findById(restaurantId);
+            if (optionalRestaurant.isPresent()) {
+                Restaurant restaurant = optionalRestaurant.get();
+                restaurant.removeCompany(company);
+                company.removeRestaurant(restaurant);
+                this.save(company);
+                restaurantService.save(restaurant);
+                return true;
+            } else {
+                log.error("Restaurant with ID [{}] is not found", restaurantId);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+            }
+        } else {
+            log.error("Company with ID [{}] is not found", companyId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<RestaurantDTO> getRestaurantsForCompany(Long companyId) {
+        Optional<Company> optionalCompany = this.findById(companyId);
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            Set<Restaurant> restaurantsForCompany = company.getRestaurants();
+            return restaurantService.createRestaurantDTOs(restaurantsForCompany);
+        } else {
+            log.info("Company with ID [{}] is not found", companyId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+        }
     }
 }
