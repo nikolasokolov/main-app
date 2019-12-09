@@ -1,6 +1,7 @@
 package com.graduation.mainapp.model;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "authority")
 @AllArgsConstructor
+@NoArgsConstructor
 public class Authority {
 
     @Id
@@ -45,8 +47,6 @@ public class Authority {
 
     @Override
     public String toString() {
-        return "Authority{" +
-                "name='" + name + '\'' +
-                "}";
+        return name;
     }
 }
