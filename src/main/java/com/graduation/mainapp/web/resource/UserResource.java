@@ -2,8 +2,8 @@ package com.graduation.mainapp.web.resource;
 
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.UserAccount;
-import com.graduation.mainapp.web.dto.UserDTO;
+import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,9 +27,9 @@ public class UserResource {
     private final UserService userService;
 
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody UserAccount userAccount) throws Exception {
+    public ResponseEntity<?> createUser(@RequestBody UserAccountRequestDTO userAccountRequestDTO) throws Exception {
         log.info("Received request for creating a new user");
-        User user = userService.createUser(userAccount);
+        User user = userService.createUser(userAccountRequestDTO);
         if (Objects.nonNull(user)) {
             log.info("Successfully created a new user");
             return new ResponseEntity<>(HttpStatus.OK);
@@ -43,9 +43,9 @@ public class UserResource {
     public ResponseEntity<?> getAllUsers() {
         log.info("Received request for fetching all users");
         List<User> users = userService.findAll();
-        List<UserDTO> userDTOs = userService.createUserDTOs(users);
+        List<UserResponseDTO> userResponseDTOS = userService.createUserDTOs(users);
         log.info("Finished fetching all users");
-        return ResponseEntity.ok().body(userDTOs);
+        return ResponseEntity.ok().body(userResponseDTOS);
     }
 
     @RequestMapping(value = "/users/delete/{userId}", method = RequestMethod.DELETE)
@@ -66,8 +66,8 @@ public class UserResource {
     public ResponseEntity<?> getAllUsersForCompany(@PathVariable Long companyId) {
         log.info("Received request for fetching all users");
         List<User> users = userService.findAllUsersForCompany(companyId);
-        List<UserDTO> userDTOs = userService.createUserDTOs(users);
+        List<UserResponseDTO> userResponseDTOS = userService.createUserDTOs(users);
         log.info("Finished fetching all users");
-        return ResponseEntity.ok().body(userDTOs);
+        return ResponseEntity.ok().body(userResponseDTOS);
     }
 }

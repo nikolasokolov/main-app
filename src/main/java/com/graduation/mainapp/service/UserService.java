@@ -1,8 +1,8 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.model.User;
-import com.graduation.mainapp.web.dto.UserAccount;
-import com.graduation.mainapp.web.dto.UserDTO;
+import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.web.dto.UserResponseDTO;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,11 +13,11 @@ public interface UserService {
 
     void delete(User user);
 
-    User createUser(UserAccount userAccount) throws Exception;
+    User createUser(UserAccountRequestDTO userAccountRequestDTO) throws Exception;
 
     List<User> findAll();
 
-    List<UserDTO> createUserDTOs(Collection<User> users);
+    List<UserResponseDTO> createUserDTOs(Collection<User> users);
 
     Optional<User> findById(Long userId);
 

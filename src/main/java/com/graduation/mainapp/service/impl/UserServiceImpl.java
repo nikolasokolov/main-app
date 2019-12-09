@@ -5,10 +5,9 @@ import com.graduation.mainapp.model.Company;
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.repository.UserRepository;
-import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.UserAccount;
-import com.graduation.mainapp.web.dto.UserDTO;
+import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,22 +40,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserAccount userAccount) throws Exception {
-        boolean userAccountIsValid = validateUserAccount(userAccount);
+    public User createUser(UserAccountRequestDTO userAccountRequestDTO) throws Exception {
+        boolean userAccountIsValid = validateUserAccount(userAccountRequestDTO);
         if (userAccountIsValid) {
             Company company = null;
-            if (Objects.nonNull(userAccount.getCompanyId())) {
-                Optional<Company> optionalCompany = companyRepository.findById(userAccount.getCompanyId());
+            if (Objects.nonNull(userAccountRequestDTO.getCompanyId())) {
+                Optional<Company> optionalCompany = companyRepository.findById(userAccountRequestDTO.getCompanyId());
                 if (optionalCompany.isPresent()) {
                     company = optionalCompany.get();
                 }
             }
             Set<Authority> authorities = new HashSet<>();
-            authorities.add(new Authority(userAccount.getAuthority()));
+            authorities.add(new Authority(userAccountRequestDTO.getAuthority()));
             User user = User.builder()
-                    .username(userAccount.getUsername())
-                    .email(userAccount.getEmail())
-                    .password(passwordEncoder.encode(userAccount.getPassword()))
+                    .username(userAccountRequestDTO.getUsername())
+                    .email(userAccountRequestDTO.getEmail())
+                    .password(passwordEncoder.encode(userAccountRequestDTO.getPassword()))
                     .authorities(authorities)
                     .company(company)
                     .build();
@@ -72,18 +71,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> createUserDTOs(Collection<User> users) {
-        List<UserDTO> userDTOs = new LinkedList<>();
+    public List<UserResponseDTO> createUserDTOs(Collection<User> users) {
+        List<UserResponseDTO> userResponseDTOS = new LinkedList<>();
         users.forEach(user -> {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(user.getId());
-            userDTO.setUsername(user.getUsername());
-            userDTO.setEmail(user.getEmail());
-            userDTO.setAuthority(user.getAuthorities().stream().findFirst().get().toString());
-            userDTO.setCompany(Objects.nonNull(user.getCompany()) ? user.getCompany().getName() : "N/A");
-            userDTOs.add(userDTO);
+            UserResponseDTO userResponseDTO = new UserResponseDTO();
+            userResponseDTO.setId(user.getId());
+            userResponseDTO.setUsername(user.getUsername());
+            userResponseDTO.setEmail(user.getEmail());
+            userResponseDTO.setAuthority(user.getAuthorities().stream().findFirst().get().toString());
+            userResponseDTO.setCompany(Objects.nonNull(user.getCompany()) ? user.getCompany().getName() : "N/A");
+            userResponseDTOS.add(userResponseDTO);
         });
-        return userDTOs;
+        return userResponseDTOS;
     }
 
     @Override
@@ -97,8 +96,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAllByCompanyId(companyId);
     }
 
-    private boolean validateUserAccount(UserAccount userAccount) throws Exception {
-        if (!userAccount.getPassword().equals(userAccount.getConfirmPassword())) {
+    private boolean validateUserAccount(UserAccountRequestDTO userAccountRequestDTO) throws Exception {
+        if (!userAccountRequestDTO.getPassword().equals(userAccountRequestDTO.getConfirmPassword())) {
             throw new Exception("Passwords doesn't match");
         } else {
             return true;
