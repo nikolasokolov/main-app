@@ -10,6 +10,7 @@ import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +43,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional
     public Optional<Company> findById(Long companyId) {
         return companyRepository.findById(companyId);
     }
@@ -197,6 +197,19 @@ public class CompanyServiceImpl implements CompanyService {
             return restaurantService.createRestaurantDTOs(restaurantsForCompany);
         } else {
             log.info("Company with ID [{}] is not found", companyId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+        }
+    }
+
+    @Override
+    public Company updateCompany(CompanyDTO companyDTO) {
+        Optional<Company> companyFromDatabase = this.findById(companyDTO.getId());
+        if (companyFromDatabase.isPresent()) {
+            Company company = companyFromDatabase.get();
+            Company companyToBeUpdated = this.createCompanyObjectForUpdate(company, companyDTO);
+            return this.save(companyToBeUpdated);
+        } else {
+            log.error("Company with ID [{}] is not found", companyDTO.getId());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
         }
     }

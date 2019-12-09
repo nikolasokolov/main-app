@@ -33,4 +33,6 @@ public interface CompanyService {
     boolean deleteRestaurantForCompany(Long companyId, Long restaurantId);
 
     List<RestaurantDTO> getRestaurantsForCompany(Long companyId);
+
+    Company updateCompany(CompanyDTO companyDTO);
 }
