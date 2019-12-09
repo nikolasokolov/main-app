@@ -1,17 +1,14 @@
 package com.graduation.mainapp.web.resource;
 
 import com.graduation.mainapp.model.Company;
-import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.web.dto.CompanyDTO;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
-import com.netflix.ribbon.proxy.annotation.Http;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @RestController
@@ -86,25 +83,12 @@ public class CompanyResource {
     @RequestMapping(path = "/company/{companyId}/uploadLogo", method = RequestMethod.POST)
     public ResponseEntity<?> uploadLogo(@PathVariable("companyId") Long companyId, @RequestParam("file") MultipartFile logo) throws Exception {
         log.info("Received request for uploading logo for company with ID [{}]", companyId);
-        if (!logo.isEmpty()) {
-            try {
-                Optional<Company> companyOptional = companyService.findById(companyId);
-                if (companyOptional.isPresent()) {
-                    Company company = companyOptional.get();
-                    companyService.saveLogo(company, logo);
-                    log.info("Successfully uploaded logo for company with ID [{}]", companyId);
-                    return new ResponseEntity<>(HttpStatus.OK);
-                } else {
-                    log.warn("Company with ID [{}] is not found", companyId);
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
-                }
-            } catch (Exception exception) {
-                log.error("Error while trying to save logo for company with ID [{}]", companyId);
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        Company company = companyService.saveLogo(companyId, logo);
+        if (Objects.nonNull(company.getLogo())) {
+            log.info("Successfully uploaded logo for company with ID [{}]", companyId);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            log.error("Logo not present");
-            throw new Exception("Logo not present");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

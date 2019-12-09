@@ -10,7 +10,6 @@ import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,28 +48,44 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public void saveLogo(Company company, MultipartFile logo) throws Exception {
-        try {
-            company.setLogo(logo.getBytes());
-        } catch (IOException e) {
-            log.error("IOException caught on saveLogo company:  " + company.getName() + "message" + e.getMessage());
+    public Company saveLogo(Long companyId, MultipartFile logo) throws Exception {
+        if (!logo.isEmpty()) {
+            Optional<Company> companyOptional = this.findById(companyId);
+            if (companyOptional.isPresent()) {
+                Company company = companyOptional.get();
+                try {
+                    company.setLogo(logo.getBytes());
+                } catch (IOException e) {
+                    log.error("IOException caught on saveLogo company:  " + company.getName() + "message" + e.getMessage());
+                } catch (Exception exception) {
+                    log.error("Error while trying to save logo for company with ID [{}]", companyId);
+                }
+                validateLogoFormat(logo);
+                return this.save(company);
+            } else {
+                log.warn("Company with ID [{}] is not found", companyId);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
+            }
+        } else {
+            log.error("Logo not present");
+            throw new Exception("Logo not present");
         }
+    }
+
+    private static void validateLogoFormat(MultipartFile logo) throws Exception {
         String fileName = logo.getOriginalFilename();
         int dotIndex = Objects.requireNonNull(fileName).lastIndexOf('.');
         String extension = fileName.substring(dotIndex + 1);
         if (!extension.equals("jpg") && !extension.equals("jpeg") && !extension.equals("png")) {
             throw new Exception("Invalid image format");
         }
-        save(company);
     }
 
     @Override
-    @Transactional
     public boolean delete(Long companyId) {
         Optional<Company> optionalCompany = this.findById(companyId);
         if (optionalCompany.isPresent()) {
             Company company = optionalCompany.get();
-            company.getRestaurants().forEach(company::removeRestaurant);
             companyRepository.delete(company);
             return true;
         } else {
