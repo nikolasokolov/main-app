@@ -1,6 +1,6 @@
 spring:
   application:
-    name: main-app
+    name: restaurant-ordering-system
   datasource:
     url: jdbc:postgresql://localhost:5432/main_db
     username: user
