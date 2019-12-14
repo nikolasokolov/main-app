@@ -6,6 +6,7 @@ import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.repository.UserRepository;
 import com.graduation.mainapp.service.UserService;
+import com.graduation.mainapp.web.dto.ChangePasswordRequestDTO;
 import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
 import com.graduation.mainapp.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -102,5 +103,28 @@ public class UserServiceImpl implements UserService {
         } else {
             return true;
         }
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception {
+        if (!changePasswordRequestDTO.getNewPassword().equals(changePasswordRequestDTO.getConfirmPassword())) {
+            throw new Exception("Passwords doesn't match");
+        }
+        Optional<User> userOptional = userRepository.findOneByUsername(changePasswordRequestDTO.getUsername());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String currentPasswordFromRequest = changePasswordRequestDTO.getCurrentPassword();
+            String newPasswordEncrypted = passwordEncoder.encode(changePasswordRequestDTO.getNewPassword());
+            boolean currentPasswordMatch = passwordEncoder.matches(currentPasswordFromRequest, user.getPassword());
+            if (currentPasswordMatch) {
+                user.setPassword(newPasswordEncrypted);
+                this.save(user);
+                return true;
+            } else {
+                throw new Exception("Current password is not correct");
+            }
+        }
+        return false;
     }
 }
