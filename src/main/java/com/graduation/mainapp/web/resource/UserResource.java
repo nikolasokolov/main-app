@@ -2,6 +2,7 @@ package com.graduation.mainapp.web.resource;
 
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.service.UserService;
+import com.graduation.mainapp.web.dto.ChangePasswordRequestDTO;
 import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
 import com.graduation.mainapp.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +70,17 @@ public class UserResource {
         List<UserResponseDTO> userResponseDTOS = userService.createUserDTOs(users);
         log.info("Finished fetching all users");
         return ResponseEntity.ok().body(userResponseDTOS);
+    }
+
+    @RequestMapping(value = "/users/change-password", method = RequestMethod.POST)
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception {
+        boolean passwordSuccessfullyChanges = userService.changePassword(changePasswordRequestDTO);
+        if (passwordSuccessfullyChanges) {
+            log.info("User [{}] successfully changed the password", changePasswordRequestDTO.getUsername());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            log.warn("Cannot change password for User [{}]", changePasswordRequestDTO.getUsername());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
