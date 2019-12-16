@@ -17,6 +17,8 @@ spring:
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
+  liquibase:
+    change-log: classpath:/liquibase/master.xml
 server:
   port: 8081
 
@@ -24,3 +26,4 @@ eureka:
   client:
     service-url:
       default-zone: http://localhost:8761/eureka
+
