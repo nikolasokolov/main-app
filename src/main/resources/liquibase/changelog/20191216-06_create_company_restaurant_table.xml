@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20191216-06_create_company_restaurant_table" author="Nikola Sokolov">
+        <sql>
+            CREATE TABLE company_restaurant
+            (
+                company_id bigint NOT NULL,
+                restaurant_id bigint NOT NULL,
+                CONSTRAINT company_restaurant_pkey PRIMARY KEY (company_id, restaurant_id),
+                CONSTRAINT restaurant_restaurant_id_fk FOREIGN KEY (restaurant_id)
+                REFERENCES restaurant (id) MATCH SIMPLE
+                ON UPDATE NO ACTION
+                ON DELETE NO ACTION,
+                CONSTRAINT company_company_id_fk FOREIGN KEY (company_id)
+                REFERENCES company (id) MATCH SIMPLE
+                ON UPDATE NO ACTION
+                ON DELETE NO ACTION
+            )
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

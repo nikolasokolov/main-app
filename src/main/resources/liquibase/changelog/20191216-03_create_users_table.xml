@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20191216-03_create_authority_table" author="Nikola Sokolov">
+        <sql>
+            CREATE TABLE users
+            (
+                id SERIAL NOT NULL,
+                email character varying(100) NOT NULL,
+                password_hash character varying(60) NOT NULL,
+                username character varying(100) NOT NULL,
+                company_id bigint,
+                CONSTRAINT users_pkey PRIMARY KEY (id),
+                CONSTRAINT unique_username_constraint UNIQUE (username),
+                CONSTRAINT users_company_company_id_fk FOREIGN KEY (company_id)
+                REFERENCES company (id) MATCH SIMPLE
+                ON UPDATE NO ACTION
+                ON DELETE NO ACTION
+            )
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

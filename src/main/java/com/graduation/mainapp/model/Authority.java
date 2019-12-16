@@ -14,7 +14,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Authority {
-
     @Id
     @Column(name = "name", length = 50)
     private String name;

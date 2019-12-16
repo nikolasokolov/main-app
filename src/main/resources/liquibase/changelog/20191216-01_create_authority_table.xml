@@ -5,12 +5,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="20191216-01_populate_authority_table" author="Nikola Sokolov">
+    <changeSet id="20191216-01_create_authority_table" author="Nikola Sokolov">
         <sql>
-            INSERT INTO authority (name) values ("ROLE_SUPER_ADMIN");
-            INSERT INTO authority (name) values ("ROLE_ADMIN");
-            INSERT INTO authority (name) values ("ROLE_USER");
-            INSERT INTO authority (name) values ("ROLE_RESTAURANT");
+            CREATE TABLE authority
+            (
+                name character varying(50) NOT NULL,
+                CONSTRAINT authority_pkey PRIMARY KEY (name)
+            )
         </sql>
     </changeSet>
 
