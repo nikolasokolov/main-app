@@ -1,6 +1,6 @@
 spring:
   application:
-    name: main-app
+    name: restaurant-ordering-system
   datasource:
     url: jdbc:postgresql://localhost:5432/main_db
     username: user
@@ -13,6 +13,10 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+    generate-ddl: true
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 server:
   port: 8081
 
