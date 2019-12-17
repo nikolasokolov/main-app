@@ -1,5 +1,6 @@
 package com.graduation.mainapp.service;
 
+import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.web.dto.ChangePasswordRequestDTO;
 import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
@@ -25,4 +26,6 @@ public interface UserService {
     List<User> findAllUsersForCompany(Long companyId);
 
     boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception;
+
+    List<Restaurant> getRestaurantsForUser(Long userId) throws Exception;
 }

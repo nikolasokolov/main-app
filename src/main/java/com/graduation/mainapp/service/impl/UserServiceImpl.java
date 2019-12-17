@@ -1,7 +1,9 @@
 package com.graduation.mainapp.service.impl;
 
+import com.google.common.collect.Lists;
 import com.graduation.mainapp.model.Authority;
 import com.graduation.mainapp.model.Company;
+import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.repository.UserRepository;
@@ -126,5 +128,21 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public List<Restaurant> getRestaurantsForUser(Long userId) throws Exception {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            Optional<Company> company = companyRepository.findById(user.get().getCompany().getId());
+            if (company.isPresent()) {
+                return Lists.newArrayList(company.get().getRestaurants());
+            } else {
+                throw new Exception("Company not found");
+            }
+        } else {
+            throw new Exception("Company not found");
+        }
     }
 }
