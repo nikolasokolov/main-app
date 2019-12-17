@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20191216-08_populate_users_table_with_super_admin_user" author="Nikola Sokolov">
+        <validCheckSum>ANY</validCheckSum>
+        <sql>
+            INSERT INTO users(email, password_hash, username, company_id)
+            VALUES ('superadmin@gmail.com', '$2a$10$IC8YvTf5yIj4.v98JJhLkO2lpfhgNmNM.P4R2YtgLgsrjApEx/bl2', 'super_admin', null);
+
+            INSERT INTO user_authority(user_id, authority_name) values (1, 'ROLE_SUPER_ADMIN');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
