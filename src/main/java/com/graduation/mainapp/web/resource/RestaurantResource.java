@@ -2,6 +2,7 @@ package com.graduation.mainapp.web.resource;
 
 import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.service.RestaurantService;
+import com.graduation.mainapp.service.UserService;
 import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class RestaurantResource {
     private final RestaurantService restaurantService;
+    private final UserService userService;
 
     @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
     public ResponseEntity<?> findAllRestaurants() {
@@ -110,5 +112,14 @@ public class RestaurantResource {
             log.info("An error occurred trying to create account for restaurant with ID [{}]", restaurantId);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/user/{userId}/restaurants", method = RequestMethod.GET)
+    public ResponseEntity<?> getRestaurantsForUser(@PathVariable Long userId) throws Exception {
+        log.info("Received request for fetching restaurants for user with ID [{}]", userId);
+        List<Restaurant> restaurants = userService.getRestaurantsForUser(userId);
+        List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurants);
+        log.info("Finished fetching restaurants for user with ID [{}]", userId);
+        return new ResponseEntity<>(restaurantDTOs, HttpStatus.OK);
     }
 }
