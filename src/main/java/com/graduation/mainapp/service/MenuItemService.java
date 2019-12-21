@@ -10,4 +10,6 @@ public interface MenuItemService {
     List<MenuItem> getRestaurantMenuItems(Long restaurantId);
 
     List<MenuItemsDTO> createMenuItemsDTO(Collection<MenuItem> menuItems);
+
+    void delete(Long menuItemId);
 }

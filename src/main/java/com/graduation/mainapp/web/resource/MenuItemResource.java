@@ -22,12 +22,20 @@ import java.util.List;
 public class MenuItemResource {
     private final MenuItemService menuItemService;
 
-    @RequestMapping(value = "restaurant/{userId}/menu-items", method = RequestMethod.GET)
+    @RequestMapping(value = "/restaurant/{userId}/menu-items", method = RequestMethod.GET)
     public ResponseEntity<?> getRestaurantMenuItems(@PathVariable Long userId) {
         log.info("Received request for fetching menu items for restaurant account with ID [{}]", userId);
         List<MenuItem> menuItems = menuItemService.getRestaurantMenuItems(userId);
         List<MenuItemsDTO> menuItemsDTO = menuItemService.createMenuItemsDTO(menuItems);
         log.info("Finished fetching menu items for restaurant account with ID [{}]", userId);
         return new ResponseEntity<>(menuItemsDTO, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/restaurant/menu-item/{menuItemId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteMenuItem(@PathVariable Long menuItemId) {
+        log.info("Received request for deleting menu item with ID [{}]", menuItemId);
+        menuItemService.delete(menuItemId);
+        log.info("Successfully deleted menu item for with ID [{}]", menuItemId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

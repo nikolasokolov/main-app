@@ -42,4 +42,14 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .price(menuItem.getPrice())
                 .build()).collect(Collectors.toList());
     }
+
+    @Override
+    public void delete(Long menuItemId) {
+        Optional<MenuItem> menuItem = menuItemRepository.findById(menuItemId);
+        if (menuItem.isPresent()) {
+            menuItemRepository.delete(menuItem.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu item not found");
+        }
+    }
 }
