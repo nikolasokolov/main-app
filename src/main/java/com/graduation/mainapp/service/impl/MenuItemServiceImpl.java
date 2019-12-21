@@ -1,11 +1,14 @@
 package com.graduation.mainapp.service.impl;
 
+import com.graduation.mainapp.model.FoodType;
 import com.graduation.mainapp.model.MenuItem;
+import com.graduation.mainapp.model.Restaurant;
 import com.graduation.mainapp.model.User;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.service.MenuItemService;
+import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.MenuItemsDTO;
+import com.graduation.mainapp.web.dto.MenuItemDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class MenuItemServiceImpl implements MenuItemService {
     private final MenuItemRepository menuItemRepository;
     private final UserService userService;
+    private final RestaurantService restaurantService;
 
     @Override
     public List<MenuItem> getRestaurantMenuItems(Long userId) {
@@ -34,8 +38,8 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public List<MenuItemsDTO> createMenuItemsDTO(Collection<MenuItem> menuItems) {
-        return menuItems.stream().map(menuItem -> MenuItemsDTO.builder()
+    public List<MenuItemDTO> createMenuItemsDTO(Collection<MenuItem> menuItems) {
+        return menuItems.stream().map(menuItem -> MenuItemDTO.builder()
                 .id(menuItem.getId())
                 .type(menuItem.getFoodType().toString())
                 .name(menuItem.getName())
@@ -52,4 +56,60 @@ public class MenuItemServiceImpl implements MenuItemService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu item not found");
         }
     }
+
+    @Override
+    public MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) {
+        Optional<User> user = userService.findById(userId);
+        if (user.isPresent()) {
+            Long restaurantId = user.get().getRestaurant().getId();
+            Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
+            MenuItem menuItem = createMenuItemObject(menuItemDTO, restaurant.get());
+            return menuItemRepository.save(menuItem);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+    }
+
+    @Override
+    public MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) {
+        Optional<User> user = userService.findById(userId);
+        if (user.isPresent()) {
+            Long restaurantId = user.get().getRestaurant().getId();
+            Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
+            MenuItem menuItem = createMenuItemObjectForUpdating(menuItemDTO, restaurant.get());
+            return menuItemRepository.save(menuItem);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+    }
+
+    @Override
+    public MenuItem getMenuItem(Long id) {
+        Optional<MenuItem> menuItem = menuItemRepository.findById(id);
+        if (menuItem.isPresent()) {
+            return menuItem.get();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu Item not found");
+        }
+    }
+
+    private MenuItem createMenuItemObjectForUpdating(MenuItemDTO menuItemDTO, Restaurant restaurant) {
+        return MenuItem.builder()
+                .id(menuItemDTO.getId())
+                .name(menuItemDTO.getName())
+                .foodType(FoodType.valueOf(menuItemDTO.getType()))
+                .price(menuItemDTO.getPrice())
+                .restaurant(restaurant)
+                .build();
+    }
+
+    private MenuItem createMenuItemObject(MenuItemDTO menuItemDTO, Restaurant restaurant) {
+        return MenuItem.builder()
+                .name(menuItemDTO.getName())
+                .foodType(FoodType.valueOf(menuItemDTO.getType()))
+                .price(menuItemDTO.getPrice())
+                .restaurant(restaurant)
+                .build();
+    }
+
 }
