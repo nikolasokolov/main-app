@@ -2,7 +2,7 @@ spring:
   application:
     name: restaurant-ordering-system
   datasource:
-    url: jdbc:postgresql://localhost:5432/main_db
+    url: jdbc:postgresql://localhost:5432/restaurant_ordering_system
     username: user
     password: user
   jpa:

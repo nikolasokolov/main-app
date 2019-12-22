@@ -14,4 +14,5 @@ public class MenuItemDTO {
     private String type;
     private String name;
     private Integer price;
+    private String allergens;
 }

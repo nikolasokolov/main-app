@@ -44,6 +44,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .type(menuItem.getFoodType().toString())
                 .name(menuItem.getName())
                 .price(menuItem.getPrice())
+                .allergens(menuItem.getAllergens())
                 .build()).collect(Collectors.toList());
     }
 
@@ -99,6 +100,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .name(menuItemDTO.getName())
                 .foodType(FoodType.valueOf(menuItemDTO.getType()))
                 .price(menuItemDTO.getPrice())
+                .allergens(menuItemDTO.getAllergens())
                 .restaurant(restaurant)
                 .build();
     }
@@ -109,6 +111,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .foodType(FoodType.valueOf(menuItemDTO.getType()))
                 .price(menuItemDTO.getPrice())
                 .restaurant(restaurant)
+                .allergens(menuItemDTO.getAllergens())
                 .build();
     }
 
