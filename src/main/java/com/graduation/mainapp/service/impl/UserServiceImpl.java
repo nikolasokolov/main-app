@@ -1,16 +1,16 @@
 package com.graduation.mainapp.service.impl;
 
 import com.google.common.collect.Lists;
-import com.graduation.mainapp.model.Authority;
-import com.graduation.mainapp.model.Company;
-import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.model.User;
+import com.graduation.mainapp.domain.Authority;
+import com.graduation.mainapp.domain.Company;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.repository.UserRepository;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.ChangePasswordRequestDTO;
-import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
-import com.graduation.mainapp.web.dto.UserResponseDTO;
+import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
+import com.graduation.mainapp.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

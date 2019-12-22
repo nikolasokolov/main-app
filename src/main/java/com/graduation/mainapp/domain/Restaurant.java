@@ -1,4 +1,4 @@
-package com.graduation.mainapp.model;
+package com.graduation.mainapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

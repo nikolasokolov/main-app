@@ -19,5 +19,7 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20191216-08_populate_users_table_with_super_admin_user.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191218-01_create_menu_item_table.xml"
+             relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

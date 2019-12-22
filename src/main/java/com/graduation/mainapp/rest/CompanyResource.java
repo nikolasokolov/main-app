@@ -1,9 +1,9 @@
-package com.graduation.mainapp.web.resource;
+package com.graduation.mainapp.rest;
 
-import com.graduation.mainapp.model.Company;
+import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.service.CompanyService;
-import com.graduation.mainapp.web.dto.CompanyDTO;
-import com.graduation.mainapp.web.dto.RestaurantDTO;
+import com.graduation.mainapp.dto.CompanyDTO;
+import com.graduation.mainapp.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

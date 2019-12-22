@@ -1,15 +1,15 @@
 package com.graduation.mainapp.service.impl;
 
-import com.graduation.mainapp.model.Authority;
-import com.graduation.mainapp.model.Company;
-import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.model.User;
+import com.graduation.mainapp.domain.Authority;
+import com.graduation.mainapp.domain.Company;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.repository.RestaurantRepository;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
-import com.graduation.mainapp.web.dto.RestaurantAccountDetails;
-import com.graduation.mainapp.web.dto.RestaurantDTO;
+import com.graduation.mainapp.dto.RestaurantAccountDTO;
+import com.graduation.mainapp.dto.RestaurantAccountDetails;
+import com.graduation.mainapp.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
