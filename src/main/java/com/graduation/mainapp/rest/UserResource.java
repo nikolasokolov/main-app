@@ -1,10 +1,10 @@
-package com.graduation.mainapp.web.resource;
+package com.graduation.mainapp.rest;
 
-import com.graduation.mainapp.model.User;
+import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.ChangePasswordRequestDTO;
-import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
-import com.graduation.mainapp.web.dto.UserResponseDTO;
+import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
+import com.graduation.mainapp.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

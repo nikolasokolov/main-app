@@ -1,16 +1,15 @@
 package com.graduation.mainapp.service.impl;
 
-import com.graduation.mainapp.model.Company;
-import com.graduation.mainapp.model.Restaurant;
+import com.graduation.mainapp.domain.Company;
+import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
-import com.graduation.mainapp.web.dto.CompanyDTO;
-import com.graduation.mainapp.web.dto.RestaurantDTO;
+import com.graduation.mainapp.dto.CompanyDTO;
+import com.graduation.mainapp.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +19,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -1,8 +1,8 @@
-package com.graduation.mainapp.web.resource;
+package com.graduation.mainapp.rest;
 
-import com.graduation.mainapp.model.MenuItem;
+import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.service.MenuItemService;
-import com.graduation.mainapp.web.dto.MenuItemDTO;
+import com.graduation.mainapp.dto.MenuItemDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -1,8 +1,8 @@
 package com.graduation.mainapp.service;
 
-import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
-import com.graduation.mainapp.web.dto.RestaurantDTO;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.dto.RestaurantAccountDTO;
+import com.graduation.mainapp.dto.RestaurantDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;

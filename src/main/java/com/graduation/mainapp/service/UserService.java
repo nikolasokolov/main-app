@@ -1,10 +1,10 @@
 package com.graduation.mainapp.service;
 
-import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.model.User;
-import com.graduation.mainapp.web.dto.ChangePasswordRequestDTO;
-import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
-import com.graduation.mainapp.web.dto.UserResponseDTO;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
+import com.graduation.mainapp.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.dto.UserResponseDTO;
 
 import java.util.Collection;
 import java.util.List;

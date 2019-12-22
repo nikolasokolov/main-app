@@ -1,14 +1,14 @@
 package com.graduation.mainapp.service.impl;
 
-import com.graduation.mainapp.model.FoodType;
-import com.graduation.mainapp.model.MenuItem;
-import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.model.User;
+import com.graduation.mainapp.domain.FoodType;
+import com.graduation.mainapp.domain.MenuItem;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.MenuItemDTO;
+import com.graduation.mainapp.dto.MenuItemDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

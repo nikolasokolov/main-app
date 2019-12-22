@@ -1,11 +1,10 @@
 package com.graduation.mainapp.service;
 
-import com.graduation.mainapp.model.MenuItem;
-import com.graduation.mainapp.web.dto.MenuItemDTO;
+import com.graduation.mainapp.domain.MenuItem;
+import com.graduation.mainapp.dto.MenuItemDTO;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface MenuItemService {
     List<MenuItem> getRestaurantMenuItems(Long restaurantId);
