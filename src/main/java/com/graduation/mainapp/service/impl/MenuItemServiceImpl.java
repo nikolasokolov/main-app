@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -92,6 +93,22 @@ public class MenuItemServiceImpl implements MenuItemService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu Item not found");
         }
+    }
+
+    @Override
+    public List<MenuItem> getRestaurantMenu(Long restaurantId) {
+        Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
+        if (restaurant.isPresent()) {
+            return menuItemRepository.findAllByRestaurant(restaurant.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+        }
+    }
+
+    @Override
+    public Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems) {
+        List<MenuItemDTO> menuItemDTOs = createMenuItemsDTO(menuItems);
+        return menuItemDTOs.stream().collect(Collectors.groupingBy(MenuItemDTO::getType));
     }
 
     private MenuItem createMenuItemObjectForUpdating(MenuItemDTO menuItemDTO, Restaurant restaurant) {
