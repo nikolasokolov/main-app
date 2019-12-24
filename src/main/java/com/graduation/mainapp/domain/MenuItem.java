@@ -37,6 +37,8 @@ public class MenuItem {
 
     private String allergens;
 
+    private Boolean isAvailable;
+
     @OneToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
 }

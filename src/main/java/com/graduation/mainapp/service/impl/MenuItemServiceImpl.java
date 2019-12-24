@@ -46,6 +46,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .name(menuItem.getName())
                 .price(menuItem.getPrice())
                 .allergens(menuItem.getAllergens())
+                .isAvailable(menuItem.getIsAvailable())
                 .build()).collect(Collectors.toList());
     }
 
@@ -108,7 +109,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     public Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems) {
         List<MenuItemDTO> menuItemDTOs = createMenuItemsDTO(menuItems);
-        return menuItemDTOs.stream().collect(Collectors.groupingBy(MenuItemDTO::getType));
+        return menuItemDTOs.stream().filter(MenuItemDTO::getIsAvailable).collect(Collectors.groupingBy(MenuItemDTO::getType));
     }
 
     private MenuItem createMenuItemObjectForUpdating(MenuItemDTO menuItemDTO, Restaurant restaurant) {
@@ -118,6 +119,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .foodType(FoodType.valueOf(menuItemDTO.getType()))
                 .price(menuItemDTO.getPrice())
                 .allergens(menuItemDTO.getAllergens())
+                .isAvailable(menuItemDTO.getIsAvailable())
                 .restaurant(restaurant)
                 .build();
     }
@@ -129,6 +131,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .price(menuItemDTO.getPrice())
                 .restaurant(restaurant)
                 .allergens(menuItemDTO.getAllergens())
+                .isAvailable(menuItemDTO.getIsAvailable())
                 .build();
     }
 

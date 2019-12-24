@@ -1,9 +1,8 @@
 package com.graduation.mainapp.rest;
 
-import com.graduation.mainapp.domain.FoodType;
 import com.graduation.mainapp.domain.MenuItem;
-import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
