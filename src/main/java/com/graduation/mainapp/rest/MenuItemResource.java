@@ -1,8 +1,8 @@
 package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.domain.MenuItem;
-import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -66,5 +67,14 @@ public class MenuItemResource {
         List<MenuItemDTO> menuItemDTO = menuItemService.createMenuItemsDTO(Collections.singletonList(menuItem));
         log.info("Finished fetching menu item for with ID [{}]", id);
         return new ResponseEntity<>(menuItemDTO.get(0), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/restaurant/{restaurantId}/menu", method = RequestMethod.GET)
+    public ResponseEntity<?> getRestaurantMenu(@PathVariable Long restaurantId) {
+        log.info("Received request for fetching menu items for restaurant with ID [{}]", restaurantId);
+        List<MenuItem> menuItems = menuItemService.getRestaurantMenu(restaurantId);
+        Map<String, List<MenuItemDTO>> typeToMenuItemsDTO = menuItemService.createTypeToMenuItemsDTO(menuItems);
+        log.info("Finished fetching menu items for restaurant with ID [{}]", restaurantId);
+        return new ResponseEntity<>(typeToMenuItemsDTO, HttpStatus.OK);
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .name(menuItem.getName())
                 .price(menuItem.getPrice())
                 .allergens(menuItem.getAllergens())
+                .isAvailable(menuItem.getIsAvailable())
                 .build()).collect(Collectors.toList());
     }
 
@@ -94,6 +96,22 @@ public class MenuItemServiceImpl implements MenuItemService {
         }
     }
 
+    @Override
+    public List<MenuItem> getRestaurantMenu(Long restaurantId) {
+        Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
+        if (restaurant.isPresent()) {
+            return menuItemRepository.findAllByRestaurant(restaurant.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+        }
+    }
+
+    @Override
+    public Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems) {
+        List<MenuItemDTO> menuItemDTOs = createMenuItemsDTO(menuItems);
+        return menuItemDTOs.stream().filter(MenuItemDTO::getIsAvailable).collect(Collectors.groupingBy(MenuItemDTO::getType));
+    }
+
     private MenuItem createMenuItemObjectForUpdating(MenuItemDTO menuItemDTO, Restaurant restaurant) {
         return MenuItem.builder()
                 .id(menuItemDTO.getId())
@@ -101,6 +119,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .foodType(FoodType.valueOf(menuItemDTO.getType()))
                 .price(menuItemDTO.getPrice())
                 .allergens(menuItemDTO.getAllergens())
+                .isAvailable(menuItemDTO.getIsAvailable())
                 .restaurant(restaurant)
                 .build();
     }
@@ -112,6 +131,7 @@ public class MenuItemServiceImpl implements MenuItemService {
                 .price(menuItemDTO.getPrice())
                 .restaurant(restaurant)
                 .allergens(menuItemDTO.getAllergens())
+                .isAvailable(menuItemDTO.getIsAvailable())
                 .build();
     }
 
