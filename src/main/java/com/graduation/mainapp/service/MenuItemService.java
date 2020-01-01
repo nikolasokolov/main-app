@@ -1,8 +1,8 @@
 package com.graduation.mainapp.service;
 
-import com.graduation.mainapp.domain.FoodType;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,4 +24,6 @@ public interface MenuItemService {
     List<MenuItem> getRestaurantMenu(Long restaurantId);
 
     Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems);
+
+    MenuItem findByIdOrThrow(Long menuItemId) throws DomainObjectNotFoundException;
 }

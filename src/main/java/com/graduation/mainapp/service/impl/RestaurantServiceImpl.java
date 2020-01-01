@@ -4,6 +4,7 @@ import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.RestaurantRepository;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
@@ -172,6 +173,12 @@ public class RestaurantServiceImpl implements RestaurantService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
         }
+    }
+
+    @Override
+    public Restaurant findByIdOrThrow(Long restaurantId) throws DomainObjectNotFoundException {
+        return restaurantRepository.findById(restaurantId).orElseThrow(
+                () -> new DomainObjectNotFoundException("Restaurant with ID " + restaurantId + " is not found"));
     }
 
     private Restaurant createRestaurantForUpdate(Restaurant restaurant, RestaurantDTO restaurantDTO) {

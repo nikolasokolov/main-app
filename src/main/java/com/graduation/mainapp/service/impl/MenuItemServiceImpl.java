@@ -4,6 +4,7 @@ import com.graduation.mainapp.domain.FoodType;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.RestaurantService;
@@ -110,6 +111,12 @@ public class MenuItemServiceImpl implements MenuItemService {
     public Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems) {
         List<MenuItemDTO> menuItemDTOs = createMenuItemsDTO(menuItems);
         return menuItemDTOs.stream().filter(MenuItemDTO::getIsAvailable).collect(Collectors.groupingBy(MenuItemDTO::getType));
+    }
+
+    @Override
+    public MenuItem findByIdOrThrow(Long menuItemId) throws DomainObjectNotFoundException {
+        return menuItemRepository.findById(menuItemId).orElseThrow(
+                () -> new DomainObjectNotFoundException("Menu Item with ID " + menuItemId + " is not found"));
     }
 
     private MenuItem createMenuItemObjectForUpdating(MenuItemDTO menuItemDTO, Restaurant restaurant) {
