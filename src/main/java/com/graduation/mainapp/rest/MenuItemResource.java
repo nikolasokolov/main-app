@@ -2,6 +2,7 @@ package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class MenuItemResource {
     }
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items/add", method = RequestMethod.POST)
-    public ResponseEntity<?> addMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) {
+    public ResponseEntity<?> addMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException {
         log.info("Received request for adding menu item for restaurant account with ID [{}]", userId);
         MenuItem menuItem = menuItemService.addMenuItem(userId, menuItemDTO);
         List<MenuItemDTO> menuItemDTOResponse = menuItemService.createMenuItemsDTO(Collections.singletonList(menuItem));
@@ -52,7 +53,7 @@ public class MenuItemResource {
     }
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items/update", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) {
+    public ResponseEntity<?> updateMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException {
         log.info("Received request for updating menu item for restaurant account with ID [{}]", userId);
         MenuItem menuItem = menuItemService.updateMenuItem(userId, menuItemDTO);
         List<MenuItemDTO> menuItemDTOResponse = menuItemService.createMenuItemsDTO(Collections.singletonList(menuItem));
@@ -70,7 +71,7 @@ public class MenuItemResource {
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/menu", method = RequestMethod.GET)
-    public ResponseEntity<?> getRestaurantMenu(@PathVariable Long restaurantId) {
+    public ResponseEntity<?> getRestaurantMenu(@PathVariable Long restaurantId) throws DomainObjectNotFoundException {
         log.info("Received request for fetching menu items for restaurant with ID [{}]", restaurantId);
         List<MenuItem> menuItems = menuItemService.getRestaurantMenu(restaurantId);
         Map<String, List<MenuItemDTO>> typeToMenuItemsDTO = menuItemService.createTypeToMenuItemsDTO(menuItems);

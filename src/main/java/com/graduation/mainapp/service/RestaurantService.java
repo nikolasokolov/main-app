@@ -15,11 +15,9 @@ public interface RestaurantService {
 
     Restaurant save(Restaurant restaurant);
 
-    Optional<Restaurant> findById(Long restaurantId);
-
     Restaurant saveLogo(Long restaurantId, MultipartFile logo) throws Exception;
 
-    boolean delete(Long restaurantId);
+    boolean delete(Long restaurantId) throws DomainObjectNotFoundException;
 
     List<RestaurantDTO> createRestaurantDTOs(Collection<Restaurant> restaurants);
 
@@ -27,9 +25,9 @@ public interface RestaurantService {
 
     Restaurant createRestaurantObjectFromRestaurantDTO(RestaurantDTO restaurantDTO);
 
-    RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId);
+    RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId) throws DomainObjectNotFoundException;
 
-    Restaurant updateRestaurant(RestaurantDTO restaurantDTO);
+    Restaurant updateRestaurant(RestaurantDTO restaurantDTO) throws DomainObjectNotFoundException;
 
     Restaurant findByIdOrThrow(Long restaurantId) throws DomainObjectNotFoundException;
 }

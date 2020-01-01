@@ -15,13 +15,13 @@ public interface MenuItemService {
 
     void delete(Long menuItemId);
 
-    MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO);
+    MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException;
 
-    MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO);
+    MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException;
 
     MenuItem getMenuItem(Long id);
 
-    List<MenuItem> getRestaurantMenu(Long restaurantId);
+    List<MenuItem> getRestaurantMenu(Long restaurantId) throws DomainObjectNotFoundException;
 
     Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems);
 
