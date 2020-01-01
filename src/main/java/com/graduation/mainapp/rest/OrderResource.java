@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import javax.xml.ws.Response;
 import java.util.Objects;
 
 @Slf4j
@@ -46,5 +47,13 @@ public class OrderResource {
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+    @RequestMapping(value = "/orders/{orderId}/delete", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId) throws DomainObjectNotFoundException {
+        log.info("Received request for deleting order with ID [{}]", orderId);
+        orderService.delete(orderId);
+        log.info("Successfully deleted order with ID [{}]", orderId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

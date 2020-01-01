@@ -14,4 +14,5 @@ public class UserOrderResponseDTO {
     private String menuItemName;
     private String timePeriod;
     private String comments;
+    private Long restaurantId;
 }

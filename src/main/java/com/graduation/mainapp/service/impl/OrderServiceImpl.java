@@ -77,6 +77,7 @@ public class OrderServiceImpl implements OrderService {
                 .menuItemName(order.getMenuItem().getName())
                 .timePeriod(order.getTimePeriod().toString())
                 .comments(order.getComments())
+                .restaurantId(order.getRestaurant().getId())
                 .build();
     }
 
@@ -84,6 +85,12 @@ public class OrderServiceImpl implements OrderService {
     public Order findByIdOrThrow(Long id) throws DomainObjectNotFoundException {
         return orderRepository.findById(id).orElseThrow(
                 () -> new DomainObjectNotFoundException("Order with ID " + id + " was not found"));
+    }
+
+    @Override
+    public void delete(Long orderId) throws DomainObjectNotFoundException {
+        Order order = findByIdOrThrow(orderId);
+        orderRepository.delete(order);
     }
 
     private Order createOrderObjectForSaving(OrderDTO orderDTO) throws DomainObjectNotFoundException {

@@ -17,4 +17,6 @@ public interface OrderService {
     UserOrderResponseDTO createUserOrderResponseDTO(Order order);
 
     Order findByIdOrThrow(Long id) throws DomainObjectNotFoundException;
+
+    void delete(Long orderId) throws DomainObjectNotFoundException;
 }
