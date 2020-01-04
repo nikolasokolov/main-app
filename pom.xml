@@ -15,7 +15,7 @@
 	<description>Spring Boot project intended for company employees to order food from restaurants</description>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 		<jjwt.version>0.6.0</jjwt.version>
 		<postgresql.version>42.2.5</postgresql.version>
 		<spring-cloud-starter-netflix-eureka-client>2.2.0.RELEASE</spring-cloud-starter-netflix-eureka-client>

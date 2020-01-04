@@ -1,7 +1,6 @@
 package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.domain.Order;
-import com.graduation.mainapp.dto.MenuItemDTO;
 import com.graduation.mainapp.dto.OrderDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
-import javax.xml.ws.Response;
 import java.util.Objects;
 
 @Slf4j
