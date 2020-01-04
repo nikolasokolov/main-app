@@ -21,5 +21,7 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20191218-01_create_menu_item_table.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191229-01_create_order_table.xml"
+             relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -4,6 +4,7 @@ import com.graduation.mainapp.domain.FoodType;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.RestaurantService;
@@ -61,12 +62,12 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) {
+    public MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException {
         Optional<User> user = userService.findById(userId);
         if (user.isPresent()) {
             Long restaurantId = user.get().getRestaurant().getId();
-            Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
-            MenuItem menuItem = createMenuItemObject(menuItemDTO, restaurant.get());
+            Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
+            MenuItem menuItem = createMenuItemObject(menuItemDTO, restaurant);
             return menuItemRepository.save(menuItem);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -74,12 +75,12 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) {
+    public MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException {
         Optional<User> user = userService.findById(userId);
         if (user.isPresent()) {
             Long restaurantId = user.get().getRestaurant().getId();
-            Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
-            MenuItem menuItem = createMenuItemObjectForUpdating(menuItemDTO, restaurant.get());
+            Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
+            MenuItem menuItem = createMenuItemObjectForUpdating(menuItemDTO, restaurant);
             return menuItemRepository.save(menuItem);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -97,19 +98,21 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public List<MenuItem> getRestaurantMenu(Long restaurantId) {
-        Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
-        if (restaurant.isPresent()) {
-            return menuItemRepository.findAllByRestaurant(restaurant.get());
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
-        }
+    public List<MenuItem> getRestaurantMenu(Long restaurantId) throws DomainObjectNotFoundException {
+        Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
+        return menuItemRepository.findAllByRestaurant(restaurant);
     }
 
     @Override
     public Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems) {
         List<MenuItemDTO> menuItemDTOs = createMenuItemsDTO(menuItems);
         return menuItemDTOs.stream().filter(MenuItemDTO::getIsAvailable).collect(Collectors.groupingBy(MenuItemDTO::getType));
+    }
+
+    @Override
+    public MenuItem findByIdOrThrow(Long menuItemId) throws DomainObjectNotFoundException {
+        return menuItemRepository.findById(menuItemId).orElseThrow(
+                () -> new DomainObjectNotFoundException("Menu Item with ID " + menuItemId + " is not found"));
     }
 
     private MenuItem createMenuItemObjectForUpdating(MenuItemDTO menuItemDTO, Restaurant restaurant) {

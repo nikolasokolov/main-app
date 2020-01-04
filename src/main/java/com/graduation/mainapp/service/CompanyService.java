@@ -3,6 +3,7 @@ package com.graduation.mainapp.service;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
@@ -14,15 +15,15 @@ public interface CompanyService {
 
     Company save(Company company);
 
-    Optional<Company> findById(Long companyId);
+    Company findByIdOrThrow(Long companyId) throws DomainObjectNotFoundException;
 
     Company saveLogo(Long companyId, MultipartFile logo) throws Exception;
 
-    boolean delete(Long companyId);
+    boolean delete(Long companyId) throws DomainObjectNotFoundException;
 
     List<CompanyDTO> createCompanyDTOs(Collection<Company> companies);
 
-    boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId);
+    boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws DomainObjectNotFoundException;
 
     Company createCompanyObjectFromCompanyDTO(CompanyDTO companyDTO);
 
@@ -30,9 +31,9 @@ public interface CompanyService {
 
     Company createCompanyObjectForUpdate(Company company, CompanyDTO companyDTO);
 
-    boolean deleteRestaurantForCompany(Long companyId, Long restaurantId);
+    boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws DomainObjectNotFoundException;
 
-    List<RestaurantDTO> getRestaurantsForCompany(Long companyId);
+    List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException;
 
-    Company updateCompany(CompanyDTO companyDTO);
+    Company updateCompany(CompanyDTO companyDTO) throws DomainObjectNotFoundException;
 }

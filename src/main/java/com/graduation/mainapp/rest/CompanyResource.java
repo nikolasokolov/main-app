@@ -1,6 +1,7 @@
 package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.domain.Company;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
@@ -48,21 +49,16 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/company/{companyId}", method = RequestMethod.GET)
-    public ResponseEntity<?> findById(@PathVariable Long companyId) {
+    public ResponseEntity<?> findById(@PathVariable Long companyId) throws DomainObjectNotFoundException {
         log.info("Received request for fetching company with ID [{}]", companyId);
-        Optional<Company> companyOptional = companyService.findById(companyId);
-        if (companyOptional.isPresent()) {
-            CompanyDTO companyDTO = companyService.createCompanyDTOFromCompanyObject(companyOptional.get());
-            log.info("Successfully fetched company with ID [{}]", companyId);
-            return ResponseEntity.ok().body(companyDTO);
-        } else {
-            log.error("Company with ID [{}] is not found", companyId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found");
-        }
+        Company company = companyService.findByIdOrThrow(companyId);
+        CompanyDTO companyDTO = companyService.createCompanyDTOFromCompanyObject(company);
+        log.info("Successfully fetched company with ID [{}]", companyId);
+        return ResponseEntity.ok().body(companyDTO);
     }
 
     @RequestMapping(value = "/company/edit", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateCompany(@RequestBody CompanyDTO companyDTO) {
+    public ResponseEntity<?> updateCompany(@RequestBody CompanyDTO companyDTO) throws DomainObjectNotFoundException {
         log.info("Received request for editing company [{}]", companyDTO.getName());
         Company updatedCompany = companyService.updateCompany(companyDTO);
         if (Objects.nonNull(updatedCompany)) {
@@ -86,7 +82,7 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/company/{companyId}/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteCompany(@PathVariable Long companyId) {
+    public ResponseEntity<?> deleteCompany(@PathVariable Long companyId) throws DomainObjectNotFoundException {
         log.info("Received request for deleting company with ID [{}]", companyId);
         boolean companyIsDeleted = companyService.delete(companyId);
         if (companyIsDeleted) {
@@ -98,7 +94,7 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/company/add-restaurant/{restaurantId}", method = RequestMethod.POST)
-    public ResponseEntity<?> addRestaurantForCompany(@RequestBody CompanyDTO companyDTO, @PathVariable Long restaurantId) {
+    public ResponseEntity<?> addRestaurantForCompany(@RequestBody CompanyDTO companyDTO, @PathVariable Long restaurantId) throws DomainObjectNotFoundException {
         log.info("Received request for adding restaurant to company with ID [{}]", companyDTO.getId());
         boolean restaurantIsAdded = companyService.addRestaurantForCompany(companyDTO, restaurantId);
         if (restaurantIsAdded) {
@@ -110,7 +106,7 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/company/{companyId}/restaurants", method = RequestMethod.GET)
-    public ResponseEntity<?> getRestaurantsForCompany(@PathVariable Long companyId) {
+    public ResponseEntity<?> getRestaurantsForCompany(@PathVariable Long companyId) throws DomainObjectNotFoundException {
         log.info("Received request for fetching restaurants for company with ID [{}]", companyId);
         List<RestaurantDTO> restaurantDTOs = companyService.getRestaurantsForCompany(companyId);
         log.info("Finished fetching restaurants for company with ID [{}]", companyId);
@@ -118,7 +114,7 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/company/{companyId}/delete-restaurant/{restaurantId}")
-    public ResponseEntity<?> deleteRestaurantForCompany(@PathVariable Long companyId, @PathVariable Long restaurantId) {
+    public ResponseEntity<?> deleteRestaurantForCompany(@PathVariable Long companyId, @PathVariable Long restaurantId) throws DomainObjectNotFoundException {
         log.info("Received request for deleting restaurant with ID [{}] to company with ID [{}]", restaurantId, companyId);
         boolean restaurantIsDeleted = companyService.deleteRestaurantForCompany(companyId, restaurantId);
         if (restaurantIsDeleted) {

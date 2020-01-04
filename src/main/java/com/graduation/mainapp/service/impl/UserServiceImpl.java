@@ -5,6 +5,7 @@ import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.repository.UserRepository;
 import com.graduation.mainapp.service.UserService;
@@ -94,6 +95,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByIdOrThrow(Long userId) throws DomainObjectNotFoundException {
+        return userRepository.findById(userId).
+                orElseThrow(() -> new DomainObjectNotFoundException("User with ID " + userId + " is not found"));
+    }
+
+    @Override
     @Transactional
     public List<User> findAllUsersForCompany(Long companyId) {
         return userRepository.findAllByCompanyId(companyId);
@@ -142,7 +149,7 @@ public class UserServiceImpl implements UserService {
                 throw new Exception("Company not found");
             }
         } else {
-            throw new Exception("Company not found");
+            throw new Exception("User not found");
         }
     }
 }
