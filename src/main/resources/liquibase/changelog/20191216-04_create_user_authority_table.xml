@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20191216-04_create_user_authority_table" author="Nikola Sokolov">
+        <sql>
+            CREATE TABLE user_authority
+            (
+                user_id bigint NOT NULL,
+                authority_name character varying(50) NOT NULL,
+                CONSTRAINT user_authority_pkey PRIMARY KEY (user_id, authority_name),
+                CONSTRAINT authority_authority_name_fk FOREIGN KEY (authority_name)
+                REFERENCES authority (name) MATCH SIMPLE
+                ON UPDATE NO ACTION
+                ON DELETE NO ACTION,
+                CONSTRAINT users_user_id_fk FOREIGN KEY (user_id)
+                REFERENCES users (id) MATCH SIMPLE
+                ON UPDATE NO ACTION
+                ON DELETE NO ACTION
+            )
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

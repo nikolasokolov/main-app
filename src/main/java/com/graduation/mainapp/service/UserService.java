@@ -1,9 +1,11 @@
 package com.graduation.mainapp.service;
 
-import com.graduation.mainapp.model.User;
-import com.graduation.mainapp.web.dto.ChangePasswordRequestDTO;
-import com.graduation.mainapp.web.dto.UserAccountRequestDTO;
-import com.graduation.mainapp.web.dto.UserResponseDTO;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
+import com.graduation.mainapp.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.dto.UserResponseDTO;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,4 +27,8 @@ public interface UserService {
     List<User> findAllUsersForCompany(Long companyId);
 
     boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception;
+
+    List<Restaurant> getRestaurantsForUser(Long userId) throws Exception;
+
+    User findByIdOrThrow(Long userId) throws DomainObjectNotFoundException;
 }

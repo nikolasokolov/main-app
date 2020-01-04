@@ -1,4 +1,4 @@
-package com.graduation.mainapp.web.dto;
+package com.graduation.mainapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

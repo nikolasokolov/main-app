@@ -1,4 +1,4 @@
-package com.graduation.mainapp.model;
+package com.graduation.mainapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class Company {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

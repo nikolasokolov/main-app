@@ -1,4 +1,4 @@
-package com.graduation.mainapp.web.dto;
+package com.graduation.mainapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CompanyDTO {
+public class UserResponseDTO {
     private Long id;
-    private String name;
-    private String address;
-    private String phoneNumber;
-    private byte[] logo;
+    private String username;
+    private String email;
+    private String authority;
+    private String company;
 }

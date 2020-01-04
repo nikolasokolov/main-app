@@ -1,32 +1,31 @@
 package com.graduation.mainapp.service.impl;
 
-import com.graduation.mainapp.model.Authority;
-import com.graduation.mainapp.model.Company;
-import com.graduation.mainapp.model.Restaurant;
-import com.graduation.mainapp.model.User;
+import com.graduation.mainapp.domain.Authority;
+import com.graduation.mainapp.domain.Company;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.dto.RestaurantAccountDTO;
+import com.graduation.mainapp.dto.RestaurantAccountDetails;
+import com.graduation.mainapp.dto.RestaurantDTO;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
+import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
-import com.graduation.mainapp.web.dto.RestaurantAccountDetails;
-import com.graduation.mainapp.web.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +38,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final MenuItemRepository menuItemRepository;
 
     @Override
     public List<Restaurant> findAll() {
@@ -51,55 +51,40 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Optional<Restaurant> findById(Long companyId) {
-        return restaurantRepository.findById(companyId);
-    }
-
-    @Override
     public Restaurant saveLogo(Long restaurantId, MultipartFile logo) throws Exception {
-        Optional<Restaurant> optionalRestaurant = this.findById(restaurantId);
-        if (optionalRestaurant.isPresent()) {
-            Restaurant restaurant = optionalRestaurant.get();
-            if (!logo.isEmpty()) {
-                try {
-                    restaurant.setLogo(logo.getBytes());
-                } catch (IOException e) {
-                    log.error("IOException caught on saveLogo company:  " + restaurant.getName() + "message" + e.getMessage());
-                } catch (Exception exception) {
-                    log.error("Error while trying to save logo for company with id " + restaurantId);
-                }
-                validateLogoFormat(logo);
-                return this.save(restaurant);
-            } else {
-                log.error("Logo is not present");
-                throw new Exception("Logo is not present");
+        Restaurant restaurant = findByIdOrThrow(restaurantId);
+        if (!logo.isEmpty()) {
+            try {
+                restaurant.setLogo(logo.getBytes());
+            } catch (IOException e) {
+                log.error("IOException caught on saveLogo company:  " + restaurant.getName() + "message" + e.getMessage());
+            } catch (Exception exception) {
+                log.error("Error while trying to save logo for company with id " + restaurantId);
             }
+            validateLogoFormat(logo);
+            return this.save(restaurant);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+            log.error("Logo is not present");
+            throw new Exception("Logo is not present");
         }
     }
 
     @Override
     @Transactional
-    public boolean delete(Long restaurantId) {
-        Optional<Restaurant> optionalRestaurant = this.findById(restaurantId);
-        if (optionalRestaurant.isPresent()) {
-            Restaurant restaurant = optionalRestaurant.get();
-            Company[] companies = new Company[restaurant.getCompanies().size()];
-            companies = restaurant.getCompanies().toArray(companies);
-            for (Company company : companies) {
-                company.removeRestaurant(restaurant);
-            }
-            restaurantRepository.delete(restaurant);
-            User user = restaurant.getUser();
-            if (Objects.nonNull(user)) {
-                userService.delete(user);
-            }
-            return true;
-        } else {
-            log.error("Restaurant with ID [{}] is not found", restaurantId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+    public boolean delete(Long restaurantId) throws DomainObjectNotFoundException {
+        Restaurant restaurant = findByIdOrThrow(restaurantId);
+        Company[] companies = new Company[restaurant.getCompanies().size()];
+        companies = restaurant.getCompanies().toArray(companies);
+        for (Company company : companies) {
+            company.removeRestaurant(restaurant);
         }
+        menuItemRepository.deleteAllByRestaurantId(restaurantId);
+        restaurantRepository.delete(restaurant);
+        User user = restaurant.getUser();
+        if (Objects.nonNull(user)) {
+            userService.delete(user);
+        }
+        return true;
     }
 
     @Override
@@ -124,14 +109,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (passwordsMatch) {
             User user = createUserForRestaurant(restaurantAccountDTO);
             User savedUser = userService.save(user);
-            Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
-            if (restaurantOptional.isPresent()) {
-                Restaurant restaurant = restaurantOptional.get();
-                restaurant.setUser(savedUser);
-                return restaurantRepository.save(restaurant);
-            } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
-            }
+            Restaurant restaurant = findByIdOrThrow(restaurantId);
+            restaurant.setUser(savedUser);
+            return restaurantRepository.save(restaurant);
         } else {
             throw new Exception("Passwords don't match");
         }
@@ -147,32 +127,28 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId) {
-        Optional<Restaurant> restaurantOptional = this.findById(restaurantId);
-        if (restaurantOptional.isPresent()) {
-            Restaurant restaurant = restaurantOptional.get();
-            User user = restaurant.getUser();
-            RestaurantAccountDetails restaurantAccountDetails = null;
-            if (Objects.nonNull(user)) {
-                restaurantAccountDetails = new RestaurantAccountDetails(
-                        user.getUsername(), user.getEmail());
-            }
-            return this.createRestaurantDTOFromRestaurantObject(restaurant, restaurantAccountDetails);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+    public RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId) throws DomainObjectNotFoundException {
+        Restaurant restaurant = findByIdOrThrow(restaurantId);
+        User user = restaurant.getUser();
+        RestaurantAccountDetails restaurantAccountDetails = null;
+        if (Objects.nonNull(user)) {
+            restaurantAccountDetails = new RestaurantAccountDetails(
+                    user.getUsername(), user.getEmail());
         }
+        return this.createRestaurantDTOFromRestaurantObject(restaurant, restaurantAccountDetails);
     }
 
     @Override
-    public Restaurant updateRestaurant(RestaurantDTO restaurantDTO) {
-        Optional<Restaurant> optionalRestaurant = this.findById(restaurantDTO.getId());
-        if (optionalRestaurant.isPresent()) {
-            Restaurant restaurant = optionalRestaurant.get();
-            Restaurant restaurantForUpdate = createRestaurantForUpdate(restaurant, restaurantDTO);
-            return this.save(restaurantForUpdate);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
-        }
+    public Restaurant updateRestaurant(RestaurantDTO restaurantDTO) throws DomainObjectNotFoundException {
+        Restaurant restaurant = findByIdOrThrow(restaurantDTO.getId());
+        Restaurant restaurantForUpdate = createRestaurantForUpdate(restaurant, restaurantDTO);
+        return this.save(restaurantForUpdate);
+    }
+
+    @Override
+    public Restaurant findByIdOrThrow(Long restaurantId) throws DomainObjectNotFoundException {
+        return restaurantRepository.findById(restaurantId).orElseThrow(
+                () -> new DomainObjectNotFoundException("Restaurant with ID " + restaurantId + " is not found"));
     }
 
     private Restaurant createRestaurantForUpdate(Restaurant restaurant, RestaurantDTO restaurantDTO) {

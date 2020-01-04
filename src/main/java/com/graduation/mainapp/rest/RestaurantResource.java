@@ -1,9 +1,11 @@
-package com.graduation.mainapp.web.resource;
+package com.graduation.mainapp.rest;
 
-import com.graduation.mainapp.model.Restaurant;
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.service.RestaurantService;
-import com.graduation.mainapp.web.dto.RestaurantAccountDTO;
-import com.graduation.mainapp.web.dto.RestaurantDTO;
+import com.graduation.mainapp.service.UserService;
+import com.graduation.mainapp.dto.RestaurantAccountDTO;
+import com.graduation.mainapp.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,7 @@ import java.util.Objects;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class RestaurantResource {
     private final RestaurantService restaurantService;
+    private final UserService userService;
 
     @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
     public ResponseEntity<?> findAllRestaurants() {
@@ -46,7 +49,7 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
-    public ResponseEntity<?> findRestaurantById(@PathVariable Long restaurantId) {
+    public ResponseEntity<?> findRestaurantById(@PathVariable Long restaurantId) throws DomainObjectNotFoundException {
         log.info("Received request for fetching restaurant with ID [{}]", restaurantId);
         RestaurantDTO restaurantDTO = restaurantService.getRestaurantAccountIfPresent(restaurantId);
         if (Objects.nonNull(restaurantDTO)) {
@@ -58,7 +61,7 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/edit", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
+    public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO restaurantDTO) throws DomainObjectNotFoundException {
         log.info("Received request for editing restaurant [{}]", restaurantDTO.getName());
         Restaurant restaurantForUpdate = restaurantService.updateRestaurant(restaurantDTO);
         if (Objects.nonNull(restaurantForUpdate)) {
@@ -83,7 +86,7 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> delete(@PathVariable Long restaurantId) {
+    public ResponseEntity<?> delete(@PathVariable Long restaurantId) throws DomainObjectNotFoundException {
         log.info("Received request for deleting restaurant with ID [{}]", restaurantId);
         boolean restaurantIsDeleted = restaurantService.delete(restaurantId);
         if (restaurantIsDeleted) {
@@ -110,5 +113,14 @@ public class RestaurantResource {
             log.info("An error occurred trying to create account for restaurant with ID [{}]", restaurantId);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/user/{userId}/restaurants", method = RequestMethod.GET)
+    public ResponseEntity<?> getRestaurantsForUser(@PathVariable Long userId) throws Exception {
+        log.info("Received request for fetching restaurants for user with ID [{}]", userId);
+        List<Restaurant> restaurants = userService.getRestaurantsForUser(userId);
+        List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurants);
+        log.info("Finished fetching restaurants for user with ID [{}]", userId);
+        return new ResponseEntity<>(restaurantDTOs, HttpStatus.OK);
     }
 }

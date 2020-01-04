@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Objects;
 
 public class LogoValidationUtil {
+
     public static void validateLogoFormat(MultipartFile logo) throws Exception {
         String fileName = logo.getOriginalFilename();
         int dotIndex = Objects.requireNonNull(fileName).lastIndexOf('.');

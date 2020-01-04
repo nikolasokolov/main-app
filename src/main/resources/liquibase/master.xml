@@ -1,0 +1,27 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="classpath:/liquibase/changelog/20191216-01_create_authority_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191216-02_create_company_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191216-03_create_users_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191216-04_create_user_authority_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191216-05_create_restaurant_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191216-06_create_company_restaurant_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191216-07_populate_authority_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191216-08_populate_users_table_with_super_admin_user.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191218-01_create_menu_item_table.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20191229-01_create_order_table.xml"
+             relativeToChangelogFile="false"/>
+
+</databaseChangeLog>
