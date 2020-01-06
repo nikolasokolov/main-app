@@ -1,6 +1,5 @@
 package com.graduation.mainapp.service.impl;
 
-import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Order;
 import com.graduation.mainapp.domain.User;
@@ -88,6 +87,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<CompanyOrdersResponseDTO> getOrdersForCompany(Long companyId) {
         List<CompanyOrdersRowMapper> companyOrders = orderDAO.getOrdersForCompany(companyId);
+        return getCompanyOrders(companyOrders);
+    }
+
+    private List<CompanyOrdersResponseDTO> getCompanyOrders(Collection<CompanyOrdersRowMapper> companyOrders) {
         return companyOrders.stream().map(companyOrder ->
                 CompanyOrdersResponseDTO.builder()
                         .username(companyOrder.getUsername())
@@ -99,6 +102,12 @@ public class OrderServiceImpl implements OrderService {
                         .comments(companyOrder.getComments())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CompanyOrdersResponseDTO> getDailyOrdersForCompany(Long companyId) {
+        List<CompanyOrdersRowMapper> dailyCompanyOrders = orderDAO.getDailyOrdersForCompany(companyId);
+        return getCompanyOrders(dailyCompanyOrders);
     }
 
     private Order createOrderObjectForSaving(OrderDTO orderDTO) throws DomainObjectNotFoundException {

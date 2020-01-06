@@ -64,4 +64,12 @@ public class OrderResource {
         log.info("Successfully fetched orders for company with ID [{}]", companyId);
         return new ResponseEntity<>(companyOrdersResponseDTOs, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/daily-orders/company/{companyId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getDailyOrdersForCompany(@PathVariable Long companyId) {
+        log.info("Received request for fetching daily orders for company with ID [{}]", companyId);
+        List<CompanyOrdersResponseDTO> companyOrdersResponseDTOs = orderService.getDailyOrdersForCompany(companyId);
+        log.info("Successfully fetched daily orders for company with ID [{}]", companyId);
+        return new ResponseEntity<>(companyOrdersResponseDTOs, HttpStatus.OK);
+    }
 }

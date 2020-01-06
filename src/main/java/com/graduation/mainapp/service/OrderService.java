@@ -20,4 +20,6 @@ public interface OrderService {
     void delete(Long orderId) throws DomainObjectNotFoundException;
 
     List<CompanyOrdersResponseDTO> getOrdersForCompany(Long companyId);
+
+    List<CompanyOrdersResponseDTO> getDailyOrdersForCompany(Long companyId);
 }
