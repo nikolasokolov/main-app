@@ -29,9 +29,6 @@ public class Order {
     private User user;
 
     @OneToOne
-    private Restaurant restaurant;
-
-    @OneToOne
     private MenuItem menuItem;
 
     private LocalTime timePeriod;

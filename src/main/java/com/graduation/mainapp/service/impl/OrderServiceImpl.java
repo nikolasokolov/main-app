@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
                 .id(order.getId())
                 .comments(order.getComments())
                 .menuItemId(order.getMenuItem().getId())
-                .restaurantId(order.getRestaurant().getId())
+                .restaurantId(order.getMenuItem().getRestaurant().getId())
                 .userId(order.getUser().getId())
                 .timePeriod(order.getTimePeriod().toString())
                 .build();
@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
                 .menuItemName(order.getMenuItem().getName())
                 .timePeriod(order.getTimePeriod().toString())
                 .comments(order.getComments())
-                .restaurantId(order.getRestaurant().getId())
+                .restaurantId(order.getMenuItem().getRestaurant().getId())
                 .build();
     }
 
@@ -96,10 +96,8 @@ public class OrderServiceImpl implements OrderService {
     private Order createOrderObjectForSaving(OrderDTO orderDTO) throws DomainObjectNotFoundException {
         User user = userService.findByIdOrThrow(orderDTO.getUserId());
         MenuItem menuItem = menuItemService.findByIdOrThrow(orderDTO.getMenuItemId());
-        Restaurant restaurant = restaurantService.findByIdOrThrow(orderDTO.getRestaurantId());
         return Order.builder()
                 .menuItem(menuItem)
-                .restaurant(restaurant)
                 .user(user)
                 .comments(orderDTO.getComments())
                 .timePeriod(LocalTime.parse(orderDTO.getTimePeriod(), DateTimeFormatter.ISO_TIME))
