@@ -4,13 +4,14 @@ import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDetails;
 import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
-import com.graduation.mainapp.service.MenuItemService;
+import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final MenuItemRepository menuItemRepository;
+    private final CompanyService companyService;
 
     @Override
     public List<Restaurant> findAll() {
@@ -187,5 +189,37 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .password(passwordEncoder.encode(restaurantAccountDTO.getPassword()))
                 .authorities(authorities)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException {
+        Company company = companyService.findByIdOrThrow(companyId);
+        Set<Restaurant> restaurantsForCompany = company.getRestaurants();
+        return createRestaurantDTOs(restaurantsForCompany);
+    }
+
+    @Override
+    @Transactional
+    public boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws DomainObjectNotFoundException {
+        Company company = companyService.findByIdOrThrow(companyDTO.getId());
+        Restaurant restaurant = findByIdOrThrow(restaurantId);
+        company.getRestaurants().add(restaurant);
+        restaurant.getCompanies().add(company);
+        companyService.save(company);
+        save(restaurant);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws DomainObjectNotFoundException {
+        Company company = companyService.findByIdOrThrow(companyId);
+        Restaurant restaurant = findByIdOrThrow(restaurantId);
+        restaurant.removeCompany(company);
+        company.removeRestaurant(restaurant);
+        companyService.save(company);
+        save(restaurant);
+        return true;
     }
 }

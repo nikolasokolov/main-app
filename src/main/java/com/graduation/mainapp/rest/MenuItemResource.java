@@ -27,7 +27,7 @@ public class MenuItemResource {
     private final MenuItemService menuItemService;
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items", method = RequestMethod.GET)
-    public ResponseEntity<?> getRestaurantMenuItems(@PathVariable Long userId) {
+    public ResponseEntity<?> getRestaurantMenuItems(@PathVariable Long userId) throws DomainObjectNotFoundException {
         log.info("Received request for fetching menu items for restaurant account with ID [{}]", userId);
         List<MenuItem> menuItems = menuItemService.getRestaurantMenuItems(userId);
         List<MenuItemDTO> menuItemDTO = menuItemService.createMenuItemsDTO(menuItems);
