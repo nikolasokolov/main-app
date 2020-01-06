@@ -23,17 +23,11 @@ public interface CompanyService {
 
     List<CompanyDTO> createCompanyDTOs(Collection<Company> companies);
 
-    boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws DomainObjectNotFoundException;
-
     Company createCompanyObjectFromCompanyDTO(CompanyDTO companyDTO);
 
     CompanyDTO createCompanyDTOFromCompanyObject(Company company);
 
     Company createCompanyObjectForUpdate(Company company, CompanyDTO companyDTO);
-
-    boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws DomainObjectNotFoundException;
-
-    List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException;
 
     Company updateCompany(CompanyDTO companyDTO) throws DomainObjectNotFoundException;
 }

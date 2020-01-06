@@ -1,6 +1,7 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
@@ -30,4 +31,10 @@ public interface RestaurantService {
     Restaurant updateRestaurant(RestaurantDTO restaurantDTO) throws DomainObjectNotFoundException;
 
     Restaurant findByIdOrThrow(Long restaurantId) throws DomainObjectNotFoundException;
+
+    boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws DomainObjectNotFoundException;
+
+    boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws DomainObjectNotFoundException;
+
+    List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException;
 }

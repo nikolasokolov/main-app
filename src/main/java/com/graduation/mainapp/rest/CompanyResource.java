@@ -5,6 +5,7 @@ import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
+import com.graduation.mainapp.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class CompanyResource {
     private final CompanyService companyService;
+    private final RestaurantService restaurantService;
 
     @RequestMapping(value = "/companies", method = RequestMethod.GET)
     public ResponseEntity<?> findAll() {
@@ -96,7 +98,7 @@ public class CompanyResource {
     @RequestMapping(value = "/company/add-restaurant/{restaurantId}", method = RequestMethod.POST)
     public ResponseEntity<?> addRestaurantForCompany(@RequestBody CompanyDTO companyDTO, @PathVariable Long restaurantId) throws DomainObjectNotFoundException {
         log.info("Received request for adding restaurant to company with ID [{}]", companyDTO.getId());
-        boolean restaurantIsAdded = companyService.addRestaurantForCompany(companyDTO, restaurantId);
+        boolean restaurantIsAdded = restaurantService.addRestaurantForCompany(companyDTO, restaurantId);
         if (restaurantIsAdded) {
             log.info("Successfully added restaurant to company with ID [{}]", companyDTO.getId());
             return new ResponseEntity<>(HttpStatus.OK);
@@ -108,7 +110,7 @@ public class CompanyResource {
     @RequestMapping(value = "/company/{companyId}/restaurants", method = RequestMethod.GET)
     public ResponseEntity<?> getRestaurantsForCompany(@PathVariable Long companyId) throws DomainObjectNotFoundException {
         log.info("Received request for fetching restaurants for company with ID [{}]", companyId);
-        List<RestaurantDTO> restaurantDTOs = companyService.getRestaurantsForCompany(companyId);
+        List<RestaurantDTO> restaurantDTOs = restaurantService.getRestaurantsForCompany(companyId);
         log.info("Finished fetching restaurants for company with ID [{}]", companyId);
         return ResponseEntity.ok().body(restaurantDTOs);
     }
@@ -116,7 +118,7 @@ public class CompanyResource {
     @RequestMapping(value = "/company/{companyId}/delete-restaurant/{restaurantId}")
     public ResponseEntity<?> deleteRestaurantForCompany(@PathVariable Long companyId, @PathVariable Long restaurantId) throws DomainObjectNotFoundException {
         log.info("Received request for deleting restaurant with ID [{}] to company with ID [{}]", restaurantId, companyId);
-        boolean restaurantIsDeleted = companyService.deleteRestaurantForCompany(companyId, restaurantId);
+        boolean restaurantIsDeleted = restaurantService.deleteRestaurantForCompany(companyId, restaurantId);
         if (restaurantIsDeleted) {
             log.info("Successfully deleted restaurant with ID [{}] to company with ID [{}]", restaurantId, companyId);
             return new ResponseEntity<>(HttpStatus.OK);
