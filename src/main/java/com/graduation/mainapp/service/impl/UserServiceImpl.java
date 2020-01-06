@@ -5,13 +5,13 @@ import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
-import com.graduation.mainapp.repository.CompanyRepository;
-import com.graduation.mainapp.repository.UserRepository;
-import com.graduation.mainapp.service.UserService;
 import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
 import com.graduation.mainapp.dto.UserAccountRequestDTO;
 import com.graduation.mainapp.dto.UserResponseDTO;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.repository.UserRepository;
+import com.graduation.mainapp.service.CompanyService;
+import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
 
     public User save(User user) {
         return userRepository.save(user);
@@ -47,13 +47,7 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserAccountRequestDTO userAccountRequestDTO) throws Exception {
         boolean userAccountIsValid = validateUserAccount(userAccountRequestDTO);
         if (userAccountIsValid) {
-            Company company = null;
-            if (Objects.nonNull(userAccountRequestDTO.getCompanyId())) {
-                Optional<Company> optionalCompany = companyRepository.findById(userAccountRequestDTO.getCompanyId());
-                if (optionalCompany.isPresent()) {
-                    company = optionalCompany.get();
-                }
-            }
+            Company company = companyService.findByIdOrThrow(userAccountRequestDTO.getCompanyId());
             Set<Authority> authorities = new HashSet<>();
             authorities.add(new Authority(userAccountRequestDTO.getAuthority()));
             User user = User.builder()
@@ -140,16 +134,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public List<Restaurant> getRestaurantsForUser(Long userId) throws Exception {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            Optional<Company> company = companyRepository.findById(user.get().getCompany().getId());
-            if (company.isPresent()) {
-                return Lists.newArrayList(company.get().getRestaurants());
-            } else {
-                throw new Exception("Company not found");
-            }
-        } else {
-            throw new Exception("User not found");
-        }
+        User user = userRepository.getOne(userId);
+        Company company = companyService.findByIdOrThrow(user.getCompany().getId());
+        return Lists.newArrayList(company.getRestaurants());
     }
 }

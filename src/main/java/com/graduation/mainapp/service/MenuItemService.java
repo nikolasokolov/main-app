@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface MenuItemService {
-    List<MenuItem> getRestaurantMenuItems(Long restaurantId);
+    List<MenuItem> getRestaurantMenuItems(Long restaurantId) throws DomainObjectNotFoundException;
 
     List<MenuItemDTO> createMenuItemsDTO(Collection<MenuItem> menuItems);
 

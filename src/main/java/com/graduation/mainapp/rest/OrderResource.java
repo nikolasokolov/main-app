@@ -1,6 +1,7 @@
 package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.domain.Order;
+import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
 import com.graduation.mainapp.dto.OrderDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -53,5 +55,13 @@ public class OrderResource {
         orderService.delete(orderId);
         log.info("Successfully deleted order with ID [{}]", orderId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/orders/company/{companyId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getOrdersForCompany(@PathVariable Long companyId) {
+        log.info("Received request for fetching orders for company with ID [{}]", companyId);
+        List<CompanyOrdersResponseDTO> companyOrdersResponseDTOs = orderService.getOrdersForCompany(companyId);
+        log.info("Successfully fetched orders for company with ID [{}]", companyId);
+        return new ResponseEntity<>(companyOrdersResponseDTOs, HttpStatus.OK);
     }
 }

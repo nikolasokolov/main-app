@@ -31,7 +31,6 @@ import static com.graduation.mainapp.util.LogoValidationUtil.validateLogoFormat;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
-    private final RestaurantService restaurantService;
 
     @Override
     public List<Company> findAll() {
@@ -89,18 +88,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional
-    public boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws DomainObjectNotFoundException {
-        Company company = findByIdOrThrow(companyDTO.getId());
-        Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
-        company.getRestaurants().add(restaurant);
-        restaurant.getCompanies().add(company);
-        companyRepository.save(company);
-        restaurantService.save(restaurant);
-        return true;
-    }
-
-    @Override
     public Company createCompanyObjectFromCompanyDTO(CompanyDTO companyDTO) {
         return Company.builder()
                 .name(companyDTO.getName())
@@ -130,26 +117,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .logo(company.getLogo())
                 .restaurants(company.getRestaurants())
                 .build();
-    }
-
-    @Override
-    @Transactional
-    public boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws DomainObjectNotFoundException {
-        Company company = findByIdOrThrow(companyId);
-        Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
-        restaurant.removeCompany(company);
-        company.removeRestaurant(restaurant);
-        this.save(company);
-        restaurantService.save(restaurant);
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException {
-        Company company = findByIdOrThrow(companyId);
-        Set<Restaurant> restaurantsForCompany = company.getRestaurants();
-        return restaurantService.createRestaurantDTOs(restaurantsForCompany);
     }
 
     @Override

@@ -1,16 +1,18 @@
 package com.graduation.mainapp.service.impl;
 
+import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Order;
-import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
 import com.graduation.mainapp.dto.OrderDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.OrderRepository;
+import com.graduation.mainapp.repository.dao.OrderDAO;
+import com.graduation.mainapp.repository.dao.rowmapper.CompanyOrdersRowMapper;
 import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.OrderService;
-import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,10 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -29,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserService userService;
     private final OrderRepository orderRepository;
     private final MenuItemService menuItemService;
-    private final RestaurantService restaurantService;
+    private final OrderDAO orderDAO;
 
     @Override
     public Order save(OrderDTO orderDTO) throws DomainObjectNotFoundException {
@@ -52,18 +56,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO createOrderDTO(Order order) {
-        return OrderDTO.builder()
-                .id(order.getId())
-                .comments(order.getComments())
-                .menuItemId(order.getMenuItem().getId())
-                .restaurantId(order.getRestaurant().getId())
-                .userId(order.getUser().getId())
-                .timePeriod(order.getTimePeriod().toString())
-                .build();
-    }
-
-    @Override
     @Transactional
     public Order findByUser(Long userId) throws DomainObjectNotFoundException {
         User user = userService.findByIdOrThrow(userId);
@@ -77,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
                 .menuItemName(order.getMenuItem().getName())
                 .timePeriod(order.getTimePeriod().toString())
                 .comments(order.getComments())
-                .restaurantId(order.getRestaurant().getId())
+                .restaurantId(order.getMenuItem().getRestaurant().getId())
                 .build();
     }
 
@@ -93,13 +85,27 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(order);
     }
 
+    @Override
+    public List<CompanyOrdersResponseDTO> getOrdersForCompany(Long companyId) {
+        List<CompanyOrdersRowMapper> companyOrders = orderDAO.getOrdersForCompany(companyId);
+        return companyOrders.stream().map(companyOrder ->
+                CompanyOrdersResponseDTO.builder()
+                        .username(companyOrder.getUsername())
+                        .restaurantName(companyOrder.getRestaurantName())
+                        .menuItemName(companyOrder.getMenuItemName())
+                        .menuItemPrice(companyOrder.getMenuItemPrice())
+                        .timePeriod(companyOrder.getTimePeriod())
+                        .dateOfOrder(companyOrder.getDateOfOrder())
+                        .comments(companyOrder.getComments())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     private Order createOrderObjectForSaving(OrderDTO orderDTO) throws DomainObjectNotFoundException {
         User user = userService.findByIdOrThrow(orderDTO.getUserId());
         MenuItem menuItem = menuItemService.findByIdOrThrow(orderDTO.getMenuItemId());
-        Restaurant restaurant = restaurantService.findByIdOrThrow(orderDTO.getRestaurantId());
         return Order.builder()
                 .menuItem(menuItem)
-                .restaurant(restaurant)
                 .user(user)
                 .comments(orderDTO.getComments())
                 .timePeriod(LocalTime.parse(orderDTO.getTimePeriod(), DateTimeFormatter.ISO_TIME))
