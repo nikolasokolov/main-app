@@ -126,4 +126,12 @@ public class CompanyResource {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/company/{companyId}/available-restaurants", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableRestaurantsForCompany(@PathVariable Long companyId) {
+        log.info("Received request for fetching available restaurants for company with ID [{}]", companyId);
+        List<RestaurantDTO> restaurantDTOs = restaurantService.getAvailableRestaurantsForCompany(companyId);
+        log.info("Finished fetching available restaurants for company with ID [{}]", companyId);
+        return ResponseEntity.ok().body(restaurantDTOs);
+    }
 }

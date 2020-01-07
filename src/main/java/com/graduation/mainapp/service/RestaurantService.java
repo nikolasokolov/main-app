@@ -37,4 +37,6 @@ public interface RestaurantService {
     boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws DomainObjectNotFoundException;
 
     List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException;
+
+    List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId);
 }
