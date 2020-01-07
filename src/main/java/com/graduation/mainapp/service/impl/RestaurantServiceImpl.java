@@ -11,6 +11,8 @@ import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
+import com.graduation.mainapp.repository.dao.AvailableRestaurantsDAO;
+import com.graduation.mainapp.repository.dao.rowmapper.AvailableRestaurantsRowMapper;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
@@ -41,6 +43,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final PasswordEncoder passwordEncoder;
     private final MenuItemRepository menuItemRepository;
     private final CompanyService companyService;
+    private final AvailableRestaurantsDAO availableRestaurantsDAO;
 
     @Override
     public List<Restaurant> findAll() {
@@ -197,6 +200,26 @@ public class RestaurantServiceImpl implements RestaurantService {
         Company company = companyService.findByIdOrThrow(companyId);
         Set<Restaurant> restaurantsForCompany = company.getRestaurants();
         return createRestaurantDTOs(restaurantsForCompany);
+    }
+
+    @Override
+    public List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId) {
+        List<AvailableRestaurantsRowMapper> availableRestaurantsForCompany = availableRestaurantsDAO
+                .getAvailableRestaurantsForCompany(companyId);
+        return createAvailableRestaurantDTOs(availableRestaurantsForCompany);
+    }
+
+    private List<RestaurantDTO> createAvailableRestaurantDTOs(Collection<AvailableRestaurantsRowMapper> availableRestaurantsForCompany) {
+        return availableRestaurantsForCompany.stream().map(restaurant -> {
+            byte[] restaurantLogo = restaurant.getLogo();
+            return new RestaurantDTO(
+                    restaurant.getId(),
+                    restaurant.getName(),
+                    restaurant.getAddress(),
+                    restaurant.getAddress(),
+                    restaurantLogo,
+                    null);
+        }).collect(Collectors.toList());
     }
 
     @Override
