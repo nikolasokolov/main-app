@@ -209,6 +209,11 @@ public class RestaurantServiceImpl implements RestaurantService {
         return createAvailableRestaurantDTOs(availableRestaurantsForCompany);
     }
 
+    @Override
+    public Restaurant findByUser(User user) {
+        return restaurantRepository.findByUser(user);
+    }
+
     private List<RestaurantDTO> createAvailableRestaurantDTOs(Collection<AvailableRestaurantsRowMapper> availableRestaurantsForCompany) {
         return availableRestaurantsForCompany.stream().map(restaurant -> {
             byte[] restaurantLogo = restaurant.getLogo();

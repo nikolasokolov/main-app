@@ -3,6 +3,7 @@ package com.graduation.mainapp.rest;
 import com.graduation.mainapp.domain.Order;
 import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
 import com.graduation.mainapp.dto.OrderDTO;
+import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.service.OrderService;
@@ -66,10 +67,19 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/daily-orders/company/{companyId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getDailyOrdersForCompany(@PathVariable Long companyId) {
+    public ResponseEntity<?> getColleaguesChoicesForCompany(@PathVariable Long companyId) {
         log.info("Received request for fetching daily orders for company with ID [{}]", companyId);
         List<CompanyOrdersResponseDTO> companyOrdersResponseDTOs = orderService.getDailyOrdersForCompany(companyId);
         log.info("Successfully fetched daily orders for company with ID [{}]", companyId);
         return new ResponseEntity<>(companyOrdersResponseDTOs, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/daily-orders/restaurant/{restaurantAccountId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getDailyOrdersForRestaurant(@PathVariable Long restaurantAccountId) throws DomainObjectNotFoundException {
+        log.info("Received request for fetching daily orders for restaurant account with ID [{}]", restaurantAccountId);
+        List<RestaurantDailyOrdersResponseDTO> restaurantDailyOrdersResponseDTOs = orderService
+                .getDailyOrdersForRestaurant(restaurantAccountId);
+        log.info("Successfully fetched daily orders for restaurant account with ID [{}]", restaurantAccountId);
+        return new ResponseEntity<>(restaurantDailyOrdersResponseDTOs, HttpStatus.OK);
     }
 }
