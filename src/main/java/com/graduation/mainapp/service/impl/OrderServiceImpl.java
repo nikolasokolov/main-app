@@ -2,16 +2,20 @@ package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Order;
+import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
 import com.graduation.mainapp.dto.OrderDTO;
+import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.OrderRepository;
 import com.graduation.mainapp.repository.dao.OrderDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyOrdersRowMapper;
+import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
 import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.OrderService;
+import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final MenuItemService menuItemService;
     private final OrderDAO orderDAO;
+    private final RestaurantService restaurantService;
 
     @Override
     public Order save(OrderDTO orderDTO) throws DomainObjectNotFoundException {
@@ -87,10 +92,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<CompanyOrdersResponseDTO> getOrdersForCompany(Long companyId) {
         List<CompanyOrdersRowMapper> companyOrders = orderDAO.getOrdersForCompany(companyId);
-        return getCompanyOrders(companyOrders);
+        return getCompanyOrdersResponseDTOs(companyOrders);
     }
 
-    private List<CompanyOrdersResponseDTO> getCompanyOrders(Collection<CompanyOrdersRowMapper> companyOrders) {
+    private List<CompanyOrdersResponseDTO> getCompanyOrdersResponseDTOs(Collection<CompanyOrdersRowMapper> companyOrders) {
         return companyOrders.stream().map(companyOrder ->
                 CompanyOrdersResponseDTO.builder()
                         .username(companyOrder.getUsername())
@@ -107,7 +112,30 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<CompanyOrdersResponseDTO> getDailyOrdersForCompany(Long companyId) {
         List<CompanyOrdersRowMapper> dailyCompanyOrders = orderDAO.getDailyOrdersForCompany(companyId);
-        return getCompanyOrders(dailyCompanyOrders);
+        return getCompanyOrdersResponseDTOs(dailyCompanyOrders);
+    }
+
+    @Override
+    public List<RestaurantDailyOrdersResponseDTO> getDailyOrdersForRestaurant(Long restaurantAccountId)
+            throws DomainObjectNotFoundException {
+        User user = userService.findByIdOrThrow(restaurantAccountId);
+        Restaurant restaurant = restaurantService.findByUser(user);
+        List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(restaurant.getId());
+        return getRestaurantDailyOrdersDTOs(restaurantDailyOrders);
+    }
+
+    private List<RestaurantDailyOrdersResponseDTO> getRestaurantDailyOrdersDTOs(Collection<RestaurantDailyOrdersRowMapper> restaurantDailyOrders) {
+        return restaurantDailyOrders.stream().map(order ->
+                RestaurantDailyOrdersResponseDTO.builder()
+                        .companyName(order.getCompanyName())
+                        .user(order.getUser())
+                        .menuItemName(order.getMenuItemName())
+                        .menuItemPrice(order.getMenuItemPrice())
+                        .timePeriod(order.getTimePeriod())
+                        .dateOfOrder(order.getDateOfOrder())
+                        .comments(order.getComments())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private Order createOrderObjectForSaving(OrderDTO orderDTO) throws DomainObjectNotFoundException {
