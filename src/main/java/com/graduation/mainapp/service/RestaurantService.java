@@ -1,6 +1,7 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
@@ -9,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface RestaurantService {
     List<Restaurant> findAll();
@@ -39,4 +39,6 @@ public interface RestaurantService {
     List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException;
 
     List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId);
+
+    Restaurant findByUser(User user);
 }
