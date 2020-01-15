@@ -1,5 +1,6 @@
 package com.graduation.mainapp.rest;
 
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.service.ExportService;
 import com.graduation.mainapp.service.OrderService;
 import com.netflix.ribbon.proxy.annotation.Http;
@@ -24,7 +25,7 @@ public class ExportResource {
     private final ExportService exportService;
 
     @RequestMapping(value = "/daily-orders/{restaurantId}/export", method = RequestMethod.GET)
-    public ResponseEntity<?> exportDailyOrders(@PathVariable Long restaurantId) throws FileNotFoundException, JRException {
+    public ResponseEntity<?> exportDailyOrders(@PathVariable Long restaurantId) throws FileNotFoundException, JRException, DomainObjectNotFoundException {
         exportService.exportDailyOrders(restaurantId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

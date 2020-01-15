@@ -1,9 +1,11 @@
 package com.graduation.mainapp.service.impl;
 
+import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.dao.OrderDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
 import com.graduation.mainapp.service.ExportService;
-import com.graduation.mainapp.service.OrderService;
+import com.graduation.mainapp.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -18,6 +20,7 @@ import org.springframework.util.ResourceUtils;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +29,12 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ExportServiceImpl implements ExportService {
     private final OrderDAO orderDAO;
+    private final RestaurantService restaurantService;
 
     @Override
-    public void exportDailyOrders(Long restaurantId) throws FileNotFoundException, JRException {
+    public void exportDailyOrders(Long restaurantId) throws FileNotFoundException, JRException, DomainObjectNotFoundException {
+        Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
+        String currentDate = LocalDate.now().toString();
         String path = "C:\\Users\\nsokolov\\Downloads";
         List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(restaurantId);
         File file = ResourceUtils.getFile("classpath:reports/daily-orders.jrxml");
@@ -37,6 +43,7 @@ public class ExportServiceImpl implements ExportService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("createdBy", "Nikola Sokolov");
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        JasperExportManager.exportReportToPdfFile(jasperPrint, path + "\\daily-orders.pdf");
+        JasperExportManager.exportReportToPdfFile(
+                jasperPrint, path + "\\" + restaurant.getName() + "-daily-orders-" + currentDate + ".pdf");
     }
 }
