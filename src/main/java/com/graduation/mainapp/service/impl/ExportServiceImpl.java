@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,8 @@ public class ExportServiceImpl implements ExportService {
         JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(restaurantDailyOrders);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("createdBy", "Nikola");
+        parameters.put("restaurant", user.getRestaurant().getName());
+        parameters.put("today", LocalDate.now().toString());
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         ByteArrayOutputStream byteArrayOutputStream = getByteArrayOutputStream(jasperPrint);
         log.info("Finished generating daily orders pdf report for restaurant [{}]", user.getRestaurant().getName());
