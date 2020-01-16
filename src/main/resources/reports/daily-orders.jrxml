@@ -122,7 +122,7 @@
             <line>
                 <reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="72b52b23-27a7-428c-99c1-71b425a135cf"/>
             </line>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="0" y="0" width="79" height="20" uuid="f5b3c82f-59dc-4f28-a4c6-f6eb20820802">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d10ebf2c-e29b-4bb3-a2d9-31c707e1ceea"/>
                 </reportElement>
@@ -131,7 +131,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{companyName}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="79" y="0" width="79" height="20" uuid="ac635a62-c524-4c8d-9b9c-89446382ce84">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9315e7f6-de41-445e-a1fe-d812c7340878"/>
                 </reportElement>
@@ -140,7 +140,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{user}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="158" y="0" width="79" height="20" uuid="a981b470-4e0b-4c40-9ab2-48f68251a8b2">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="730b1fb1-ac60-48a0-bb6f-16b652ee584a"/>
                 </reportElement>
@@ -149,7 +149,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{menuItemName}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="237" y="0" width="79" height="20" uuid="c8256bfa-8148-4c84-a9d4-c2e0ce23f017">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="989dd33b-7327-4a77-ba18-7bed80904dc4"/>
                 </reportElement>
@@ -158,7 +158,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{menuItemPrice}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="316" y="0" width="79" height="20" uuid="1af6f735-49a4-4d2b-a09b-4172b71442de">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="23300999-2058-4c6a-a188-b8612d64b50f"/>
                 </reportElement>
@@ -167,7 +167,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{dateOfOrder}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="395" y="0" width="79" height="20" uuid="7d22e6c8-28b0-48d6-825c-f1e7bede7efa">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="311015c5-2f4d-4883-8fca-8900ef39a7c0"/>
                 </reportElement>
@@ -176,7 +176,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{timePeriod}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="474" y="0" width="79" height="20" uuid="0b4fc63b-122d-489a-a6a8-29e2ef86da3e">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6dd3f5cd-219e-462b-8453-69b3fe0ea8c3"/>
                 </reportElement>

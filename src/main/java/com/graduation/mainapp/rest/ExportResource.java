@@ -1,5 +1,6 @@
 package com.graduation.mainapp.rest;
 
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.service.ExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,26 +25,24 @@ import java.io.OutputStream;
 @RequestMapping(value = "/main")
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ExportResource {
-    private static final String APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET
-            = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
     private final ExportService exportService;
 
-    @RequestMapping(value = "/daily-orders/{restaurantId}/export", method = RequestMethod.POST)
-    public void exportDailyOrders(@PathVariable Long restaurantId, HttpServletResponse httpServletResponse) throws IOException, JRException {
-        byte[] dailyOrdersBytes = exportService.exportDailyOrders(restaurantId);
+    @RequestMapping(value = "/daily-orders/{userId}/export", method = RequestMethod.POST)
+    public void exportDailyOrders(@PathVariable Long userId, HttpServletResponse httpServletResponse)
+            throws IOException, JRException, DomainObjectNotFoundException {
+        byte[] dailyOrdersBytes = exportService.exportDailyOrders(userId);
         ByteArrayOutputStream out = new ByteArrayOutputStream(dailyOrdersBytes.length);
         out.write(dailyOrdersBytes, 0, dailyOrdersBytes.length);
 
         httpServletResponse.setContentType("application/pdf");
         httpServletResponse.addHeader("Content-Disposition", "inline; filename=dailyOrdersReport.pdf");
 
-        OutputStream os;
+        OutputStream outputStream;
         try {
-            os = httpServletResponse.getOutputStream();
-            out.writeTo(os);
-            os.flush();
-            os.close();
+            outputStream = httpServletResponse.getOutputStream();
+            out.writeTo(outputStream);
+            outputStream.flush();
+            outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

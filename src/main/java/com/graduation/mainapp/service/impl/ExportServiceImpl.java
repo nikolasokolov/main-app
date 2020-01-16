@@ -1,9 +1,12 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.MainAppApplication;
+import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.dao.OrderDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
 import com.graduation.mainapp.service.ExportService;
+import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -37,10 +40,13 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ExportServiceImpl implements ExportService {
     private final OrderDAO orderDAO;
+    private final UserService userService;
 
     @Override
-    public byte[] exportDailyOrders(Long restaurantId) throws IOException, JRException {
-        List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(restaurantId);
+    public byte[] exportDailyOrders(Long userId) throws IOException, JRException, DomainObjectNotFoundException {
+        User user = userService.findByIdOrThrow(userId);
+        log.info("Started generating daily orders pdf report for restaurant [{}]", user.getRestaurant().getName());
+        List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(user.getRestaurant().getId());
         File file = ResourceUtils.getFile("classpath:reports/daily-orders.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(restaurantDailyOrders);
@@ -48,10 +54,11 @@ public class ExportServiceImpl implements ExportService {
         parameters.put("createdBy", "Nikola");
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         ByteArrayOutputStream byteArrayOutputStream = getByteArrayOutputStream(jasperPrint);
+        log.info("Finished generating daily orders pdf report for restaurant [{}]", user.getRestaurant().getName());
         return byteArrayOutputStream.toByteArray();
     }
 
-    protected ByteArrayOutputStream getByteArrayOutputStream(JasperPrint jasperPrint) throws JRException {
+    private ByteArrayOutputStream getByteArrayOutputStream(JasperPrint jasperPrint) throws JRException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         JasperExportManager.exportReportToPdfStream(jasperPrint, byteArrayOutputStream);
         return byteArrayOutputStream;
