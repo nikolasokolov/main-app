@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 @Slf4j
 @RestController
@@ -25,13 +29,23 @@ public class ExportResource {
     private final ExportService exportService;
 
     @RequestMapping(value = "/daily-orders/{restaurantId}/export", method = RequestMethod.POST)
-    public ResponseEntity<?> exportDailyOrders(@PathVariable Long restaurantId) {
-        HttpHeaders header = new HttpHeaders();
+    public void exportDailyOrders(@PathVariable Long restaurantId, HttpServletResponse httpServletResponse) {
         byte[] dailyOrdersBytes = exportService.exportDailyOrders(restaurantId);
-        header.setContentDispositionFormData("inline", "dailyOrdersReport.pdf");
-        header.setContentType(MediaType.valueOf(APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET));
-        header.setContentLength(dailyOrdersBytes.length);
-        return new ResponseEntity<Object>(dailyOrdersBytes, header, HttpStatus.OK);
+        ByteArrayOutputStream out = new ByteArrayOutputStream(dailyOrdersBytes.length);
+        out.write(dailyOrdersBytes, 0, dailyOrdersBytes.length);
+
+        httpServletResponse.setContentType("application/pdf");
+        httpServletResponse.addHeader("Content-Disposition", "inline; filename=dailyOrdersReport.pdf");
+
+        OutputStream os;
+        try {
+            os = httpServletResponse.getOutputStream();
+            out.writeTo(os);
+            os.flush();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
