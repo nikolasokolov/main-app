@@ -3,6 +3,7 @@ package com.graduation.mainapp.rest;
 import com.graduation.mainapp.service.ExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class ExportResource {
     private final ExportService exportService;
 
     @RequestMapping(value = "/daily-orders/{restaurantId}/export", method = RequestMethod.POST)
-    public void exportDailyOrders(@PathVariable Long restaurantId, HttpServletResponse httpServletResponse) {
+    public void exportDailyOrders(@PathVariable Long restaurantId, HttpServletResponse httpServletResponse) throws IOException, JRException {
         byte[] dailyOrdersBytes = exportService.exportDailyOrders(restaurantId);
         ByteArrayOutputStream out = new ByteArrayOutputStream(dailyOrdersBytes.length);
         out.write(dailyOrdersBytes, 0, dailyOrdersBytes.length);
