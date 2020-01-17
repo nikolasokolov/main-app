@@ -9,6 +9,7 @@ import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
 import com.graduation.mainapp.dto.UserAccountRequestDTO;
 import com.graduation.mainapp.dto.UserResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.InvalidCredentialsException;
 import com.graduation.mainapp.repository.UserRepository;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.UserService;
@@ -59,7 +60,7 @@ public class UserServiceImpl implements UserService {
                     .build();
             return save(user);
         } else {
-            throw new Exception("Could not create a new user account");
+            throw new InvalidCredentialsException("Could not create a new user account");
         }
     }
 
@@ -95,6 +96,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByAuthoritiesAndCompany(Authority authority, Company company) {
+        return userRepository.findByAuthoritiesAndCompany(authority, company);
+    }
+
+    @Override
     @Transactional
     public List<User> findAllUsersForCompany(Long companyId) {
         return userRepository.findAllByCompanyId(companyId);
@@ -102,7 +108,7 @@ public class UserServiceImpl implements UserService {
 
     private boolean validateUserAccount(UserAccountRequestDTO userAccountRequestDTO) throws Exception {
         if (!userAccountRequestDTO.getPassword().equals(userAccountRequestDTO.getConfirmPassword())) {
-            throw new Exception("Passwords doesn't match");
+            throw new InvalidCredentialsException("Passwords doesn't match");
         } else {
             return true;
         }
@@ -112,7 +118,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception {
         if (!changePasswordRequestDTO.getNewPassword().equals(changePasswordRequestDTO.getConfirmPassword())) {
-            throw new Exception("Passwords doesn't match");
+            throw new InvalidCredentialsException("Passwords doesn't match");
         }
         Optional<User> userOptional = userRepository.findOneByUsername(changePasswordRequestDTO.getUsername());
         if (userOptional.isPresent()) {
@@ -125,7 +131,7 @@ public class UserServiceImpl implements UserService {
                 this.save(user);
                 return true;
             } else {
-                throw new Exception("Current password is not correct");
+                throw new InvalidCredentialsException("Current password is not correct");
             }
         }
         return false;

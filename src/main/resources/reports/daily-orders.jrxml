@@ -161,8 +161,8 @@
                 <reportElement x="474" y="0" width="79" height="20" uuid="0b4fc63b-122d-489a-a6a8-29e2ef86da3e">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6dd3f5cd-219e-462b-8453-69b3fe0ea8c3"/>
                 </reportElement>
-                <textElement textAlignment="Center">
-                    <font size="12"/>
+                <textElement>
+                    <font size="10"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
             </textField>

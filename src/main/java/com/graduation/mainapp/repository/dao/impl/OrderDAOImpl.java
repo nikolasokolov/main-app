@@ -1,6 +1,7 @@
 package com.graduation.mainapp.repository.dao.impl;
 
 import com.graduation.mainapp.repository.dao.OrderDAO;
+import com.graduation.mainapp.repository.dao.rowmapper.CompanyMonthlyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ public class OrderDAOImpl implements OrderDAO {
             new BeanPropertyRowMapper<>(CompanyOrdersRowMapper.class);
     private static final BeanPropertyRowMapper<RestaurantDailyOrdersRowMapper> DAILY_RESTAURANT_ORDERS_ROW_MAPPER =
             new BeanPropertyRowMapper<>(RestaurantDailyOrdersRowMapper.class);
-
+    private static final BeanPropertyRowMapper<CompanyMonthlyOrdersRowMapper> MONTHLY_COMPANY_ORDERS_ROW_MAPPER =
+            new BeanPropertyRowMapper<>(CompanyMonthlyOrdersRowMapper.class);
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -41,6 +43,12 @@ public class OrderDAOImpl implements OrderDAO {
         LocalDate currentDate = LocalDate.now();
         String restaurantDailyOrdersQuery = getDailyOrdersForRestaurant(currentDate.toString(), restaurantId);
         return namedParameterJdbcTemplate.query(restaurantDailyOrdersQuery, DAILY_RESTAURANT_ORDERS_ROW_MAPPER);
+    }
+
+    @Override
+    public List<CompanyMonthlyOrdersRowMapper> getMonthlyOrdersForCompany(Long companyId, Long restaurantId) {
+        String monthlyOrdersForCompanyQuery = getMonthlyOrdersForCompanyQuery(companyId, restaurantId, LocalDate.now().getMonthValue());
+        return namedParameterJdbcTemplate.query(monthlyOrdersForCompanyQuery, MONTHLY_COMPANY_ORDERS_ROW_MAPPER);
     }
 
     private String getDailyOrdersForCompanyQuery(String currentDate, Long companyId) {
@@ -78,5 +86,17 @@ public class OrderDAOImpl implements OrderDAO {
                 " AND r.id = " + restaurantId +
                 " ORDER BY " +
                 " c.name, time_period";
+    }
+
+    private String getMonthlyOrdersForCompanyQuery(Long companyId, Long restaurantId, Integer currentMonth) {
+        return "SELECT c.name as company_name, u.username as user, SUM(mi.price) as total_price, count(*) as number_of_orders" +
+                " FROM orders o " +
+                " INNER JOIN users u ON o.user_id = u.id" +
+                " INNER JOIN menu_item mi ON o.menu_item_id = mi.id" +
+                " INNER JOIN restaurant r on r.id = mi.restaurant_id" +
+                " INNER JOIN company c on c.id = u.company_id AND EXTRACT(MONTH FROM o.date_of_order) = " + currentMonth +
+                " WHERE r.id = " + restaurantId + " AND c.id = " + companyId +
+                " GROUP BY c.name, u.username" +
+                " ORDER BY c.name, u.username";
     }
 }

@@ -1,5 +1,7 @@
 package com.graduation.mainapp.service;
 
+import com.graduation.mainapp.domain.Authority;
+import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
@@ -31,4 +33,6 @@ public interface UserService {
     List<Restaurant> getRestaurantsForUser(Long userId) throws Exception;
 
     User findByIdOrThrow(Long userId) throws DomainObjectNotFoundException;
+
+    User findByAuthoritiesAndCompany(Authority authority, Company company);
 }
