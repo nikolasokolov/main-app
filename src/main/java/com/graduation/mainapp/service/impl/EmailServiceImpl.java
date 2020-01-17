@@ -1,7 +1,6 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.service.EmailService;
-import com.graduation.mainapp.service.ExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,18 +21,16 @@ public class EmailServiceImpl implements EmailService {
     private String email;
 
     private final JavaMailSender mailSender;
-    private final ExportService exportService;
 
     @Override
-    public void sendMailWithAttachment(String to, String subject, String body, String fileToAttach) {
+    public void sendInvoiceViaMail(String to, String subject, String body, byte[] pdfReport, String fileName) {
         mailSender.send(mimeMessage -> {
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
             mimeMessage.setFrom(new InternetAddress(email));
             mimeMessage.setSubject(subject);
-            byte[] dailyOrdersBytes = exportService.exportDailyOrders(3L);
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.addAttachment("daily-orders.pdf", new ByteArrayResource(dailyOrdersBytes));
-            helper.setText("", true);
+            helper.addAttachment(fileName, new ByteArrayResource(pdfReport));
+            helper.setText(body, true);
         });
     }
 

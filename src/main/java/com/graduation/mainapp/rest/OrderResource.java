@@ -6,9 +6,11 @@ import com.graduation.mainapp.dto.OrderDTO;
 import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.service.InvoiceService;
 import com.graduation.mainapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,6 +30,7 @@ import java.util.Objects;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class OrderResource {
     private final OrderService orderService;
+    private final InvoiceService invoiceService;
 
     @RequestMapping(value = "/orders/save", method = RequestMethod.POST)
     public ResponseEntity<?> saveOrder(@RequestBody OrderDTO orderDTO) throws DomainObjectNotFoundException {
@@ -81,5 +85,13 @@ public class OrderResource {
                 .getDailyOrdersForRestaurant(restaurantAccountId);
         log.info("Successfully fetched daily orders for restaurant account with ID [{}]", restaurantAccountId);
         return new ResponseEntity<>(restaurantDailyOrdersResponseDTOs, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/company/{companyId}/user/{userId}", method = RequestMethod.GET)
+    public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long companyId, @PathVariable Long userId) throws DomainObjectNotFoundException, IOException, JRException {
+        log.info("Received request for sending invoice for company with ID [{}]", companyId);
+        invoiceService.sendInvoiceToCompany(companyId, userId);
+        log.info("Successfully sent invoice for company with ID [{}]", companyId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
