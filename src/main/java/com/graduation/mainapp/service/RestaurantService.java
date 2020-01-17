@@ -6,6 +6,7 @@ import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
@@ -41,4 +42,6 @@ public interface RestaurantService {
     List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId);
 
     Restaurant findByUser(User user);
+
+    List<CompanyRowMapper> getCompaniesForRestaurant(Long userId) throws DomainObjectNotFoundException;
 }

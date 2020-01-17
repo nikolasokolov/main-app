@@ -2,6 +2,7 @@ package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
@@ -133,5 +134,13 @@ public class CompanyResource {
         List<RestaurantDTO> restaurantDTOs = restaurantService.getAvailableRestaurantsForCompany(companyId);
         log.info("Finished fetching available restaurants for company with ID [{}]", companyId);
         return ResponseEntity.ok().body(restaurantDTOs);
+    }
+
+    @RequestMapping(value = "/restaurant/{userId}/companies", method = RequestMethod.GET)
+    public ResponseEntity<?> getCompaniesForRestaurant(@PathVariable Long userId) throws DomainObjectNotFoundException {
+        log.info("Started fetching companies for restaurant with user ID [{}]", userId);
+        List<CompanyRowMapper> companyDTOs = restaurantService.getCompaniesForRestaurant(userId);
+        log.info("Finished fetching companies for restaurant with user ID [{}]", userId);
+        return ResponseEntity.ok().body(companyDTOs);
     }
 }

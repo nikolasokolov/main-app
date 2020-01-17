@@ -11,8 +11,9 @@ import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
-import com.graduation.mainapp.repository.dao.AvailableRestaurantsDAO;
+import com.graduation.mainapp.repository.dao.AvailableCompaniesRestaurantsDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.AvailableRestaurantsRowMapper;
+import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
@@ -43,7 +44,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final PasswordEncoder passwordEncoder;
     private final MenuItemRepository menuItemRepository;
     private final CompanyService companyService;
-    private final AvailableRestaurantsDAO availableRestaurantsDAO;
+    private final AvailableCompaniesRestaurantsDAO availableCompaniesRestaurantsDAO;
 
     @Override
     public List<Restaurant> findAll() {
@@ -204,7 +205,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId) {
-        List<AvailableRestaurantsRowMapper> availableRestaurantsForCompany = availableRestaurantsDAO
+        List<AvailableRestaurantsRowMapper> availableRestaurantsForCompany = availableCompaniesRestaurantsDAO
                 .getAvailableRestaurantsForCompany(companyId);
         return createAvailableRestaurantDTOs(availableRestaurantsForCompany);
     }
@@ -212,6 +213,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Restaurant findByUser(User user) {
         return restaurantRepository.findByUser(user);
+    }
+
+    @Override
+    public List<CompanyRowMapper> getCompaniesForRestaurant(Long userId) throws DomainObjectNotFoundException {
+        User user = userService.findByIdOrThrow(userId);
+        List<CompanyRowMapper> companies = availableCompaniesRestaurantsDAO.getCompaniesForRestaurant(user.getRestaurant().getId());
+        return companies;
     }
 
     private List<RestaurantDTO> createAvailableRestaurantDTOs(Collection<AvailableRestaurantsRowMapper> availableRestaurantsForCompany) {
