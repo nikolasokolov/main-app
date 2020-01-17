@@ -3,6 +3,7 @@ package com.graduation.mainapp.service.impl;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.InvalidLogoException;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
@@ -63,7 +64,7 @@ public class CompanyServiceImpl implements CompanyService {
             return this.save(company);
         } else {
             log.error("Logo not present");
-            throw new Exception("Logo not present");
+            throw new InvalidLogoException("Logo not present");
         }
     }
 

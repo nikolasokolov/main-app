@@ -77,7 +77,7 @@
             <line>
                 <reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="c533be1e-6ba2-4755-8a25-2d68bdc961e1"/>
             </line>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="0" y="0" width="138" height="20" uuid="0b3e004e-06ac-4af3-a2f4-8c48561fefa6">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dff49047-dca3-4566-884b-9bbe1df67860"/>
                 </reportElement>
@@ -86,7 +86,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{companyName}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="138" y="0" width="138" height="20" uuid="c25907c5-2c65-4908-883e-d701558b0041">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b064b9b7-1bc5-4962-8840-0bd4018af08f"/>
                 </reportElement>
@@ -95,7 +95,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{user}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="276" y="0" width="138" height="20" uuid="0aa11a91-d7b5-4f49-b7ce-f891547fdfe4">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2468e39-c20d-4ae2-bc62-0f8ec3f7f591"/>
                 </reportElement>
@@ -104,7 +104,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{totalPrice}]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true">
+            <textField>
                 <reportElement x="414" y="0" width="138" height="20" uuid="5770fbc1-2736-4cce-8c25-389829131f3d">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7100fbac-353d-4854-b887-a91b79c806c1"/>
                 </reportElement>

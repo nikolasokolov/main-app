@@ -88,9 +88,9 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/company/{companyId}/user/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long companyId, @PathVariable Long userId) throws DomainObjectNotFoundException, IOException, JRException {
+    public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long userId, @PathVariable Long companyId) throws DomainObjectNotFoundException, IOException, JRException {
         log.info("Received request for sending invoice for company with ID [{}]", companyId);
-        invoiceService.sendInvoiceToCompany(companyId, userId);
+        invoiceService.sendInvoiceToCompany(userId, companyId);
         log.info("Successfully sent invoice for company with ID [{}]", companyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
