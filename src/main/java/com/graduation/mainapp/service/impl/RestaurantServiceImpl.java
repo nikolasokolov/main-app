@@ -9,10 +9,12 @@ import com.graduation.mainapp.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDetails;
 import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.InvalidLogoException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
-import com.graduation.mainapp.repository.dao.AvailableRestaurantsDAO;
+import com.graduation.mainapp.repository.dao.AvailableCompaniesRestaurantsDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.AvailableRestaurantsRowMapper;
+import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
@@ -38,12 +40,14 @@ import static com.graduation.mainapp.util.LogoValidationUtil.validateLogoFormat;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class RestaurantServiceImpl implements RestaurantService {
+    public static final String ROLE_RESTAURANT = "ROLE_RESTAURANT";
+
     private final RestaurantRepository restaurantRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final MenuItemRepository menuItemRepository;
     private final CompanyService companyService;
-    private final AvailableRestaurantsDAO availableRestaurantsDAO;
+    private final AvailableCompaniesRestaurantsDAO availableCompaniesRestaurantsDAO;
 
     @Override
     public List<Restaurant> findAll() {
@@ -70,7 +74,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             return this.save(restaurant);
         } else {
             log.error("Logo is not present");
-            throw new Exception("Logo is not present");
+            throw new InvalidLogoException("Logo is not present");
         }
     }
 
@@ -185,7 +189,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     private User createUserForRestaurant(RestaurantAccountDTO restaurantAccountDTO) {
         Set<Authority> authorities = new HashSet<>();
-        authorities.add(new Authority("ROLE_RESTAURANT"));
+        authorities.add(new Authority(ROLE_RESTAURANT));
         return User.builder()
                 .username(restaurantAccountDTO.getUsername())
                 .email(restaurantAccountDTO.getEmail())
@@ -204,7 +208,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId) {
-        List<AvailableRestaurantsRowMapper> availableRestaurantsForCompany = availableRestaurantsDAO
+        List<AvailableRestaurantsRowMapper> availableRestaurantsForCompany = availableCompaniesRestaurantsDAO
                 .getAvailableRestaurantsForCompany(companyId);
         return createAvailableRestaurantDTOs(availableRestaurantsForCompany);
     }
@@ -212,6 +216,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Restaurant findByUser(User user) {
         return restaurantRepository.findByUser(user);
+    }
+
+    @Override
+    public List<CompanyRowMapper> getCompaniesForRestaurant(Long userId) throws DomainObjectNotFoundException {
+        User user = userService.findByIdOrThrow(userId);
+        return availableCompaniesRestaurantsDAO.getCompaniesForRestaurant(user.getRestaurant().getId());
     }
 
     private List<RestaurantDTO> createAvailableRestaurantDTOs(Collection<AvailableRestaurantsRowMapper> availableRestaurantsForCompany) {

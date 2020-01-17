@@ -1,5 +1,6 @@
 package com.graduation.mainapp.repository.dao;
 
+import com.graduation.mainapp.repository.dao.rowmapper.CompanyMonthlyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
 
@@ -11,4 +12,6 @@ public interface OrderDAO {
     List<CompanyOrdersRowMapper> getDailyOrdersForCompany(Long companyId);
 
     List<RestaurantDailyOrdersRowMapper> getRestaurantDailyOrders(Long restaurantId);
+
+    List<CompanyMonthlyOrdersRowMapper> getMonthlyOrdersForCompany(Long companyId, Long restaurantId);
 }
