@@ -124,6 +124,11 @@ public class OrderServiceImpl implements OrderService {
         return getRestaurantDailyOrdersDTOs(restaurantDailyOrders);
     }
 
+    @Override
+    public void deleteAllByUser(User user) {
+        orderRepository.deleteAllByUser(user);
+    }
+
     private List<RestaurantDailyOrdersResponseDTO> getRestaurantDailyOrdersDTOs(Collection<RestaurantDailyOrdersRowMapper> restaurantDailyOrders) {
         return restaurantDailyOrders.stream().map(order ->
                 RestaurantDailyOrdersResponseDTO.builder()

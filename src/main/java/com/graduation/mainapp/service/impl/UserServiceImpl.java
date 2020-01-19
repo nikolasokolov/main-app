@@ -10,8 +10,10 @@ import com.graduation.mainapp.dto.UserAccountRequestDTO;
 import com.graduation.mainapp.dto.UserResponseDTO;
 import com.graduation.mainapp.exception.DomainObjectNotFoundException;
 import com.graduation.mainapp.exception.InvalidCredentialsException;
+import com.graduation.mainapp.repository.OrderRepository;
 import com.graduation.mainapp.repository.UserRepository;
 import com.graduation.mainapp.service.CompanyService;
+import com.graduation.mainapp.service.OrderService;
 import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,13 +35,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CompanyService companyService;
+    private final OrderRepository orderRepository;
 
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override
+    @Transactional
     public void delete(User user) {
+        orderRepository.deleteAllByUser(user);
         user.setAuthorities(null);
         userRepository.delete(user);
     }

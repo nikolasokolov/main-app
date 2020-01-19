@@ -10,4 +10,5 @@ import java.time.LocalDate;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Order findByUserAndDateOfOrder(User user, LocalDate dateOfOrder);
+    void deleteAllByUser(User user);
 }

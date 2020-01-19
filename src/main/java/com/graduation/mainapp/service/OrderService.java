@@ -1,6 +1,7 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.domain.Order;
+import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
 import com.graduation.mainapp.dto.OrderDTO;
 import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
@@ -25,4 +26,6 @@ public interface OrderService {
     List<CompanyOrdersResponseDTO> getDailyOrdersForCompany(Long companyId);
 
     List<RestaurantDailyOrdersResponseDTO> getDailyOrdersForRestaurant(Long restaurantId) throws DomainObjectNotFoundException;
+
+    void deleteAllByUser(User user);
 }
