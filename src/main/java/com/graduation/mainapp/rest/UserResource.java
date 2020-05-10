@@ -21,50 +21,52 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/main")
+@RequestMapping("/main/users")
 @RequiredArgsConstructor
 public class UserResource {
 
     private final UserService userService;
     private final UserConverter userConverter;
 
-    @RequestMapping(value = "/users/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<?> createNewUser(@RequestBody UserAccountRequestDTO userAccountRequestDTO) throws Exception {
-        log.info("Started creating a new user with username=[{}]", userAccountRequestDTO.getUsername());
+        log.info("Started creating a new User with username=[{}]", userAccountRequestDTO.getUsername());
         userService.createUser(userAccountRequestDTO);
-        log.info("Finished creating a new user with username=[{}]", userAccountRequestDTO.getUsername());
+        log.info("Finished creating a new User with username=[{}]", userAccountRequestDTO.getUsername());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        log.info("Started fetching all users");
+        log.info("Started fetching all Users");
         List<User> users = userService.getAllUsers();
         List<UserResponseDTO> userResponseDTOs = userConverter.convertToUserResponseDTOs(users);
-        log.info("Finished fetching all users");
+        log.info("Finished fetching all Users");
         return ResponseEntity.ok().body(userResponseDTOs);
     }
 
-    @RequestMapping(value = "/users/delete/{userId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) throws NotFoundException {
-        log.info("Started deleting user with ID=[{}]", userId);
+        log.info("Started deleting User with ID=[{}]", userId);
         userService.deleteUser(userId);
-        log.info("Finished deleting user with ID=[{}]", userId);
+        log.info("Finished deleting User with ID=[{}]", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/company/{companyId}/users", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/{companyId}", method = RequestMethod.GET)
     public ResponseEntity<List<UserResponseDTO>> getAllUsersForCompany(@PathVariable Long companyId) {
-        log.info("Started fetching all users for company with ID=[{}]", companyId);
+        log.info("Started fetching all users for Company with ID=[{}]", companyId);
         List<User> users = userService.findAllUsersForCompany(companyId);
         List<UserResponseDTO> userResponseDTOs = userConverter.convertToUserResponseDTOs(users);
-        log.info("Finished fetching all users for company with ID=[{}]", companyId);
+        log.info("Finished fetching all users for Company with ID=[{}]", companyId);
         return ResponseEntity.ok().body(userResponseDTOs);
     }
 
-    @RequestMapping(value = "/users/change-password", method = RequestMethod.POST)
+    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception {
+        log.info("Started changing password on User with username=[{}]", changePasswordRequestDTO.getUsername());
         userService.changePassword(changePasswordRequestDTO);
+        log.info("Finished changing password on User with username=[{}]", changePasswordRequestDTO.getUsername());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

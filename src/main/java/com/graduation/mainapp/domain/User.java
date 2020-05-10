@@ -3,6 +3,7 @@ package com.graduation.mainapp.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -28,6 +29,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
     @Id
@@ -37,7 +39,8 @@ public class User {
 
     @NotNull
     @Size(min = 5, max = 100)
-    @Column(name = "username", length = 100, unique = true, nullable = false)
+    @EqualsAndHashCode.Include
+    @Column(name = "username", length = 100, unique = true)
     private String username;
 
     @NotNull
@@ -61,32 +64,4 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        User user = (User) o;
-
-        return username.equals(user.username);
-    }
-
-    @Override
-    public int hashCode() {
-        return username.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                "}";
-    }
-
 }
