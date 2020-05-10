@@ -4,6 +4,6 @@ public enum FoodType {
     SALAD,
     PASTA,
     PIZZA,
-    SANDVICH,
+    SANDWICH,
     OTHER
 }
