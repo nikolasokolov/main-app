@@ -1,28 +1,20 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.domain.Company;
-import com.graduation.mainapp.domain.Restaurant;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.exception.InvalidLogoException;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.service.CompanyService;
-import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.dto.CompanyDTO;
-import com.graduation.mainapp.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.graduation.mainapp.util.LogoValidationUtil.validateLogoFormat;
@@ -44,9 +36,9 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Company findByIdOrThrow(Long companyId) throws DomainObjectNotFoundException {
+    public Company findByIdOrThrow(Long companyId) throws NotFoundException {
         return companyRepository.findById(companyId).orElseThrow(
-                () -> new DomainObjectNotFoundException("Company with ID " + companyId + " is not found"));
+                () -> new NotFoundException("Company with ID " + companyId + " is not found"));
     }
 
     @Override
@@ -69,7 +61,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public boolean delete(Long companyId) throws DomainObjectNotFoundException {
+    public boolean delete(Long companyId) throws NotFoundException {
         Company company = findByIdOrThrow(companyId);
         companyRepository.delete(company);
         return true;
@@ -121,7 +113,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Company updateCompany(CompanyDTO companyDTO) throws DomainObjectNotFoundException {
+    public Company updateCompany(CompanyDTO companyDTO) throws NotFoundException {
         Company companyFromDatabase = findByIdOrThrow(companyDTO.getId());
         Company companyToBeUpdated = this.createCompanyObjectForUpdate(companyFromDatabase, companyDTO);
         return this.save(companyToBeUpdated);

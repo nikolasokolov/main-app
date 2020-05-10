@@ -5,7 +5,7 @@ import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +19,7 @@ public interface RestaurantService {
 
     Restaurant saveLogo(Long restaurantId, MultipartFile logo) throws Exception;
 
-    boolean delete(Long restaurantId) throws DomainObjectNotFoundException;
+    boolean delete(Long restaurantId) throws NotFoundException;
 
     List<RestaurantDTO> createRestaurantDTOs(Collection<Restaurant> restaurants);
 
@@ -27,21 +27,21 @@ public interface RestaurantService {
 
     Restaurant createRestaurantObjectFromRestaurantDTO(RestaurantDTO restaurantDTO);
 
-    RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId) throws DomainObjectNotFoundException;
+    RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId) throws NotFoundException;
 
-    Restaurant updateRestaurant(RestaurantDTO restaurantDTO) throws DomainObjectNotFoundException;
+    Restaurant updateRestaurant(RestaurantDTO restaurantDTO) throws NotFoundException;
 
-    Restaurant findByIdOrThrow(Long restaurantId) throws DomainObjectNotFoundException;
+    Restaurant findByIdOrThrow(Long restaurantId) throws NotFoundException;
 
-    boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws DomainObjectNotFoundException;
+    boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws NotFoundException;
 
-    boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws DomainObjectNotFoundException;
+    boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws NotFoundException;
 
-    List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws DomainObjectNotFoundException;
+    List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws NotFoundException;
 
     List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId);
 
     Restaurant findByUser(User user);
 
-    List<CompanyRowMapper> getCompaniesForRestaurant(Long userId) throws DomainObjectNotFoundException;
+    List<CompanyRowMapper> getCompaniesForRestaurant(Long userId) throws NotFoundException;
 }

@@ -2,28 +2,28 @@ package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.dto.MenuItemDTO;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public interface MenuItemService {
-    List<MenuItem> getRestaurantMenuItems(Long restaurantId) throws DomainObjectNotFoundException;
+    List<MenuItem> getRestaurantMenuItems(Long restaurantId) throws NotFoundException;
 
     List<MenuItemDTO> createMenuItemsDTO(Collection<MenuItem> menuItems);
 
     void delete(Long menuItemId);
 
-    MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException;
+    MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException;
 
-    MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException;
+    MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException;
 
     MenuItem getMenuItem(Long id);
 
-    List<MenuItem> getRestaurantMenu(Long restaurantId) throws DomainObjectNotFoundException;
+    List<MenuItem> getRestaurantMenu(Long restaurantId) throws NotFoundException;
 
     Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems);
 
-    MenuItem findByIdOrThrow(Long menuItemId) throws DomainObjectNotFoundException;
+    MenuItem findByIdOrThrow(Long menuItemId) throws NotFoundException;
 }

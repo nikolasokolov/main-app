@@ -1,7 +1,7 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.dao.OrderDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyMonthlyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
@@ -36,8 +36,8 @@ public class ExportServiceImpl implements ExportService {
     private final UserService userService;
 
     @Override
-    public byte[] exportDailyOrders(Long userId) throws IOException, JRException, DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
+    public byte[] exportDailyOrders(Long userId) throws IOException, JRException, NotFoundException {
+        User user = userService.getUser(userId);
         log.info("Started generating daily orders pdf report for restaurant [{}]", user.getRestaurant().getName());
         List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(user.getRestaurant().getId());
         File file = ResourceUtils.getFile("classpath:reports/daily-orders.jrxml");
@@ -59,8 +59,8 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public byte[] exportMonthlyOrders(Long companyId, Long userId) throws IOException, JRException, DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
+    public byte[] exportMonthlyOrders(Long companyId, Long userId) throws IOException, JRException, NotFoundException {
+        User user = userService.getUser(userId);
         log.info("Started generating monthly orders pdf report for restaurant [{}]", user.getRestaurant().getName());
         List<CompanyMonthlyOrdersRowMapper> companyMonthlyOrdersRowMappers = orderDAO
                 .getMonthlyOrdersForCompany(companyId, user.getRestaurant().getId());

@@ -1,7 +1,7 @@
 package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.domain.Restaurant;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
@@ -49,7 +49,7 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
-    public ResponseEntity<?> findRestaurantById(@PathVariable Long restaurantId) throws DomainObjectNotFoundException {
+    public ResponseEntity<?> findRestaurantById(@PathVariable Long restaurantId) throws NotFoundException {
         log.info("Received request for fetching restaurant with ID [{}]", restaurantId);
         RestaurantDTO restaurantDTO = restaurantService.getRestaurantAccountIfPresent(restaurantId);
         if (Objects.nonNull(restaurantDTO)) {
@@ -61,7 +61,7 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/edit", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO restaurantDTO) throws DomainObjectNotFoundException {
+    public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO restaurantDTO) throws NotFoundException {
         log.info("Received request for editing restaurant [{}]", restaurantDTO.getName());
         Restaurant restaurantForUpdate = restaurantService.updateRestaurant(restaurantDTO);
         if (Objects.nonNull(restaurantForUpdate)) {
@@ -86,7 +86,7 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> delete(@PathVariable Long restaurantId) throws DomainObjectNotFoundException {
+    public ResponseEntity<?> delete(@PathVariable Long restaurantId) throws NotFoundException {
         log.info("Received request for deleting restaurant with ID [{}]", restaurantId);
         boolean restaurantIsDeleted = restaurantService.delete(restaurantId);
         if (restaurantIsDeleted) {

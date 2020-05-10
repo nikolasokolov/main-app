@@ -3,7 +3,7 @@ package com.graduation.mainapp.service.impl;
 import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.AuthorityRepository;
 import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.service.EmailService;
@@ -32,11 +32,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final AuthorityRepository authorityRepository;
 
     @Override
-    public void sendInvoiceToCompany(Long userId, Long companyId) throws DomainObjectNotFoundException, IOException, JRException {
+    public void sendInvoiceToCompany(Long userId, Long companyId) throws NotFoundException, IOException, JRException {
         Authority authority = authorityRepository.findByName(ROLE_ADMIN);
         Company company = companyService.findByIdOrThrow(companyId);
         User companyAdmin = userService.findByAuthoritiesAndCompany(authority, company);
-        User restaurantAccount = userService.findByIdOrThrow(userId);
+        User restaurantAccount = userService.getUser(userId);
         String restaurantName = restaurantAccount.getRestaurant().getName();
         byte[] monthlyOrdersBytes = exportService.exportMonthlyOrders(companyId, userId);
         String currentMonth = LocalDate.now().getMonth().toString().toLowerCase();

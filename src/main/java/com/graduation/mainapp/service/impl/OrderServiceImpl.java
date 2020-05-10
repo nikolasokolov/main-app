@@ -8,7 +8,7 @@ import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
 import com.graduation.mainapp.dto.OrderDTO;
 import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.OrderRepository;
 import com.graduation.mainapp.repository.dao.OrderDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyOrdersRowMapper;
@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
     private final RestaurantService restaurantService;
 
     @Override
-    public Order save(OrderDTO orderDTO) throws DomainObjectNotFoundException {
+    public Order save(OrderDTO orderDTO) throws NotFoundException {
         if (Objects.isNull(orderDTO.getId())) {
             Order order = createOrderObjectForSaving(orderDTO);
             return orderRepository.save(order);
@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private Order createOrderObjectForUpdate(OrderDTO orderDTO) throws DomainObjectNotFoundException {
+    private Order createOrderObjectForUpdate(OrderDTO orderDTO) throws NotFoundException {
         Order order = this.findByIdOrThrow(orderDTO.getId());
         MenuItem menuItem = menuItemService.findByIdOrThrow(orderDTO.getMenuItemId());
         order.setComments(orderDTO.getComments());
@@ -61,8 +61,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Order findByUser(Long userId) throws DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
+    public Order findByUser(Long userId) throws NotFoundException {
+        User user = userService.getUser(userId);
         return orderRepository.findByUserAndDateOfOrder(user, LocalDate.now());
     }
 
@@ -78,13 +78,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findByIdOrThrow(Long id) throws DomainObjectNotFoundException {
+    public Order findByIdOrThrow(Long id) throws NotFoundException {
         return orderRepository.findById(id).orElseThrow(
-                () -> new DomainObjectNotFoundException("Order with ID " + id + " was not found"));
+                () -> new NotFoundException("Order with ID " + id + " was not found"));
     }
 
     @Override
-    public void delete(Long orderId) throws DomainObjectNotFoundException {
+    public void delete(Long orderId) throws NotFoundException {
         Order order = findByIdOrThrow(orderId);
         orderRepository.delete(order);
     }
@@ -117,8 +117,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<RestaurantDailyOrdersResponseDTO> getDailyOrdersForRestaurant(Long restaurantAccountId)
-            throws DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(restaurantAccountId);
+            throws NotFoundException {
+        User user = userService.getUser(restaurantAccountId);
         Restaurant restaurant = restaurantService.findByUser(user);
         List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(restaurant.getId());
         return getRestaurantDailyOrdersDTOs(restaurantDailyOrders);
@@ -143,8 +143,8 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    private Order createOrderObjectForSaving(OrderDTO orderDTO) throws DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(orderDTO.getUserId());
+    private Order createOrderObjectForSaving(OrderDTO orderDTO) throws NotFoundException {
+        User user = userService.getUser(orderDTO.getUserId());
         MenuItem menuItem = menuItemService.findByIdOrThrow(orderDTO.getMenuItemId());
         return Order.builder()
                 .menuItem(menuItem)

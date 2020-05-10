@@ -1,6 +1,6 @@
 package com.graduation.mainapp.rest;
 
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.service.ExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class ExportResource {
 
     @RequestMapping(value = "/daily-orders/{userId}/export", method = RequestMethod.POST)
     public void exportDailyOrders(@PathVariable Long userId, HttpServletResponse httpServletResponse)
-            throws IOException, JRException, DomainObjectNotFoundException {
+            throws IOException, JRException, NotFoundException {
         byte[] dailyOrdersBytes = exportService.exportDailyOrders(userId);
         ByteArrayOutputStream out = new ByteArrayOutputStream(dailyOrdersBytes.length);
         out.write(dailyOrdersBytes, 0, dailyOrdersBytes.length);

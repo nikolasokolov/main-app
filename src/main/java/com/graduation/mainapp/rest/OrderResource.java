@@ -5,7 +5,7 @@ import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
 import com.graduation.mainapp.dto.OrderDTO;
 import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
 import com.graduation.mainapp.dto.UserOrderResponseDTO;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.service.InvoiceService;
 import com.graduation.mainapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class OrderResource {
     private final InvoiceService invoiceService;
 
     @RequestMapping(value = "/orders/save", method = RequestMethod.POST)
-    public ResponseEntity<?> saveOrder(@RequestBody OrderDTO orderDTO) throws DomainObjectNotFoundException {
+    public ResponseEntity<?> saveOrder(@RequestBody OrderDTO orderDTO) throws NotFoundException {
         log.info("Received request for saving a new order");
         Order order = orderService.save(orderDTO);
         UserOrderResponseDTO userOrderResponseDTO = orderService.createUserOrderResponseDTO(order);
@@ -42,7 +42,7 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/orders/user/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserOrder(@PathVariable Long userId) throws DomainObjectNotFoundException {
+    public ResponseEntity<?> getUserOrder(@PathVariable Long userId) throws NotFoundException {
         log.info("Received request for getting order for user with ID [{}]", userId);
         Order order = orderService.findByUser(userId);
         if (Objects.nonNull(order)) {
@@ -55,7 +55,7 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/orders/{orderId}/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId) throws DomainObjectNotFoundException {
+    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId) throws NotFoundException {
         log.info("Received request for deleting order with ID [{}]", orderId);
         orderService.delete(orderId);
         log.info("Successfully deleted order with ID [{}]", orderId);
@@ -79,7 +79,7 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/daily-orders/restaurant/{restaurantAccountId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getDailyOrdersForRestaurant(@PathVariable Long restaurantAccountId) throws DomainObjectNotFoundException {
+    public ResponseEntity<?> getDailyOrdersForRestaurant(@PathVariable Long restaurantAccountId) throws NotFoundException {
         log.info("Received request for fetching daily orders for restaurant account with ID [{}]", restaurantAccountId);
         List<RestaurantDailyOrdersResponseDTO> restaurantDailyOrdersResponseDTOs = orderService
                 .getDailyOrdersForRestaurant(restaurantAccountId);
@@ -88,7 +88,7 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/company/{companyId}/user/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long userId, @PathVariable Long companyId) throws DomainObjectNotFoundException, IOException, JRException {
+    public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long userId, @PathVariable Long companyId) throws NotFoundException, IOException, JRException {
         log.info("Received request for sending invoice for company with ID [{}]", companyId);
         invoiceService.sendInvoiceToCompany(userId, companyId);
         log.info("Successfully sent invoice for company with ID [{}]", companyId);

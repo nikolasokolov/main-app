@@ -5,7 +5,7 @@ import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.dto.MenuItemDTO;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.RestaurantService;
@@ -30,8 +30,8 @@ public class MenuItemServiceImpl implements MenuItemService {
     private final RestaurantService restaurantService;
 
     @Override
-    public List<MenuItem> getRestaurantMenuItems(Long userId) throws DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
+    public List<MenuItem> getRestaurantMenuItems(Long userId) throws NotFoundException {
+        User user = userService.getUser(userId);
         return menuItemRepository.findAllByRestaurant(user.getRestaurant());
     }
 
@@ -58,8 +58,8 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
+    public MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException {
+        User user = userService.getUser(userId);
         Long restaurantId = user.getRestaurant().getId();
         Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
         MenuItem menuItem = createMenuItemObject(menuItemDTO, restaurant);
@@ -67,8 +67,8 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
+    public MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException {
+        User user = userService.getUser(userId);
         Long restaurantId = user.getRestaurant().getId();
         Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
         MenuItem menuItem = createMenuItemObjectForUpdating(menuItemDTO, restaurant);
@@ -81,7 +81,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public List<MenuItem> getRestaurantMenu(Long restaurantId) throws DomainObjectNotFoundException {
+    public List<MenuItem> getRestaurantMenu(Long restaurantId) throws NotFoundException {
         Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
         return menuItemRepository.findAllByRestaurant(restaurant);
     }
@@ -93,9 +93,9 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public MenuItem findByIdOrThrow(Long menuItemId) throws DomainObjectNotFoundException {
+    public MenuItem findByIdOrThrow(Long menuItemId) throws NotFoundException {
         return menuItemRepository.findById(menuItemId).orElseThrow(
-                () -> new DomainObjectNotFoundException("Menu Item with ID " + menuItemId + " is not found"));
+                () -> new NotFoundException("Menu Item with ID " + menuItemId + " is not found"));
     }
 
     private MenuItem createMenuItemObjectForUpdating(MenuItemDTO menuItemDTO, Restaurant restaurant) {
