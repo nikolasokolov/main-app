@@ -34,7 +34,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void sendInvoiceToCompany(Long userId, Long companyId) throws NotFoundException, IOException, JRException {
         Authority authority = authorityRepository.findByName(ROLE_ADMIN);
-        Company company = companyService.findByIdOrThrow(companyId);
+        Company company = companyService.getCompany(companyId);
         User companyAdmin = userService.findByAuthoritiesAndCompany(authority, company);
         User restaurantAccount = userService.getUser(userId);
         String restaurantName = restaurantAccount.getRestaurant().getName();

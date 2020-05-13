@@ -6,40 +6,36 @@ import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.NotFoundException;
+import com.graduation.mainapp.repository.dao.rowmapper.AvailableRestaurantsRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface RestaurantService {
-    List<Restaurant> findAll();
+
+    List<Restaurant> getAllRestaurants();
 
     Restaurant save(Restaurant restaurant);
 
-    Restaurant saveLogo(Long restaurantId, MultipartFile logo) throws Exception;
+    void saveLogo(Long restaurantId, MultipartFile logo) throws Exception;
 
-    boolean delete(Long restaurantId) throws NotFoundException;
+    void delete(Long restaurantId) throws NotFoundException;
 
-    List<RestaurantDTO> createRestaurantDTOs(Collection<Restaurant> restaurants);
+    void addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception;
 
-    Restaurant addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception;
+    void updateRestaurant(RestaurantDTO restaurantDTO) throws NotFoundException;
 
-    Restaurant createRestaurantObjectFromRestaurantDTO(RestaurantDTO restaurantDTO);
+    Restaurant getRestaurant(Long restaurantId) throws NotFoundException;
 
-    RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId) throws NotFoundException;
+    void addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws NotFoundException;
 
-    Restaurant updateRestaurant(RestaurantDTO restaurantDTO) throws NotFoundException;
+    void deleteRestaurantForCompany(Long companyId, Long restaurantId) throws NotFoundException;
 
-    Restaurant findByIdOrThrow(Long restaurantId) throws NotFoundException;
+    Set<Restaurant> getRestaurantsForCompany(Long companyId) throws NotFoundException;
 
-    boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws NotFoundException;
-
-    boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws NotFoundException;
-
-    List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws NotFoundException;
-
-    List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId);
+    List<AvailableRestaurantsRowMapper> getAvailableRestaurantsForCompany(Long companyId);
 
     Restaurant findByUser(User user);
 

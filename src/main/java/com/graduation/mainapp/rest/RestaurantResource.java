@@ -1,11 +1,12 @@
 package com.graduation.mainapp.rest;
 
+import com.graduation.mainapp.converter.RestaurantConverter;
 import com.graduation.mainapp.domain.Restaurant;
+import com.graduation.mainapp.dto.RestaurantAccountDTO;
+import com.graduation.mainapp.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
-import com.graduation.mainapp.dto.RestaurantAccountDTO;
-import com.graduation.mainapp.dto.RestaurantDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,109 +19,85 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.inject.Inject;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/main")
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class RestaurantResource {
+
     private final RestaurantService restaurantService;
     private final UserService userService;
+    private final RestaurantConverter restaurantConverter;
 
     @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
-    public ResponseEntity<?> findAllRestaurants() {
-        log.info("Received request for fetching all restaurants");
-        List<Restaurant> restaurants = restaurantService.findAll();
-        List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurants);
-        log.info("Finished fetching all restaurants [{}]", restaurants.size());
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
+        log.info("Started fetching all restaurants");
+        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+        List<RestaurantDTO> restaurantDTOs = restaurantConverter.convertToRestaurantDTOs(restaurants);
+        log.info("Finished fetching all restaurants");
         return ResponseEntity.ok().body(restaurantDTOs);
     }
 
     @RequestMapping(value = "/restaurant/new", method = RequestMethod.POST)
     public ResponseEntity<?> saveRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
-        log.info("Received request for saving a new restaurant");
-        Restaurant restaurant = restaurantService.createRestaurantObjectFromRestaurantDTO(restaurantDTO);
-        Restaurant savedRestaurant = restaurantService.save(restaurant);
-        log.info("Successfully saved new company [{}]", restaurant.getName());
-        return ResponseEntity.ok().body(savedRestaurant);
+        log.info("Started saving a new restaurant");
+        Restaurant restaurant = restaurantConverter.convertToRestaurant(restaurantDTO);
+        restaurantService.save(restaurant);
+        log.info("Finished saving new restaurant [{}]", restaurant.getName());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
-    public ResponseEntity<?> findRestaurantById(@PathVariable Long restaurantId) throws NotFoundException {
-        log.info("Received request for fetching restaurant with ID [{}]", restaurantId);
-        RestaurantDTO restaurantDTO = restaurantService.getRestaurantAccountIfPresent(restaurantId);
-        if (Objects.nonNull(restaurantDTO)) {
-            log.info("Successfully fetched restaurant with ID [{}]", restaurantId);
-            return ResponseEntity.ok().body(restaurantDTO);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable Long restaurantId) throws NotFoundException {
+        log.info("Started fetching restaurant with ID=[{}]", restaurantId);
+        Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
+        RestaurantDTO restaurantDTO = restaurantConverter.convertToRestaurantDTO(restaurant);
+        log.info("Finished fetching restaurant with ID=[{}]", restaurantId);
+        return ResponseEntity.ok().body(restaurantDTO);
     }
 
     @RequestMapping(value = "/restaurant/edit", method = RequestMethod.PUT)
     public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO restaurantDTO) throws NotFoundException {
-        log.info("Received request for editing restaurant [{}]", restaurantDTO.getName());
-        Restaurant restaurantForUpdate = restaurantService.updateRestaurant(restaurantDTO);
-        if (Objects.nonNull(restaurantForUpdate)) {
-            log.info("Successfully updated restaurant [{}]", restaurantForUpdate.getName());
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        log.info("Started updating restaurant with ID=[{}]", restaurantDTO.getId());
+        restaurantService.updateRestaurant(restaurantDTO);
+        log.info("Finished updating restaurant with ID=[{}]", restaurantDTO.getId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(path = "/restaurant/{restaurantId}/uploadLogo", method = RequestMethod.POST)
     public ResponseEntity<?> uploadLogo(@PathVariable("restaurantId") Long restaurantId,
                                         @RequestParam("file") MultipartFile logo) throws Exception {
-        log.info("Received request for uploading logo for restaurant with ID [{}]", restaurantId);
-        Restaurant restaurant = restaurantService.saveLogo(restaurantId, logo);
-        if (Objects.nonNull(restaurant.getLogo())) {
-            log.info("Successfully uploaded logo for restaurant with ID [{}]", restaurantId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        log.info("Started uploading logo for restaurant with ID=[{}]", restaurantId);
+        restaurantService.saveLogo(restaurantId, logo);
+        log.info("Finished uploading logo for restaurant with ID=[{}]", restaurantId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable Long restaurantId) throws NotFoundException {
-        log.info("Received request for deleting restaurant with ID [{}]", restaurantId);
-        boolean restaurantIsDeleted = restaurantService.delete(restaurantId);
-        if (restaurantIsDeleted) {
-            log.info("Successfully deleted restaurant with ID [{}]", restaurantId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        log.info("Started deleting restaurant with ID=[{}]", restaurantId);
+        restaurantService.delete(restaurantId);
+        log.info("Finished deleting restaurant with ID=[{}]", restaurantId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/account/add", method = RequestMethod.POST)
-    public ResponseEntity<?> addAccountForRestaurant(
-            @PathVariable Long restaurantId, @RequestBody RestaurantAccountDTO restaurantAccountDTO) throws Exception {
-        log.info("Received request for creating account for restaurant with ID [{}]", restaurantId);
-        Restaurant restaurant = restaurantService.addAccountForRestaurant(restaurantId, restaurantAccountDTO);
-        if (Objects.nonNull(restaurant)) {
-            RestaurantAccountDTO restaurantAccountResponseDTO = RestaurantAccountDTO.builder()
-                    .username(restaurantAccountDTO.getUsername())
-                    .email(restaurantAccountDTO.getEmail())
-                    .build();
-            log.info("Successfully created account for restaurant with ID [{}]", restaurantId);
-            return ResponseEntity.ok().body(restaurantAccountResponseDTO);
-        } else {
-            log.info("An error occurred trying to create account for restaurant with ID [{}]", restaurantId);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> addAccountForRestaurant(@PathVariable Long restaurantId,
+                                                     @RequestBody RestaurantAccountDTO restaurantAccountDTO) throws Exception {
+        log.info("Started creating account for restaurant with ID=[{}]", restaurantId);
+        restaurantService.addAccountForRestaurant(restaurantId, restaurantAccountDTO);
+        log.info("Finished created account for restaurant with ID=[{}]", restaurantId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/{userId}/restaurants", method = RequestMethod.GET)
-    public ResponseEntity<?> getRestaurantsForUser(@PathVariable Long userId) throws Exception {
-        log.info("Received request for fetching restaurants for user with ID [{}]", userId);
+    public ResponseEntity<List<RestaurantDTO>> getRestaurantsForUser(@PathVariable Long userId) throws Exception {
+        log.info("Started fetching restaurants for user with ID=[{}]", userId);
         List<Restaurant> restaurants = userService.getRestaurantsForUser(userId);
-        List<RestaurantDTO> restaurantDTOs = restaurantService.createRestaurantDTOs(restaurants);
-        log.info("Finished fetching restaurants for user with ID [{}]", userId);
-        return new ResponseEntity<>(restaurantDTOs, HttpStatus.OK);
+        List<RestaurantDTO> restaurantDTOs = restaurantConverter.convertToRestaurantDTOs(restaurants);
+        log.info("Finished fetching restaurants for user with ID=[{}]", userId);
+        return ResponseEntity.ok(restaurantDTOs);
     }
 }

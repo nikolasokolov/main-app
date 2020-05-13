@@ -27,8 +27,9 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequestMapping(value = "/main")
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor
 public class OrderResource {
+
     private final OrderService orderService;
     private final InvoiceService invoiceService;
 

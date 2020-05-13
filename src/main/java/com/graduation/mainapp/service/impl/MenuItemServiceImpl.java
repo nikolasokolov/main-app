@@ -61,7 +61,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     public MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException {
         User user = userService.getUser(userId);
         Long restaurantId = user.getRestaurant().getId();
-        Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
+        Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
         MenuItem menuItem = createMenuItemObject(menuItemDTO, restaurant);
         return menuItemRepository.save(menuItem);
     }
@@ -70,7 +70,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     public MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException {
         User user = userService.getUser(userId);
         Long restaurantId = user.getRestaurant().getId();
-        Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
+        Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
         MenuItem menuItem = createMenuItemObjectForUpdating(menuItemDTO, restaurant);
         return menuItemRepository.save(menuItem);
     }
@@ -82,7 +82,7 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public List<MenuItem> getRestaurantMenu(Long restaurantId) throws NotFoundException {
-        Restaurant restaurant = restaurantService.findByIdOrThrow(restaurantId);
+        Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
         return menuItemRepository.findAllByRestaurant(restaurant);
     }
 

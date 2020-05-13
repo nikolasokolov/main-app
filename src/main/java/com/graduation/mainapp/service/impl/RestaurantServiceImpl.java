@@ -6,10 +6,9 @@ import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.dto.CompanyDTO;
 import com.graduation.mainapp.dto.RestaurantAccountDTO;
-import com.graduation.mainapp.dto.RestaurantAccountDetails;
 import com.graduation.mainapp.dto.RestaurantDTO;
-import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.exception.InvalidLogoException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
 import com.graduation.mainapp.repository.dao.AvailableCompaniesRestaurantsDAO;
@@ -25,21 +24,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.graduation.mainapp.util.LogoValidationUtil.validateLogoFormat;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
+
     public static final String ROLE_RESTAURANT = "ROLE_RESTAURANT";
 
     private final RestaurantRepository restaurantRepository;
@@ -50,7 +47,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final AvailableCompaniesRestaurantsDAO availableCompaniesRestaurantsDAO;
 
     @Override
-    public List<Restaurant> findAll() {
+    public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll();
     }
 
@@ -60,8 +57,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant saveLogo(Long restaurantId, MultipartFile logo) throws Exception {
-        Restaurant restaurant = findByIdOrThrow(restaurantId);
+    public void saveLogo(Long restaurantId, MultipartFile logo) throws Exception {
+        Restaurant restaurant = getRestaurant(restaurantId);
         if (!logo.isEmpty()) {
             try {
                 restaurant.setLogo(logo.getBytes());
@@ -71,7 +68,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 log.error("Error while trying to save logo for company with id " + restaurantId);
             }
             validateLogoFormat(logo);
-            return this.save(restaurant);
+            save(restaurant);
         } else {
             log.error("Logo is not present");
             throw new InvalidLogoException("Logo is not present");
@@ -80,8 +77,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public boolean delete(Long restaurantId) throws NotFoundException {
-        Restaurant restaurant = findByIdOrThrow(restaurantId);
+    public void delete(Long restaurantId) throws NotFoundException {
+        Restaurant restaurant = getRestaurant(restaurantId);
         Company[] companies = new Company[restaurant.getCompanies().size()];
         companies = restaurant.getCompanies().toArray(companies);
         for (Company company : companies) {
@@ -93,71 +90,34 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (Objects.nonNull(user)) {
             userService.deleteUser(user.getId());
         }
-        return true;
-    }
-
-    @Override
-    public List<RestaurantDTO> createRestaurantDTOs(Collection<Restaurant> restaurants) {
-        return restaurants.stream().map(restaurant -> {
-            byte[] restaurantLogo = restaurant.getLogo();
-            return new RestaurantDTO(
-                    restaurant.getId(),
-                    restaurant.getName(),
-                    restaurant.getAddress(),
-                    restaurant.getAddress(),
-                    restaurantLogo,
-                    null);
-        }).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public Restaurant addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO)
-            throws Exception {
+    public void addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception {
         boolean passwordsMatch = checkIfPasswordsMatch(restaurantAccountDTO);
         if (passwordsMatch) {
             User user = createUserForRestaurant(restaurantAccountDTO);
             User savedUser = userService.save(user);
-            Restaurant restaurant = findByIdOrThrow(restaurantId);
+            Restaurant restaurant = getRestaurant(restaurantId);
             restaurant.setUser(savedUser);
-            return restaurantRepository.save(restaurant);
+            restaurantRepository.save(restaurant);
         } else {
             throw new Exception("Passwords don't match");
         }
     }
 
     @Override
-    public Restaurant createRestaurantObjectFromRestaurantDTO(RestaurantDTO restaurantDTO) {
-        return Restaurant.builder()
-                .name(restaurantDTO.getName())
-                .address(restaurantDTO.getAddress())
-                .phoneNumber(restaurantDTO.getPhoneNumber())
-                .build();
-    }
-
-    @Override
-    public RestaurantDTO getRestaurantAccountIfPresent(Long restaurantId) throws NotFoundException {
-        Restaurant restaurant = findByIdOrThrow(restaurantId);
-        User user = restaurant.getUser();
-        RestaurantAccountDetails restaurantAccountDetails = null;
-        if (Objects.nonNull(user)) {
-            restaurantAccountDetails = new RestaurantAccountDetails(
-                    user.getUsername(), user.getEmail());
-        }
-        return this.createRestaurantDTOFromRestaurantObject(restaurant, restaurantAccountDetails);
-    }
-
-    @Override
-    public Restaurant updateRestaurant(RestaurantDTO restaurantDTO) throws NotFoundException {
-        Restaurant restaurant = findByIdOrThrow(restaurantDTO.getId());
+    public void updateRestaurant(RestaurantDTO restaurantDTO) throws NotFoundException {
+        Restaurant restaurant = getRestaurant(restaurantDTO.getId());
         Restaurant restaurantForUpdate = createRestaurantForUpdate(restaurant, restaurantDTO);
-        return this.save(restaurantForUpdate);
+        save(restaurantForUpdate);
     }
 
     @Override
-    public Restaurant findByIdOrThrow(Long restaurantId) throws NotFoundException {
+    public Restaurant getRestaurant(Long restaurantId) throws NotFoundException {
         return restaurantRepository.findById(restaurantId).orElseThrow(
-                () -> new NotFoundException("Restaurant with ID " + restaurantId + " is not found"));
+                () -> new NotFoundException("Restaurant with ID=[" + restaurantId + "] is not found"));
     }
 
     private Restaurant createRestaurantForUpdate(Restaurant restaurant, RestaurantDTO restaurantDTO) {
@@ -169,22 +129,6 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .logo(restaurant.getLogo())
                 .user(restaurant.getUser())
                 .build();
-    }
-
-    private RestaurantDTO createRestaurantDTOFromRestaurantObject(
-            Restaurant restaurant, RestaurantAccountDetails restaurantAccountDetails) {
-        return RestaurantDTO.builder()
-                .id(restaurant.getId())
-                .name(restaurant.getName())
-                .address(restaurant.getAddress())
-                .phoneNumber(restaurant.getPhoneNumber())
-                .logo(restaurant.getLogo())
-                .restaurantAccountDetails(restaurantAccountDetails)
-                .build();
-    }
-
-    private boolean checkIfPasswordsMatch(RestaurantAccountDTO restaurantAccountDTO) {
-        return restaurantAccountDTO.getPassword().equals(restaurantAccountDTO.getConfirmPassword());
     }
 
     private User createUserForRestaurant(RestaurantAccountDTO restaurantAccountDTO) {
@@ -200,17 +144,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public List<RestaurantDTO> getRestaurantsForCompany(Long companyId) throws NotFoundException {
-        Company company = companyService.findByIdOrThrow(companyId);
-        Set<Restaurant> restaurantsForCompany = company.getRestaurants();
-        return createRestaurantDTOs(restaurantsForCompany);
+    public Set<Restaurant> getRestaurantsForCompany(Long companyId) throws NotFoundException {
+        Company company = companyService.getCompany(companyId);
+        return company.getRestaurants();
     }
 
     @Override
-    public List<RestaurantDTO> getAvailableRestaurantsForCompany(Long companyId) {
-        List<AvailableRestaurantsRowMapper> availableRestaurantsForCompany = availableCompaniesRestaurantsDAO
-                .getAvailableRestaurantsForCompany(companyId);
-        return createAvailableRestaurantDTOs(availableRestaurantsForCompany);
+    public List<AvailableRestaurantsRowMapper> getAvailableRestaurantsForCompany(Long companyId) {
+        return availableCompaniesRestaurantsDAO.getAvailableRestaurantsForCompany(companyId);
     }
 
     @Override
@@ -224,40 +165,29 @@ public class RestaurantServiceImpl implements RestaurantService {
         return availableCompaniesRestaurantsDAO.getCompaniesForRestaurant(user.getRestaurant().getId());
     }
 
-    private List<RestaurantDTO> createAvailableRestaurantDTOs(Collection<AvailableRestaurantsRowMapper> availableRestaurantsForCompany) {
-        return availableRestaurantsForCompany.stream().map(restaurant -> {
-            byte[] restaurantLogo = restaurant.getLogo();
-            return new RestaurantDTO(
-                    restaurant.getId(),
-                    restaurant.getName(),
-                    restaurant.getAddress(),
-                    restaurant.getAddress(),
-                    restaurantLogo,
-                    null);
-        }).collect(Collectors.toList());
-    }
-
     @Override
     @Transactional
-    public boolean addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws NotFoundException {
-        Company company = companyService.findByIdOrThrow(companyDTO.getId());
-        Restaurant restaurant = findByIdOrThrow(restaurantId);
+    public void addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws NotFoundException {
+        Company company = companyService.getCompany(companyDTO.getId());
+        Restaurant restaurant = getRestaurant(restaurantId);
         company.getRestaurants().add(restaurant);
         restaurant.getCompanies().add(company);
         companyService.save(company);
         save(restaurant);
-        return true;
     }
 
     @Override
     @Transactional
-    public boolean deleteRestaurantForCompany(Long companyId, Long restaurantId) throws NotFoundException {
-        Company company = companyService.findByIdOrThrow(companyId);
-        Restaurant restaurant = findByIdOrThrow(restaurantId);
+    public void deleteRestaurantForCompany(Long companyId, Long restaurantId) throws NotFoundException {
+        Company company = companyService.getCompany(companyId);
+        Restaurant restaurant = getRestaurant(restaurantId);
         restaurant.removeCompany(company);
         company.removeRestaurant(restaurant);
         companyService.save(company);
         save(restaurant);
-        return true;
+    }
+
+    private boolean checkIfPasswordsMatch(RestaurantAccountDTO restaurantAccountDTO) {
+        return restaurantAccountDTO.getPassword().equals(restaurantAccountDTO.getConfirmPassword());
     }
 }

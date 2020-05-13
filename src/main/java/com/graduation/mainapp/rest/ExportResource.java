@@ -18,9 +18,10 @@ import java.io.OutputStream;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/main")
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ExportResource {
+
     private final ExportService exportService;
 
     @RequestMapping(value = "/daily-orders/{userId}/export", method = RequestMethod.POST)

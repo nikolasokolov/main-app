@@ -21,9 +21,10 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/main")
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class MenuItemResource {
+
     private final MenuItemService menuItemService;
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items", method = RequestMethod.GET)

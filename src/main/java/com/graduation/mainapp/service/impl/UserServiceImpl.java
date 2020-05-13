@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(UserAccountRequestDTO userAccountRequestDTO) throws NotFoundException {
         if (userAccountRequestDTO.getPassword().equals(userAccountRequestDTO.getConfirmPassword())) {
-            Company company = companyService.findByIdOrThrow(userAccountRequestDTO.getCompanyId());
+            Company company = companyService.getCompany(userAccountRequestDTO.getCompanyId());
             String password = passwordEncoder.encode(userAccountRequestDTO.getPassword());
             User user = userConverter.convertToUser(userAccountRequestDTO, password, company);
             save(user);
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<Restaurant> getRestaurantsForUser(Long userId) throws Exception {
         User user = userRepository.getOne(userId);
-        Company company = companyService.findByIdOrThrow(user.getCompany().getId());
+        Company company = companyService.getCompany(user.getCompany().getId());
         return new LinkedList<>(company.getRestaurants());
     }
 
