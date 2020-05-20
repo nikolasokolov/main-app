@@ -9,21 +9,16 @@ import java.util.List;
 import java.util.Map;
 
 public interface MenuItemService {
+
     List<MenuItem> getRestaurantMenuItems(Long restaurantId) throws NotFoundException;
 
-    List<MenuItemDTO> createMenuItemsDTO(Collection<MenuItem> menuItems);
+    void deleteMenuItem(Long menuItemId) throws NotFoundException;
 
-    void delete(Long menuItemId);
-
-    MenuItem addMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException;
+    MenuItem createMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException;
 
     MenuItem updateMenuItem(Long userId, MenuItemDTO menuItemDTO) throws NotFoundException;
 
-    MenuItem getMenuItem(Long id);
-
     List<MenuItem> getRestaurantMenu(Long restaurantId) throws NotFoundException;
 
-    Map<String, List<MenuItemDTO>> createTypeToMenuItemsDTO(Collection<MenuItem> menuItems);
-
-    MenuItem findByIdOrThrow(Long menuItemId) throws NotFoundException;
+    MenuItem getMenuItem(Long menuItemId) throws NotFoundException;
 }

@@ -21,9 +21,9 @@ public interface RestaurantService {
 
     void saveLogo(Long restaurantId, MultipartFile logo) throws Exception;
 
-    void delete(Long restaurantId) throws NotFoundException;
+    void deleteRestaurant(Long restaurantId) throws NotFoundException;
 
-    void addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception;
+    void createAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception;
 
     void updateRestaurant(RestaurantDTO restaurantDTO) throws NotFoundException;
 

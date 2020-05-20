@@ -77,7 +77,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public void delete(Long restaurantId) throws NotFoundException {
+    public void deleteRestaurant(Long restaurantId) throws NotFoundException {
         Restaurant restaurant = getRestaurant(restaurantId);
         Company[] companies = new Company[restaurant.getCompanies().size()];
         companies = restaurant.getCompanies().toArray(companies);
@@ -94,7 +94,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public void addAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception {
+    public void createAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception {
         boolean passwordsMatch = checkIfPasswordsMatch(restaurantAccountDTO);
         if (passwordsMatch) {
             User user = createUserForRestaurant(restaurantAccountDTO);

@@ -41,7 +41,7 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/new", method = RequestMethod.POST)
-    public ResponseEntity<?> saveRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
+    public ResponseEntity<?> createRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
         log.info("Started saving a new restaurant");
         Restaurant restaurant = restaurantConverter.convertToRestaurant(restaurantDTO);
         restaurantService.save(restaurant);
@@ -76,18 +76,18 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> delete(@PathVariable Long restaurantId) throws NotFoundException {
+    public ResponseEntity<?> deleteRestaurant(@PathVariable Long restaurantId) throws NotFoundException {
         log.info("Started deleting restaurant with ID=[{}]", restaurantId);
-        restaurantService.delete(restaurantId);
+        restaurantService.deleteRestaurant(restaurantId);
         log.info("Finished deleting restaurant with ID=[{}]", restaurantId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}/account/add", method = RequestMethod.POST)
-    public ResponseEntity<?> addAccountForRestaurant(@PathVariable Long restaurantId,
+    public ResponseEntity<?> createAccountForRestaurant(@PathVariable Long restaurantId,
                                                      @RequestBody RestaurantAccountDTO restaurantAccountDTO) throws Exception {
         log.info("Started creating account for restaurant with ID=[{}]", restaurantId);
-        restaurantService.addAccountForRestaurant(restaurantId, restaurantAccountDTO);
+        restaurantService.createAccountForRestaurant(restaurantId, restaurantAccountDTO);
         log.info("Finished created account for restaurant with ID=[{}]", restaurantId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
