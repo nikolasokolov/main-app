@@ -95,15 +95,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     @Transactional
     public void createAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception {
-        boolean passwordsMatch = checkIfPasswordsMatch(restaurantAccountDTO);
-        if (passwordsMatch) {
-            String password = passwordEncoder.encode(restaurantAccountDTO.getPassword());
-            User user = userConverter.convertToUser(restaurantAccountDTO, password);
-            User savedUser = userService.save(user);
-            Restaurant restaurant = getRestaurant(restaurantId);
-            restaurant.setUser(savedUser);
-            restaurantRepository.save(restaurant);
-        }
+        String password = passwordEncoder.encode(restaurantAccountDTO.getPassword());
+        User user = userConverter.convertToUser(restaurantAccountDTO, password);
+        User savedUser = userService.save(user);
+        Restaurant restaurant = getRestaurant(restaurantId);
+        restaurant.setUser(savedUser);
+        restaurantRepository.save(restaurant);
     }
 
     @Override
@@ -173,9 +170,5 @@ public class RestaurantServiceImpl implements RestaurantService {
         company.removeRestaurant(restaurant);
         companyService.save(company);
         save(restaurant);
-    }
-
-    private boolean checkIfPasswordsMatch(RestaurantAccountDTO restaurantAccountDTO) {
-        return restaurantAccountDTO.getPassword().equals(restaurantAccountDTO.getConfirmPassword());
     }
 }

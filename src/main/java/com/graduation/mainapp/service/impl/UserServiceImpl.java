@@ -39,12 +39,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(UserAccountDTO userAccountDTO) throws NotFoundException {
-        if (userAccountDTO.getPassword().equals(userAccountDTO.getConfirmPassword())) {
-            Company company = companyService.getCompany(userAccountDTO.getCompanyId());
-            String password = passwordEncoder.encode(userAccountDTO.getPassword());
-            User user = userConverter.convertToUser(userAccountDTO, password, company);
-            save(user);
-        }
+        Company company = companyService.getCompany(userAccountDTO.getCompanyId());
+        String password = passwordEncoder.encode(userAccountDTO.getPassword());
+        User user = userConverter.convertToUser(userAccountDTO, password, company);
+        save(user);
     }
 
     @Override
@@ -72,20 +70,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changePassword(ChangePasswordDTO changePasswordDTO) throws Exception {
-        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
-            throw new InvalidCredentialsException("Passwords doesn't match");
-        }
         Optional<User> userOptional = userRepository.findOneByUsername(changePasswordDTO.getUsername());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            String currentPasswordFromRequest = changePasswordDTO.getCurrentPassword();
-            String newPasswordEncrypted = passwordEncoder.encode(changePasswordDTO.getNewPassword());
-            boolean currentPasswordMatch = passwordEncoder.matches(currentPasswordFromRequest, user.getPassword());
-            if (currentPasswordMatch) {
+            String oldPassword = changePasswordDTO.getOldPassword();
+            String newPasswordEncrypted = passwordEncoder.encode(changePasswordDTO.getPassword());
+            boolean isOldPasswordCorrect = passwordEncoder.matches(oldPassword, user.getPassword());
+            if (isOldPasswordCorrect) {
                 user.setPassword(newPasswordEncrypted);
                 save(user);
             } else {
-                throw new InvalidCredentialsException("Current password is not correct");
+                throw new InvalidCredentialsException("Old password is not correct");
             }
         }
     }

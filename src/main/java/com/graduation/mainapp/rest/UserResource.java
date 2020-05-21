@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +30,7 @@ public class UserResource {
     private final UserConverter userConverter;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<?> createNewUser(@RequestBody UserAccountDTO userAccountDTO) throws Exception {
+    public ResponseEntity<?> createNewUser(@RequestBody @Valid UserAccountDTO userAccountDTO) throws Exception {
         log.info("Started creating a new User with username=[{}]", userAccountDTO.getUsername());
         userService.createUser(userAccountDTO);
         log.info("Finished creating a new User with username=[{}]", userAccountDTO.getUsername());
@@ -63,7 +64,7 @@ public class UserResource {
     }
 
     @RequestMapping(value = "/change-password", method = RequestMethod.POST)
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) throws Exception {
+    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordDTO changePasswordDTO) throws Exception {
         log.info("Started changing password on User with username=[{}]", changePasswordDTO.getUsername());
         userService.changePassword(changePasswordDTO);
         log.info("Finished changing password on User with username=[{}]", changePasswordDTO.getUsername());

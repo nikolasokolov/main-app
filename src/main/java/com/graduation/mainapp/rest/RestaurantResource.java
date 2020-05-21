@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -85,7 +86,7 @@ public class RestaurantResource {
 
     @RequestMapping(value = "/restaurant/{restaurantId}/account/add", method = RequestMethod.POST)
     public ResponseEntity<?> createAccountForRestaurant(@PathVariable Long restaurantId,
-                                                     @RequestBody RestaurantAccountDTO restaurantAccountDTO) throws Exception {
+                                                     @RequestBody @Valid RestaurantAccountDTO restaurantAccountDTO) throws Exception {
         log.info("Started creating account for restaurant with ID=[{}]", restaurantId);
         restaurantService.createAccountForRestaurant(restaurantId, restaurantAccountDTO);
         log.info("Finished created account for restaurant with ID=[{}]", restaurantId);
