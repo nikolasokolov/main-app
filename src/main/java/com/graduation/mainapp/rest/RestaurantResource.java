@@ -2,8 +2,8 @@ package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.converter.RestaurantConverter;
 import com.graduation.mainapp.domain.Restaurant;
-import com.graduation.mainapp.dto.RestaurantAccountDTO;
-import com.graduation.mainapp.dto.RestaurantDTO;
+import com.graduation.mainapp.rest.dto.RestaurantAccountDTO;
+import com.graduation.mainapp.rest.dto.RestaurantDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;

@@ -5,7 +5,7 @@ import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.exception.InvalidLogoException;
 import com.graduation.mainapp.repository.CompanyRepository;
 import com.graduation.mainapp.service.CompanyService;
-import com.graduation.mainapp.dto.CompanyDTO;
+import com.graduation.mainapp.rest.dto.CompanyDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

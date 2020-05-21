@@ -3,8 +3,8 @@ package com.graduation.mainapp.converter;
 import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.dto.UserAccountRequestDTO;
-import com.graduation.mainapp.dto.UserResponseDTO;
+import com.graduation.mainapp.rest.dto.UserAccountDTO;
+import com.graduation.mainapp.rest.dto.UserDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -18,9 +18,9 @@ public class UserConverter {
 
     public static final String NOT_AVAILABLE = "N/A";
 
-    public List<UserResponseDTO> convertToUserResponseDTOs(Collection<User> users) {
+    public List<UserDTO> convertToUserResponseDTOs(Collection<User> users) {
         return users.stream()
-                .map(user -> UserResponseDTO.builder()
+                .map(user -> UserDTO.builder()
                         .id(user.getId())
                         .username(user.getUsername())
                         .email(user.getEmail())
@@ -29,12 +29,12 @@ public class UserConverter {
                         .build()).collect(Collectors.toList());
     }
 
-    public User convertToUser(UserAccountRequestDTO userAccountRequestDTO, String password, Company company) {
+    public User convertToUser(UserAccountDTO userAccountDTO, String password, Company company) {
         return User.builder()
-                .username(userAccountRequestDTO.getUsername())
-                .email(userAccountRequestDTO.getEmail())
+                .username(userAccountDTO.getUsername())
+                .email(userAccountDTO.getEmail())
                 .password(password)
-                .authorities(Set.of(new Authority(userAccountRequestDTO.getAuthority())))
+                .authorities(Set.of(new Authority(userAccountDTO.getAuthority())))
                 .company(company)
                 .build();
     }

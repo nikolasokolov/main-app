@@ -1,4 +1,4 @@
-package com.graduation.mainapp.dto;
+package com.graduation.mainapp.rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RestaurantAccountDTO {
+public class UserAccountDTO {
+
     private String username;
     private String email;
     private String password;
     private String confirmPassword;
+    private String authority;
+    private Long companyId;
 }

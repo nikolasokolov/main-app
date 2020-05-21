@@ -1,11 +1,10 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.domain.Company;
-import com.graduation.mainapp.dto.CompanyDTO;
+import com.graduation.mainapp.rest.dto.CompanyDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface CompanyService {

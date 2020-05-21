@@ -1,12 +1,10 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.domain.MenuItem;
-import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.rest.dto.MenuItemDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public interface MenuItemService {
 

@@ -5,7 +5,7 @@ import com.graduation.mainapp.domain.FoodType;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.rest.dto.MenuItemDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.MenuItemRepository;
 import com.graduation.mainapp.service.MenuItemService;
@@ -14,10 +14,7 @@ import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

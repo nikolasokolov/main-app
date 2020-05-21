@@ -3,7 +3,7 @@ package com.graduation.mainapp.converter;
 import com.graduation.mainapp.domain.FoodType;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Restaurant;
-import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.rest.dto.MenuItemDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;

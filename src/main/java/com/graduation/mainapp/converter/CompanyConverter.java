@@ -1,7 +1,7 @@
 package com.graduation.mainapp.converter;
 
 import com.graduation.mainapp.domain.Company;
-import com.graduation.mainapp.dto.CompanyDTO;
+import com.graduation.mainapp.rest.dto.CompanyDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;

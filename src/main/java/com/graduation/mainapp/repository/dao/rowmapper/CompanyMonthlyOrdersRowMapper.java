@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompanyMonthlyOrdersRowMapper {
+
     private String companyName;
     private String user;
     private Integer numberOfOrders;

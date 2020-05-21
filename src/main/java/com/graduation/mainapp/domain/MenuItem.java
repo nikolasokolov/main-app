@@ -23,6 +23,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Table(name = "menu_item")
 public class MenuItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

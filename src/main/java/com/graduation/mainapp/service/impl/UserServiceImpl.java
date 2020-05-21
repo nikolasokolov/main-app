@@ -5,8 +5,8 @@ import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.dto.ChangePasswordRequestDTO;
-import com.graduation.mainapp.dto.UserAccountRequestDTO;
+import com.graduation.mainapp.rest.dto.ChangePasswordDTO;
+import com.graduation.mainapp.rest.dto.UserAccountDTO;
 import com.graduation.mainapp.exception.InvalidCredentialsException;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.OrderRepository;
@@ -38,11 +38,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(UserAccountRequestDTO userAccountRequestDTO) throws NotFoundException {
-        if (userAccountRequestDTO.getPassword().equals(userAccountRequestDTO.getConfirmPassword())) {
-            Company company = companyService.getCompany(userAccountRequestDTO.getCompanyId());
-            String password = passwordEncoder.encode(userAccountRequestDTO.getPassword());
-            User user = userConverter.convertToUser(userAccountRequestDTO, password, company);
+    public void createUser(UserAccountDTO userAccountDTO) throws NotFoundException {
+        if (userAccountDTO.getPassword().equals(userAccountDTO.getConfirmPassword())) {
+            Company company = companyService.getCompany(userAccountDTO.getCompanyId());
+            String password = passwordEncoder.encode(userAccountDTO.getPassword());
+            User user = userConverter.convertToUser(userAccountDTO, password, company);
             save(user);
         }
     }
@@ -71,15 +71,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception {
-        if (!changePasswordRequestDTO.getNewPassword().equals(changePasswordRequestDTO.getConfirmPassword())) {
+    public void changePassword(ChangePasswordDTO changePasswordDTO) throws Exception {
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
             throw new InvalidCredentialsException("Passwords doesn't match");
         }
-        Optional<User> userOptional = userRepository.findOneByUsername(changePasswordRequestDTO.getUsername());
+        Optional<User> userOptional = userRepository.findOneByUsername(changePasswordDTO.getUsername());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            String currentPasswordFromRequest = changePasswordRequestDTO.getCurrentPassword();
-            String newPasswordEncrypted = passwordEncoder.encode(changePasswordRequestDTO.getNewPassword());
+            String currentPasswordFromRequest = changePasswordDTO.getCurrentPassword();
+            String newPasswordEncrypted = passwordEncoder.encode(changePasswordDTO.getNewPassword());
             boolean currentPasswordMatch = passwordEncoder.matches(currentPasswordFromRequest, user.getPassword());
             if (currentPasswordMatch) {
                 user.setPassword(newPasswordEncrypted);

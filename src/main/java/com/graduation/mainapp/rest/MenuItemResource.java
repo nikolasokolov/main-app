@@ -2,7 +2,7 @@ package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.converter.MenuItemConverter;
 import com.graduation.mainapp.domain.MenuItem;
-import com.graduation.mainapp.dto.MenuItemDTO;
+import com.graduation.mainapp.rest.dto.MenuItemDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

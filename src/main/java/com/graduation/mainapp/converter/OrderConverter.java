@@ -3,10 +3,10 @@ package com.graduation.mainapp.converter;
 import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Order;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
-import com.graduation.mainapp.dto.OrderDTO;
-import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
-import com.graduation.mainapp.dto.UserOrderResponseDTO;
+import com.graduation.mainapp.rest.dto.CompanyOrdersDTO;
+import com.graduation.mainapp.rest.dto.OrderDTO;
+import com.graduation.mainapp.rest.dto.RestaurantDailyOrdersDTO;
+import com.graduation.mainapp.rest.dto.UserOrderDTO;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
 import org.springframework.stereotype.Component;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @Component
 public class OrderConverter {
 
-    public UserOrderResponseDTO convertToUserOrderResponseDTO(Order order) {
-        return UserOrderResponseDTO.builder()
+    public UserOrderDTO convertToUserOrderResponseDTO(Order order) {
+        return UserOrderDTO.builder()
                 .id(order.getId())
                 .menuItemName(order.getMenuItem().getName())
                 .timePeriod(order.getTimePeriod().toString())
@@ -31,10 +31,10 @@ public class OrderConverter {
                 .build();
     }
 
-    public List<CompanyOrdersResponseDTO> convertToCompanyOrdersResponseDTOs(Collection<CompanyOrdersRowMapper> companyOrders) {
+    public List<CompanyOrdersDTO> convertToCompanyOrdersResponseDTOs(Collection<CompanyOrdersRowMapper> companyOrders) {
         return companyOrders.stream()
                 .map(companyOrder ->
-                        CompanyOrdersResponseDTO.builder()
+                        CompanyOrdersDTO.builder()
                                 .username(companyOrder.getUsername())
                                 .restaurantName(companyOrder.getRestaurantName())
                                 .menuItemName(companyOrder.getMenuItemName())
@@ -46,10 +46,10 @@ public class OrderConverter {
                 .collect(Collectors.toList());
     }
 
-    public List<RestaurantDailyOrdersResponseDTO> convertToRestaurantDailyOrdersDTOs(Collection<RestaurantDailyOrdersRowMapper> restaurantDailyOrders) {
+    public List<RestaurantDailyOrdersDTO> convertToRestaurantDailyOrdersDTOs(Collection<RestaurantDailyOrdersRowMapper> restaurantDailyOrders) {
         return restaurantDailyOrders.stream()
                 .map(order ->
-                        RestaurantDailyOrdersResponseDTO.builder()
+                        RestaurantDailyOrdersDTO.builder()
                                 .companyName(order.getCompanyName())
                                 .user(order.getUser())
                                 .menuItemName(order.getMenuItemName())

@@ -2,10 +2,10 @@ package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.converter.OrderConverter;
 import com.graduation.mainapp.domain.Order;
-import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
-import com.graduation.mainapp.dto.OrderDTO;
-import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
-import com.graduation.mainapp.dto.UserOrderResponseDTO;
+import com.graduation.mainapp.rest.dto.CompanyOrdersDTO;
+import com.graduation.mainapp.rest.dto.OrderDTO;
+import com.graduation.mainapp.rest.dto.RestaurantDailyOrdersDTO;
+import com.graduation.mainapp.rest.dto.UserOrderDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.service.InvoiceService;
 import com.graduation.mainapp.service.OrderService;
@@ -36,22 +36,22 @@ public class OrderResource {
     private final OrderConverter orderConverter;
 
     @RequestMapping(value = "/orders/save", method = RequestMethod.POST)
-    public ResponseEntity<UserOrderResponseDTO> saveOrder(@RequestBody OrderDTO orderDTO) throws NotFoundException {
+    public ResponseEntity<UserOrderDTO> saveOrder(@RequestBody OrderDTO orderDTO) throws NotFoundException {
         log.info("Started creating a new order");
         Order order = orderService.save(orderDTO);
-        UserOrderResponseDTO userOrderResponseDTO = orderConverter.convertToUserOrderResponseDTO(order);
+        UserOrderDTO userOrderDTO = orderConverter.convertToUserOrderResponseDTO(order);
         log.info("Finished creating a new order");
-        return ResponseEntity.ok(userOrderResponseDTO);
+        return ResponseEntity.ok(userOrderDTO);
     }
 
     @RequestMapping(value = "/orders/user/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<UserOrderResponseDTO> getDailyOrderForUser(@PathVariable Long userId) throws NotFoundException {
+    public ResponseEntity<UserOrderDTO> getDailyOrderForUser(@PathVariable Long userId) throws NotFoundException {
         log.info("Started fetching order for User with ID [{}]", userId);
         Order order = orderService.getDailyOrderForUser(userId);
         if (nonNull(order)) {
-            UserOrderResponseDTO userOrderResponseDTO = orderConverter.convertToUserOrderResponseDTO(order);
+            UserOrderDTO userOrderDTO = orderConverter.convertToUserOrderResponseDTO(order);
             log.info("Finished fetching order for User with ID [{}]", userId);
-            return ResponseEntity.ok(userOrderResponseDTO);
+            return ResponseEntity.ok(userOrderDTO);
         } else {
             log.info("User with ID=[{}] has not ordered today", userId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -69,27 +69,27 @@ public class OrderResource {
     @RequestMapping(value = "/orders/company/{companyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getOrdersForCompany(@PathVariable Long companyId) {
         log.info("Received request for fetching orders for company with ID [{}]", companyId);
-        List<CompanyOrdersResponseDTO> companyOrdersResponseDTOs = orderService.getOrdersForCompany(companyId);
+        List<CompanyOrdersDTO> companyOrdersDTOS = orderService.getOrdersForCompany(companyId);
         log.info("Successfully fetched orders for company with ID [{}]", companyId);
-        return new ResponseEntity<>(companyOrdersResponseDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(companyOrdersDTOS, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/daily-orders/company/{companyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getColleaguesChoicesForCompany(@PathVariable Long companyId) {
         log.info("Received request for fetching daily orders for company with ID [{}]", companyId);
-        List<CompanyOrdersResponseDTO> companyOrdersResponseDTOs = orderService.getDailyOrdersForCompany(companyId);
+        List<CompanyOrdersDTO> companyOrdersDTOS = orderService.getDailyOrdersForCompany(companyId);
         log.info("Successfully fetched daily orders for company with ID [{}]", companyId);
-        return new ResponseEntity<>(companyOrdersResponseDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(companyOrdersDTOS, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/daily-orders/restaurant/{restaurantAccountId}", method = RequestMethod.GET)
-    public ResponseEntity<List<RestaurantDailyOrdersResponseDTO>> getDailyOrdersForRestaurant(
+    public ResponseEntity<List<RestaurantDailyOrdersDTO>> getDailyOrdersForRestaurant(
             @PathVariable Long restaurantAccountId) throws NotFoundException {
         log.info("Started fetching daily orders for restaurant with User ID=[{}]", restaurantAccountId);
-        List<RestaurantDailyOrdersResponseDTO> restaurantDailyOrdersResponseDTOs = orderService
+        List<RestaurantDailyOrdersDTO> restaurantDailyOrdersDTOS = orderService
                 .getDailyOrdersForRestaurant(restaurantAccountId);
         log.info("Started fetching daily orders for restaurant with User ID=[{}]", restaurantAccountId);
-        return new ResponseEntity<>(restaurantDailyOrdersResponseDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(restaurantDailyOrdersDTOS, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/company/{companyId}/user/{userId}", method = RequestMethod.GET)

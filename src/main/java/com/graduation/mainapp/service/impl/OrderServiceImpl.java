@@ -5,9 +5,9 @@ import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Order;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.dto.CompanyOrdersResponseDTO;
-import com.graduation.mainapp.dto.OrderDTO;
-import com.graduation.mainapp.dto.RestaurantDailyOrdersResponseDTO;
+import com.graduation.mainapp.rest.dto.CompanyOrdersDTO;
+import com.graduation.mainapp.rest.dto.OrderDTO;
+import com.graduation.mainapp.rest.dto.RestaurantDailyOrdersDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.OrderRepository;
 import com.graduation.mainapp.repository.dao.OrderDAO;
@@ -71,19 +71,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<CompanyOrdersResponseDTO> getOrdersForCompany(Long companyId) {
+    public List<CompanyOrdersDTO> getOrdersForCompany(Long companyId) {
         List<CompanyOrdersRowMapper> companyOrders = orderDAO.getOrdersForCompany(companyId);
         return orderConverter.convertToCompanyOrdersResponseDTOs(companyOrders);
     }
 
     @Override
-    public List<CompanyOrdersResponseDTO> getDailyOrdersForCompany(Long companyId) {
+    public List<CompanyOrdersDTO> getDailyOrdersForCompany(Long companyId) {
         List<CompanyOrdersRowMapper> dailyCompanyOrders = orderDAO.getDailyOrdersForCompany(companyId);
         return orderConverter.convertToCompanyOrdersResponseDTOs(dailyCompanyOrders);
     }
 
     @Override
-    public List<RestaurantDailyOrdersResponseDTO> getDailyOrdersForRestaurant(Long restaurantAccountId) throws NotFoundException {
+    public List<RestaurantDailyOrdersDTO> getDailyOrdersForRestaurant(Long restaurantAccountId) throws NotFoundException {
         User user = userService.getUser(restaurantAccountId);
         Restaurant restaurant = restaurantService.findByUser(user);
         List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(restaurant.getId());

@@ -2,8 +2,8 @@ package com.graduation.mainapp.converter;
 
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.dto.RestaurantAccountDetails;
-import com.graduation.mainapp.dto.RestaurantDTO;
+import com.graduation.mainapp.rest.dto.RestaurantAccountDetailsDTO;
+import com.graduation.mainapp.rest.dto.RestaurantDTO;
 import com.graduation.mainapp.repository.dao.rowmapper.AvailableRestaurantsRowMapper;
 import org.springframework.stereotype.Component;
 
@@ -37,9 +37,9 @@ public class RestaurantConverter {
 
     public RestaurantDTO convertToRestaurantDTO(Restaurant restaurant) {
         User user = restaurant.getUser();
-        RestaurantAccountDetails restaurantAccountDetails = null;
+        RestaurantAccountDetailsDTO restaurantAccountDetailsDTO = null;
         if (Objects.nonNull(user)) {
-            restaurantAccountDetails = new RestaurantAccountDetails(user.getUsername(), user.getEmail());
+            restaurantAccountDetailsDTO = new RestaurantAccountDetailsDTO(user.getUsername(), user.getEmail());
         }
         return RestaurantDTO.builder()
                 .id(restaurant.getId())
@@ -47,7 +47,7 @@ public class RestaurantConverter {
                 .address(restaurant.getAddress())
                 .phoneNumber(restaurant.getPhoneNumber())
                 .logo(restaurant.getLogo())
-                .restaurantAccountDetails(restaurantAccountDetails)
+                .restaurantAccountDetailsDTO(restaurantAccountDetailsDTO)
                 .build();
     }
 
