@@ -30,8 +30,9 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor
 public class ExportServiceImpl implements ExportService {
+
     private final OrderDAO orderDAO;
     private final UserService userService;
 
@@ -52,12 +53,6 @@ public class ExportServiceImpl implements ExportService {
         return byteArrayOutputStream.toByteArray();
     }
 
-    private ByteArrayOutputStream getByteArrayOutputStream(JasperPrint jasperPrint) throws JRException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, byteArrayOutputStream);
-        return byteArrayOutputStream;
-    }
-
     @Override
     public byte[] exportMonthlyOrders(Long companyId, Long userId) throws IOException, JRException, NotFoundException {
         User user = userService.getUser(userId);
@@ -74,6 +69,12 @@ public class ExportServiceImpl implements ExportService {
         ByteArrayOutputStream byteArrayOutputStream = getByteArrayOutputStream(jasperPrint);
         log.info("Finished generating monthly orders pdf report for restaurant [{}]", user.getRestaurant().getName());
         return byteArrayOutputStream.toByteArray();
+    }
+
+    private ByteArrayOutputStream getByteArrayOutputStream(JasperPrint jasperPrint) throws JRException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        JasperExportManager.exportReportToPdfStream(jasperPrint, byteArrayOutputStream);
+        return byteArrayOutputStream;
     }
 
 }

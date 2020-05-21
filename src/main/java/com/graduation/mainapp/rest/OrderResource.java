@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
 
@@ -93,10 +94,10 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/company/{companyId}/user/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long userId, @PathVariable Long companyId) throws NotFoundException, IOException, JRException {
-        log.info("Received request for sending invoice for company with ID [{}]", companyId);
+    public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long userId, @PathVariable Long companyId) throws NotFoundException, IOException, JRException, MessagingException {
+        log.info("Started sending invoice for Company with ID=[{}]", companyId);
         invoiceService.sendInvoiceToCompany(userId, companyId);
-        log.info("Successfully sent invoice for company with ID [{}]", companyId);
+        log.info("Finished sending invoice for Company with ID=[{}]", companyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -16,13 +16,15 @@ import net.sf.jasperreports.engine.JRException;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDate;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor
 public class InvoiceServiceImpl implements InvoiceService {
+
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     private final EmailService emailService;
@@ -30,9 +32,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final UserService userService;
     private final CompanyService companyService;
     private final AuthorityRepository authorityRepository;
+    private final MailTemplateContextPopulator mailTemplateContextPopulator;
 
     @Override
-    public void sendInvoiceToCompany(Long userId, Long companyId) throws NotFoundException, IOException, JRException {
+    public void sendInvoiceToCompany(Long userId, Long companyId) throws NotFoundException, IOException, JRException, MessagingException {
         Authority authority = authorityRepository.findByName(ROLE_ADMIN);
         Company company = companyService.getCompany(companyId);
         User companyAdmin = userService.findByAuthoritiesAndCompany(authority, company);
@@ -41,11 +44,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         byte[] monthlyOrdersBytes = exportService.exportMonthlyOrders(companyId, userId);
         String currentMonth = LocalDate.now().getMonth().toString().toLowerCase();
         String month = currentMonth.substring(0, 1).toUpperCase() + currentMonth.substring(1);
-        String subject = month + " invoice for " + company.getName();
-        String body = "Dear " + company.getName() + ", <br/> In addition to this e-mail, you can find the monthly invoice " +
-                "from restaurant " + restaurantName + ". <br/> Kind regards, <br/>" + restaurantName + " team.";
+        String subject = month + " invoice from " + restaurantName;
         String fileName = restaurantName + "-" + currentMonth + "-orders.pdf";
-        emailService.sendInvoiceViaMail(companyAdmin.getEmail(), subject,
-                body, monthlyOrdersBytes, fileName);
+        String invoiceEmailTemplate = mailTemplateContextPopulator.populateInvoiceEmailTemplate(company, restaurantAccount);
+        emailService.sendInvoiceViaMail(companyAdmin.getEmail(), subject, invoiceEmailTemplate, monthlyOrdersBytes, fileName);
     }
 }

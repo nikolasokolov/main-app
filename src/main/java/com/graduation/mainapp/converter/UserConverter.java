@@ -3,11 +3,13 @@ package com.graduation.mainapp.converter;
 import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.User;
+import com.graduation.mainapp.rest.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.rest.dto.UserAccountDTO;
 import com.graduation.mainapp.rest.dto.UserDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserConverter {
 
     public static final String NOT_AVAILABLE = "N/A";
+    public static final String ROLE_RESTAURANT = "ROLE_RESTAURANT";
 
     public List<UserDTO> convertToUserResponseDTOs(Collection<User> users) {
         return users.stream()
@@ -36,6 +39,15 @@ public class UserConverter {
                 .password(password)
                 .authorities(Set.of(new Authority(userAccountDTO.getAuthority())))
                 .company(company)
+                .build();
+    }
+
+    public User convertToUser(RestaurantAccountDTO restaurantAccountDTO, String password) {
+        return User.builder()
+                .username(restaurantAccountDTO.getUsername())
+                .email(restaurantAccountDTO.getEmail())
+                .password(password)
+                .authorities(Set.of(new Authority(ROLE_RESTAURANT)))
                 .build();
     }
 }

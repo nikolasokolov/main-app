@@ -40,7 +40,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Company saveLogo(Long companyId, MultipartFile logo) throws Exception {
+    public void saveLogo(Long companyId, MultipartFile logo) throws Exception {
         if (!logo.isEmpty()) {
             Company company = getCompany(companyId);
             try {
@@ -51,7 +51,7 @@ public class CompanyServiceImpl implements CompanyService {
                 log.error("Error while trying to save logo for company with ID [{}]", companyId);
             }
             validateLogoFormat(logo);
-            return save(company);
+            save(company);
         } else {
             log.error("Logo not present");
             throw new InvalidLogoException("Logo not present");
@@ -59,17 +59,16 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public boolean delete(Long companyId) throws NotFoundException {
+    public void delete(Long companyId) throws NotFoundException {
         Company company = getCompany(companyId);
         companyRepository.delete(company);
-        return true;
     }
 
     @Override
-    public Company updateCompany(CompanyDTO companyDTO) throws NotFoundException {
+    public void updateCompany(CompanyDTO companyDTO) throws NotFoundException {
         Company companyFromDatabase = getCompany(companyDTO.getId());
         Company companyToBeUpdated = createCompanyObjectForUpdate(companyFromDatabase, companyDTO);
-        return save(companyToBeUpdated);
+        save(companyToBeUpdated);
     }
 
     private Company createCompanyObjectForUpdate(Company company, CompanyDTO companyDTO) {

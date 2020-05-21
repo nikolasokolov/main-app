@@ -1,5 +1,6 @@
 package com.graduation.mainapp.service.impl;
 
+import com.graduation.mainapp.converter.UserConverter;
 import com.graduation.mainapp.domain.Authority;
 import com.graduation.mainapp.domain.Company;
 import com.graduation.mainapp.domain.Restaurant;
@@ -37,14 +38,13 @@ import static com.graduation.mainapp.util.LogoValidationUtil.validateLogoFormat;
 @RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
 
-    public static final String ROLE_RESTAURANT = "ROLE_RESTAURANT";
-
     private final RestaurantRepository restaurantRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final MenuItemRepository menuItemRepository;
     private final CompanyService companyService;
     private final AvailableCompaniesRestaurantsDAO availableCompaniesRestaurantsDAO;
+    private final UserConverter userConverter;
 
     @Override
     public List<Restaurant> getAllRestaurants() {
@@ -97,13 +97,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void createAccountForRestaurant(Long restaurantId, RestaurantAccountDTO restaurantAccountDTO) throws Exception {
         boolean passwordsMatch = checkIfPasswordsMatch(restaurantAccountDTO);
         if (passwordsMatch) {
-            User user = createUserForRestaurant(restaurantAccountDTO);
+            String password = passwordEncoder.encode(restaurantAccountDTO.getPassword());
+            User user = userConverter.convertToUser(restaurantAccountDTO, password);
             User savedUser = userService.save(user);
             Restaurant restaurant = getRestaurant(restaurantId);
             restaurant.setUser(savedUser);
             restaurantRepository.save(restaurant);
-        } else {
-            throw new Exception("Passwords don't match");
         }
     }
 
@@ -128,17 +127,6 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .phoneNumber(restaurantDTO.getPhoneNumber())
                 .logo(restaurant.getLogo())
                 .user(restaurant.getUser())
-                .build();
-    }
-
-    private User createUserForRestaurant(RestaurantAccountDTO restaurantAccountDTO) {
-        Set<Authority> authorities = new HashSet<>();
-        authorities.add(new Authority(ROLE_RESTAURANT));
-        return User.builder()
-                .username(restaurantAccountDTO.getUsername())
-                .email(restaurantAccountDTO.getEmail())
-                .password(passwordEncoder.encode(restaurantAccountDTO.getPassword()))
-                .authorities(authorities)
                 .build();
     }
 
