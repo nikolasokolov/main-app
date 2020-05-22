@@ -40,22 +40,15 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public void saveLogo(Long companyId, MultipartFile logo) throws Exception {
-        if (!logo.isEmpty()) {
-            Company company = getCompany(companyId);
-            try {
-                company.setLogo(logo.getBytes());
-            } catch (IOException e) {
-                log.error("IOException caught on saveLogo company:  " + company.getName() + "message" + e.getMessage());
-            } catch (Exception exception) {
-                log.error("Error while trying to save logo for company with ID [{}]", companyId);
-            }
-            validateLogoFormat(logo);
-            save(company);
-        } else {
-            log.error("Logo not present");
-            throw new InvalidLogoException("Logo not present");
+    public void saveLogo(Long companyId, MultipartFile logo) throws NotFoundException, InvalidLogoException {
+        Company company = getCompany(companyId);
+        try {
+            company.setLogo(logo.getBytes());
+        } catch (IOException e) {
+            log.error("Error while trying to save logo for company with ID [{}]", companyId);
         }
+        validateLogoFormat(logo);
+        save(company);
     }
 
     @Override
@@ -81,5 +74,4 @@ public class CompanyServiceImpl implements CompanyService {
                 .restaurants(company.getRestaurants())
                 .build();
     }
-
 }

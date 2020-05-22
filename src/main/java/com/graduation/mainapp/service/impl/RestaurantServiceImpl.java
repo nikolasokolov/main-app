@@ -57,22 +57,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void saveLogo(Long restaurantId, MultipartFile logo) throws Exception {
+    public void saveLogo(Long restaurantId, MultipartFile logo) throws NotFoundException, InvalidLogoException {
         Restaurant restaurant = getRestaurant(restaurantId);
-        if (!logo.isEmpty()) {
-            try {
-                restaurant.setLogo(logo.getBytes());
-            } catch (IOException e) {
-                log.error("IOException caught on saveLogo company:  " + restaurant.getName() + "message" + e.getMessage());
-            } catch (Exception exception) {
-                log.error("Error while trying to save logo for company with id " + restaurantId);
-            }
-            validateLogoFormat(logo);
-            save(restaurant);
-        } else {
-            log.error("Logo is not present");
-            throw new InvalidLogoException("Logo is not present");
+        try {
+            restaurant.setLogo(logo.getBytes());
+        } catch (IOException e) {
+            log.error("IOException caught on saveLogo company:  " + restaurant.getName() + "message" + e.getMessage());
         }
+        validateLogoFormat(logo);
+        save(restaurant);
     }
 
     @Override
@@ -114,17 +107,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant getRestaurant(Long restaurantId) throws NotFoundException {
         return restaurantRepository.findById(restaurantId).orElseThrow(
                 () -> new NotFoundException("Restaurant with ID=[" + restaurantId + "] is not found"));
-    }
-
-    private Restaurant createRestaurantForUpdate(Restaurant restaurant, RestaurantDTO restaurantDTO) {
-        return Restaurant.builder()
-                .id(restaurantDTO.getId())
-                .name(restaurantDTO.getName())
-                .address(restaurantDTO.getAddress())
-                .phoneNumber(restaurantDTO.getPhoneNumber())
-                .logo(restaurant.getLogo())
-                .user(restaurant.getUser())
-                .build();
     }
 
     @Override
@@ -170,5 +152,16 @@ public class RestaurantServiceImpl implements RestaurantService {
         company.removeRestaurant(restaurant);
         companyService.save(company);
         save(restaurant);
+    }
+
+    private Restaurant createRestaurantForUpdate(Restaurant restaurant, RestaurantDTO restaurantDTO) {
+        return Restaurant.builder()
+                .id(restaurantDTO.getId())
+                .name(restaurantDTO.getName())
+                .address(restaurantDTO.getAddress())
+                .phoneNumber(restaurantDTO.getPhoneNumber())
+                .logo(restaurant.getLogo())
+                .user(restaurant.getUser())
+                .build();
     }
 }
