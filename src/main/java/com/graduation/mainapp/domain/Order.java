@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,10 +33,13 @@ public class Order {
     @OneToOne
     private MenuItem menuItem;
 
+    @Column(name = "time_period")
     private LocalTime timePeriod;
 
+    @Column(name = "date_of_order")
     private LocalDate dateOfOrder;
 
+    @Column(name = "comments")
     private String comments;
 
 }
