@@ -47,12 +47,13 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public ResponseEntity<?> createNewCompany(@RequestBody CompanyDTO companyDTO) {
+    public ResponseEntity<CompanyDTO> createNewCompany(@RequestBody CompanyDTO companyDTO) {
         log.info("Started creating a new Company with name=[{}]", companyDTO.getName());
         Company company = companyConverter.convertToCompany(companyDTO);
-        companyService.save(company);
+        Company savedCompany = companyService.save(company);
+        CompanyDTO companyResponseDTO = companyConverter.convertToCompanyDTO(savedCompany);
         log.info("Finished creating a new Company with name=[{}]", companyDTO.getName());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(companyResponseDTO);
     }
 
     @RequestMapping(value = "/{companyId}", method = RequestMethod.GET)

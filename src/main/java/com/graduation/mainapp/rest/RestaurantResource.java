@@ -42,12 +42,13 @@ public class RestaurantResource {
     }
 
     @RequestMapping(value = "/restaurant/new", method = RequestMethod.POST)
-    public ResponseEntity<?> createRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
+    public ResponseEntity<RestaurantDTO> createRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
         log.info("Started saving a new restaurant");
         Restaurant restaurant = restaurantConverter.convertToRestaurant(restaurantDTO);
-        restaurantService.save(restaurant);
+        Restaurant restaurantToBeSaved = restaurantService.save(restaurant);
+        RestaurantDTO restaurantResponseDTO = restaurantConverter.convertToRestaurantDTO(restaurantToBeSaved);
         log.info("Finished saving new restaurant [{}]", restaurant.getName());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(restaurantResponseDTO);
     }
 
     @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
