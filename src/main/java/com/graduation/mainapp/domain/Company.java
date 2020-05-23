@@ -1,36 +1,56 @@
 package com.graduation.mainapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
-@Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "company")
 public class Company {
+
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotNull
+    @Column(name = "name")
     private String name;
 
-    @NotBlank
+    @NotNull
+    @Column(name = "address")
     private String address;
 
-    @NotBlank
+    @NotNull
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Lob
+    @Column(name = "logo")
     private byte[] logo;
 
     @ToString.Exclude
-    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "company_restaurant",
             joinColumns = {@JoinColumn(name = "company_id")}, inverseJoinColumns = {@JoinColumn(name = "restaurant_id")})

@@ -1,11 +1,12 @@
-package com.graduation.mainapp.dto;
+package com.graduation.mainapp.rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RestaurantAccountDetails {
+public class RestaurantAccountDetailsDTO {
+
     private String username;
     private String email;
 }

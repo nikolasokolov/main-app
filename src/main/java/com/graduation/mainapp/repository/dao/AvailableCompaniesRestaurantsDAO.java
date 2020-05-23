@@ -6,6 +6,8 @@ import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
 import java.util.List;
 
 public interface AvailableCompaniesRestaurantsDAO {
+
     List<AvailableRestaurantsRowMapper> getAvailableRestaurantsForCompany(Long companyId);
+
     List<CompanyRowMapper> getCompaniesForRestaurant(Long restaurantId);
 }

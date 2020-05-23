@@ -12,8 +12,9 @@ import javax.inject.Inject;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor
 public class AvailableCompaniesRestaurantsDAOImpl implements AvailableCompaniesRestaurantsDAO {
+
     private static final BeanPropertyRowMapper<AvailableRestaurantsRowMapper> AVAILABLE_RESTAURANTS_ROW_MAPPER =
             new BeanPropertyRowMapper<>(AvailableRestaurantsRowMapper.class);
     private static final BeanPropertyRowMapper<CompanyRowMapper> COMPANY_ROW_MAPPER =

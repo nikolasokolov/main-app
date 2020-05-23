@@ -1,7 +1,7 @@
 package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.exception.DomainObjectNotFoundException;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.dao.OrderDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyMonthlyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
@@ -30,25 +30,40 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor
 public class ExportServiceImpl implements ExportService {
+
     private final OrderDAO orderDAO;
     private final UserService userService;
 
     @Override
-    public byte[] exportDailyOrders(Long userId) throws IOException, JRException, DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
-        log.info("Started generating daily orders pdf report for restaurant [{}]", user.getRestaurant().getName());
+    public byte[] exportDailyOrders(Long userId) throws IOException, JRException, NotFoundException {
+        User user = userService.getUser(userId);
+        log.info("Started generating daily orders pdf report for Restaurant [{}]", user.getRestaurant().getName());
         List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(user.getRestaurant().getId());
+
         File file = ResourceUtils.getFile("classpath:reports/daily-orders.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(restaurantDailyOrders);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("restaurant", user.getRestaurant().getName());
-        parameters.put("today", LocalDate.now().toString());
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<>(), dataSource);
         ByteArrayOutputStream byteArrayOutputStream = getByteArrayOutputStream(jasperPrint);
-        log.info("Finished generating daily orders pdf report for restaurant [{}]", user.getRestaurant().getName());
+        log.info("Finished generating daily orders pdf report for Restaurant [{}]", user.getRestaurant().getName());
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    @Override
+    public byte[] exportMonthlyOrders(Long companyId, Long userId) throws IOException, JRException, NotFoundException {
+        User user = userService.getUser(userId);
+        log.info("Started generating Monthly Orders pdf report for Restaurant [{}]", user.getRestaurant().getName());
+        List<CompanyMonthlyOrdersRowMapper> companyMonthlyOrdersRowMappers = orderDAO
+                .getMonthlyOrdersForCompany(companyId, user.getRestaurant().getId());
+
+        File file = ResourceUtils.getFile("classpath:reports/monthly-orders.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(companyMonthlyOrdersRowMappers);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<>(), dataSource);
+        ByteArrayOutputStream byteArrayOutputStream = getByteArrayOutputStream(jasperPrint);
+        log.info("Finished generating monthly orders pdf report for Restaurant [{}]", user.getRestaurant().getName());
         return byteArrayOutputStream.toByteArray();
     }
 
@@ -57,23 +72,4 @@ public class ExportServiceImpl implements ExportService {
         JasperExportManager.exportReportToPdfStream(jasperPrint, byteArrayOutputStream);
         return byteArrayOutputStream;
     }
-
-    @Override
-    public byte[] exportMonthlyOrders(Long companyId, Long userId) throws IOException, JRException, DomainObjectNotFoundException {
-        User user = userService.findByIdOrThrow(userId);
-        log.info("Started generating monthly orders pdf report for restaurant [{}]", user.getRestaurant().getName());
-        List<CompanyMonthlyOrdersRowMapper> companyMonthlyOrdersRowMappers = orderDAO
-                .getMonthlyOrdersForCompany(companyId, user.getRestaurant().getId());
-        File file = ResourceUtils.getFile("classpath:reports/monthly-orders.jrxml");
-        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(companyMonthlyOrdersRowMappers);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("restaurant", user.getRestaurant().getName());
-        parameters.put("today", LocalDate.now().toString());
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        ByteArrayOutputStream byteArrayOutputStream = getByteArrayOutputStream(jasperPrint);
-        log.info("Finished generating monthly orders pdf report for restaurant [{}]", user.getRestaurant().getName());
-        return byteArrayOutputStream.toByteArray();
-    }
-
 }

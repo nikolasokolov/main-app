@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompanyRowMapper {
+
     private Long id;
     private String address;
     private byte[] logo;
