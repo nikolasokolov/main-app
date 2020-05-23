@@ -9,17 +9,16 @@ import com.graduation.mainapp.rest.dto.UserDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.graduation.mainapp.config.Constants.Authorities.ROLE_RESTAURANT;
+import static com.graduation.mainapp.config.Constants.NOT_AVAILABLE;
+
 @Component
 public class UserConverter {
-
-    public static final String NOT_AVAILABLE = "N/A";
-    public static final String ROLE_RESTAURANT = "ROLE_RESTAURANT";
 
     public List<UserDTO> convertToUserResponseDTOs(Collection<User> users) {
         return users.stream()

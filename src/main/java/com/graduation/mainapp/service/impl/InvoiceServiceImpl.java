@@ -15,17 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDate;
+
+import static com.graduation.mainapp.config.Constants.Authorities.ROLE_ADMIN;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class InvoiceServiceImpl implements InvoiceService {
-
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     private final EmailService emailService;
     private final ExportService exportService;
