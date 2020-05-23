@@ -110,7 +110,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    @Transactional
     public Set<Restaurant> getRestaurantsForCompany(Long companyId) throws NotFoundException {
         Company company = companyService.getCompany(companyId);
         return company.getRestaurants();

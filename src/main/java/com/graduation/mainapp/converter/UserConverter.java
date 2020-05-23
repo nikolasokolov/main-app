@@ -29,7 +29,8 @@ public class UserConverter {
                         .email(user.getEmail())
                         .authority(user.getAuthorities().stream().findFirst().get().toString())
                         .company(Objects.nonNull(user.getCompany()) ? user.getCompany().getName() : NOT_AVAILABLE)
-                        .build()).collect(Collectors.toList());
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public User convertToUser(UserAccountDTO userAccountDTO, String password, Company company) {

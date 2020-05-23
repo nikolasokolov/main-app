@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,13 +48,13 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public ResponseEntity<CompanyDTO> createNewCompany(@RequestBody CompanyDTO companyDTO) {
-        log.info("Started creating a new Company with name=[{}]", companyDTO.getName());
-        Company company = companyConverter.convertToCompany(companyDTO);
+    public ResponseEntity<CompanyDTO> createNewCompany(@RequestBody CompanyDTO companyRequestDTO) {
+        log.info("Started creating a new Company with name=[{}]", companyRequestDTO.getName());
+        Company company = companyConverter.convertToCompany(companyRequestDTO);
         Company savedCompany = companyService.save(company);
-        CompanyDTO companyResponseDTO = companyConverter.convertToCompanyDTO(savedCompany);
-        log.info("Finished creating a new Company with name=[{}]", companyDTO.getName());
-        return ResponseEntity.ok(companyResponseDTO);
+        CompanyDTO companyDTO = companyConverter.convertToCompanyDTO(savedCompany);
+        log.info("Finished creating a new Company with name=[{}]", companyRequestDTO.getName());
+        return ResponseEntity.ok(companyDTO);
     }
 
     @RequestMapping(value = "/{companyId}", method = RequestMethod.GET)
@@ -97,6 +98,7 @@ public class CompanyResource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Transactional
     @RequestMapping(value = "/{companyId}/restaurants", method = RequestMethod.GET)
     public ResponseEntity<List<RestaurantDTO>> getRestaurantsForCompany(@PathVariable Long companyId) throws NotFoundException {
         log.info("Started fetching restaurants for Company with ID=[{}]", companyId);
