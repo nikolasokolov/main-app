@@ -48,7 +48,7 @@ public class CompanyResource {
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public ResponseEntity<CompanyDTO> createNewCompany(@RequestBody CompanyDTO companyRequestDTO) {
+    public ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyDTO companyRequestDTO) {
         log.info("Started creating a new Company with name=[{}]", companyRequestDTO.getName());
         Company company = companyConverter.convertToCompany(companyRequestDTO);
         Company savedCompany = companyService.save(company);

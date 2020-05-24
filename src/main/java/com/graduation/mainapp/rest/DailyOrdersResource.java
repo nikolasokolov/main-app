@@ -30,25 +30,25 @@ public class DailyOrdersResource {
     private final OrderService orderService;
     private final ExportService exportService;
 
-    @RequestMapping(value = "/company/{companyId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/companies/{companyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getColleaguesChoicesForCompany(@PathVariable Long companyId) {
         log.info("Started fetching daily orders for Company with ID=[{}]", companyId);
-        List<CompanyOrdersDTO> companyOrdersDTOS = orderService.getDailyOrdersForCompany(companyId);
+        List<CompanyOrdersDTO> companyOrdersDTOs = orderService.getDailyOrdersForCompany(companyId);
         log.info("Finished fetching daily orders for Company with ID=[{}]", companyId);
-        return new ResponseEntity<>(companyOrdersDTOS, HttpStatus.OK);
+        return new ResponseEntity<>(companyOrdersDTOs, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/restaurant/{restaurantAccountId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/restaurants/users/{userId}", method = RequestMethod.GET)
     public ResponseEntity<List<RestaurantDailyOrdersDTO>> getDailyOrdersForRestaurant(
-            @PathVariable Long restaurantAccountId) throws NotFoundException {
-        log.info("Started fetching daily orders for Restaurant with User ID=[{}]", restaurantAccountId);
-        List<RestaurantDailyOrdersDTO> restaurantDailyOrdersDTOS = orderService
-                .getDailyOrdersForRestaurant(restaurantAccountId);
-        log.info("Started fetching daily orders for Restaurant with User ID=[{}]", restaurantAccountId);
-        return new ResponseEntity<>(restaurantDailyOrdersDTOS, HttpStatus.OK);
+            @PathVariable Long userId) throws NotFoundException {
+        log.info("Started fetching daily orders for Restaurant with User ID=[{}]", userId);
+        List<RestaurantDailyOrdersDTO> restaurantDailyOrdersDTOs = orderService
+                .getDailyOrdersForRestaurant(userId);
+        log.info("Started fetching daily orders for Restaurant with User ID=[{}]", userId);
+        return new ResponseEntity<>(restaurantDailyOrdersDTOs, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{userId}/export", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/{userId}/export", method = RequestMethod.POST)
     public ResponseEntity<Resource> exportDailyOrders(@PathVariable Long userId) throws IOException, JRException, NotFoundException {
         log.info("Started exporting daily orders for Restaurant with User ID=[{}]", userId);
         byte[] dailyOrdersBytes = exportService.exportDailyOrders(userId);

@@ -45,21 +45,21 @@ public class MenuItemResource {
     }
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items/add", method = RequestMethod.POST)
-    public ResponseEntity<MenuItemDTO> addMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws NotFoundException {
+    public ResponseEntity<MenuItemDTO> createMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemRequestDTO) throws NotFoundException {
         log.info("Started creating Menu Item for Restaurant with User ID=[{}]", userId);
-        MenuItem menuItem = menuItemService.createMenuItem(userId, menuItemDTO);
-        MenuItemDTO menuItemDTOResponse = menuItemConverter.convertToMenuItemDTO(menuItem);
+        MenuItem menuItem = menuItemService.createMenuItem(userId, menuItemRequestDTO);
+        MenuItemDTO menuItemDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
         log.info("Finished creating Menu Item for Restaurant with User ID=[{}]", userId);
-        return ResponseEntity.ok(menuItemDTOResponse);
+        return ResponseEntity.ok(menuItemDTO);
     }
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items/update", method = RequestMethod.PUT)
-    public ResponseEntity<MenuItemDTO> updateMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws NotFoundException {
+    public ResponseEntity<MenuItemDTO> updateMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemRequestDTO) throws NotFoundException {
         log.info("Started updating Menu Item for Restaurant with User ID=[{}]", userId);
-        MenuItem menuItem = menuItemService.updateMenuItem(userId, menuItemDTO);
-        MenuItemDTO menuItemResponseDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
+        MenuItem menuItem = menuItemService.updateMenuItem(userId, menuItemRequestDTO);
+        MenuItemDTO menuItemDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
         log.info("Finished updating Menu Item for Restaurant with User ID=[{}]", userId);
-        return ResponseEntity.ok(menuItemResponseDTO);
+        return ResponseEntity.ok(menuItemDTO);
     }
 
     @RequestMapping(value = "/restaurant/menu-items/{id}", method = RequestMethod.GET)

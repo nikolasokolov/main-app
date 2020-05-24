@@ -18,12 +18,12 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/main")
+@RequestMapping(value = "/main/invoices")
 public class InvoiceResource {
 
     private final InvoiceService invoiceService;
 
-    @RequestMapping(value = "/company/{companyId}/user/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/companies/{companyId}/users/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> sendInvoiceToCompany(@PathVariable Long userId, @PathVariable Long companyId) throws NotFoundException, IOException, JRException, MessagingException {
         log.info("Started sending invoice for Company with ID=[{}]", companyId);
         invoiceService.sendInvoiceToCompany(userId, companyId);

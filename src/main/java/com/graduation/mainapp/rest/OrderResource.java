@@ -48,7 +48,7 @@ public class OrderResource {
         return ResponseEntity.ok(userOrderDTO);
     }
 
-    @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
     public ResponseEntity<UserOrderDTO> getDailyOrderForUser(@PathVariable Long userId) throws NotFoundException {
         log.info("Started fetching Order for User with ID=[{}]", userId);
         Order order = orderService.getDailyOrderForUser(userId);
@@ -70,7 +70,7 @@ public class OrderResource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/company/{companyId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/companies/{companyId}", method = RequestMethod.GET)
     public ResponseEntity<?> getOrdersForCompany(@PathVariable Long companyId) {
         log.info("Started fetching Orders for Company with ID=[{}]", companyId);
         List<CompanyOrdersDTO> companyOrdersDTOS = orderService.getOrdersForCompany(companyId);
