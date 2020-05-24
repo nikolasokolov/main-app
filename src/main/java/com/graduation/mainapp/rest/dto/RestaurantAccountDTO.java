@@ -1,15 +1,18 @@
-package com.graduation.mainapp.dto;
+package com.graduation.mainapp.rest.dto;
 
+import com.graduation.mainapp.validation.annotation.PasswordsMatchValidation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@PasswordsMatchValidation(password = "password", confirmPassword = "confirmPassword")
 public class RestaurantAccountDTO {
+
     private String username;
     private String email;
     private String password;

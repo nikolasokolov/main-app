@@ -1,4 +1,4 @@
-package com.graduation.mainapp.dto;
+package com.graduation.mainapp.rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserAccountRequestDTO {
+public class UserDTO {
+
+    private Long id;
     private String username;
     private String email;
-    private String password;
-    private String confirmPassword;
     private String authority;
-    private Long companyId;
+    private String company;
 }

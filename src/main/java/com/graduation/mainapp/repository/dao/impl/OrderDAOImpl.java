@@ -14,8 +14,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor
 public class OrderDAOImpl implements OrderDAO {
+
     private static final BeanPropertyRowMapper<CompanyOrdersRowMapper> COMPANY_ORDERS__ROW_MAPPER =
             new BeanPropertyRowMapper<>(CompanyOrdersRowMapper.class);
     private static final BeanPropertyRowMapper<RestaurantDailyOrdersRowMapper> DAILY_RESTAURANT_ORDERS_ROW_MAPPER =

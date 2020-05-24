@@ -23,6 +23,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Table(name = "menu_item")
 public class MenuItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,12 +32,16 @@ public class MenuItem {
     @Enumerated(value = EnumType.STRING)
     private FoodType foodType;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "price")
     private Integer price;
 
+    @Column(name = "allergens")
     private String allergens;
 
+    @Column(name = "is_available")
     private Boolean isAvailable;
 
     @OneToOne(fetch = FetchType.LAZY)

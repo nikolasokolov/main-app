@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class LogoValidationUtil {
 
-    public static void validateLogoFormat(MultipartFile logo) throws Exception {
+    public static void validateLogoFormat(MultipartFile logo) throws InvalidLogoException {
         String fileName = logo.getOriginalFilename();
         int dotIndex = Objects.requireNonNull(fileName).lastIndexOf('.');
         String extension = fileName.substring(dotIndex + 1);

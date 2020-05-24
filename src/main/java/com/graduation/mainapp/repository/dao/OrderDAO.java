@@ -7,6 +7,7 @@ import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowM
 import java.util.List;
 
 public interface OrderDAO {
+
     List<CompanyOrdersRowMapper> getOrdersForCompany(Long companyId);
 
     List<CompanyOrdersRowMapper> getDailyOrdersForCompany(Long companyId);

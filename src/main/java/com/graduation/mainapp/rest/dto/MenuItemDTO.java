@@ -1,4 +1,4 @@
-package com.graduation.mainapp.dto;
+package com.graduation.mainapp.rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CompanyDTO {
+public class MenuItemDTO {
+
     private Long id;
+    private String type;
     private String name;
-    private String address;
-    private String phoneNumber;
-    private byte[] logo;
+    private Integer price;
+    private String allergens;
+    private Boolean isAvailable;
 }

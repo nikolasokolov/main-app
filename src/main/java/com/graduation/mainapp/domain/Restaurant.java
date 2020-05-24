@@ -1,6 +1,5 @@
 package com.graduation.mainapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,26 +26,30 @@ import java.util.Set;
 @Builder
 @EqualsAndHashCode(exclude = {"companies"})
 public class Restaurant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
+    @Column(name = "name")
     private String name;
 
     @NotBlank
+    @Column(name = "address")
     private String address;
 
     @NotBlank
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Lob
+    @Column(name = "logo")
     private byte[] logo;
 
-    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "restaurants", fetch = FetchType.LAZY)
     private Set<Company> companies;
 
