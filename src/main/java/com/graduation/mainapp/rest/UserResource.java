@@ -39,7 +39,7 @@ public class UserResource {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<?> createNewUser(@RequestBody @Valid UserAccountDTO userAccountDTO) throws Exception {
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserAccountDTO userAccountDTO) throws Exception {
         log.info("Started creating a new User with username=[{}]", userAccountDTO.getUsername());
         userService.createUser(userAccountDTO);
         log.info("Finished creating a new User with username=[{}]", userAccountDTO.getUsername());
@@ -57,7 +57,7 @@ public class UserResource {
     @RequestMapping(value = "/company/{companyId}", method = RequestMethod.GET)
     public ResponseEntity<List<UserDTO>> getAllUsersForCompany(@PathVariable Long companyId) {
         log.info("Started fetching all users for Company with ID=[{}]", companyId);
-        List<User> users = userService.findAllUsersForCompany(companyId);
+        List<User> users = userService.getAllUsersForCompany(companyId);
         List<UserDTO> userDTOs = userConverter.convertToUserResponseDTOs(users);
         log.info("Finished fetching all users for Company with ID=[{}]", companyId);
         return ResponseEntity.ok().body(userDTOs);

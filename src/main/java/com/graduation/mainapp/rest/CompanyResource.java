@@ -108,7 +108,7 @@ public class CompanyResource {
         return ResponseEntity.ok().body(restaurantDTOs);
     }
 
-    @RequestMapping(value = "/{companyId}/delete-restaurant/{restaurantId}")
+    @RequestMapping(value = "/{companyId}/restaurants/{restaurantId}/delete")
     public ResponseEntity<?> deleteRestaurantForCompany(@PathVariable Long companyId, @PathVariable Long restaurantId) throws NotFoundException {
         log.info("Started deleting Restaurant with ID=[{}] to Company with ID=[{}]", restaurantId, companyId);
         restaurantService.deleteRestaurantForCompany(companyId, restaurantId);

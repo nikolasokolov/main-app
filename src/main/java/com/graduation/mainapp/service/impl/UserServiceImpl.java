@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<User> findAllUsersForCompany(Long companyId) {
+    public List<User> getAllUsersForCompany(Long companyId) {
         return userRepository.findAllByCompanyId(companyId);
     }
 
