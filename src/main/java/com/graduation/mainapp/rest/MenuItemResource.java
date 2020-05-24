@@ -46,28 +46,28 @@ public class MenuItemResource {
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items/add", method = RequestMethod.POST)
     public ResponseEntity<MenuItemDTO> addMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws NotFoundException {
-        log.info("Received request for adding menu item for restaurant account with ID [{}]", userId);
+        log.info("Started creating Menu Item for Restaurant with User ID=[{}]", userId);
         MenuItem menuItem = menuItemService.createMenuItem(userId, menuItemDTO);
         MenuItemDTO menuItemDTOResponse = menuItemConverter.convertToMenuItemDTO(menuItem);
-        log.info("Successfully added menu item for restaurant account with ID [{}]", userId);
+        log.info("Finished creating Menu Item for Restaurant with User ID=[{}]", userId);
         return ResponseEntity.ok(menuItemDTOResponse);
     }
 
     @RequestMapping(value = "/restaurant/{userId}/menu-items/update", method = RequestMethod.PUT)
     public ResponseEntity<MenuItemDTO> updateMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws NotFoundException {
-        log.info("Received request for updating menu item for restaurant account with ID [{}]", userId);
+        log.info("Started updating Menu Item for Restaurant with User ID=[{}]", userId);
         MenuItem menuItem = menuItemService.updateMenuItem(userId, menuItemDTO);
         MenuItemDTO menuItemResponseDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
-        log.info("Successfully updated menu item for restaurant account with ID [{}]", userId);
+        log.info("Finished updating Menu Item for Restaurant with User ID=[{}]", userId);
         return ResponseEntity.ok(menuItemResponseDTO);
     }
 
     @RequestMapping(value = "/restaurant/menu-items/{id}", method = RequestMethod.GET)
     public ResponseEntity<MenuItemDTO> getMenuItem(@PathVariable Long id) throws NotFoundException {
-        log.info("Received request for fetching menu item with ID [{}]", id);
+        log.info("Started fetching Menu Item with ID=[{}]", id);
         MenuItem menuItem = menuItemService.getMenuItem(id);
         MenuItemDTO menuItemDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
-        log.info("Finished fetching menu item for with ID [{}]", id);
+        log.info("Finished fetching Menu Item with ID=[{}]", id);
         return ResponseEntity.ok(menuItemDTO);
     }
 

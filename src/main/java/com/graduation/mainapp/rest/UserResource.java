@@ -22,12 +22,21 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/main/users")
 @RequiredArgsConstructor
+@RequestMapping("/main/users")
 public class UserResource {
 
     private final UserService userService;
     private final UserConverter userConverter;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        log.info("Started fetching all Users");
+        List<User> users = userService.getAllUsers();
+        List<UserDTO> userDTOs = userConverter.convertToUserResponseDTOs(users);
+        log.info("Finished fetching all Users");
+        return ResponseEntity.ok().body(userDTOs);
+    }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<?> createNewUser(@RequestBody @Valid UserAccountDTO userAccountDTO) throws Exception {
@@ -35,15 +44,6 @@ public class UserResource {
         userService.createUser(userAccountDTO);
         log.info("Finished creating a new User with username=[{}]", userAccountDTO.getUsername());
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        log.info("Started fetching all Users");
-        List<User> users = userService.getAllUsers();
-        List<UserDTO> userDTOS = userConverter.convertToUserResponseDTOs(users);
-        log.info("Finished fetching all Users");
-        return ResponseEntity.ok().body(userDTOS);
     }
 
     @RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE)
@@ -58,9 +58,9 @@ public class UserResource {
     public ResponseEntity<List<UserDTO>> getAllUsersForCompany(@PathVariable Long companyId) {
         log.info("Started fetching all users for Company with ID=[{}]", companyId);
         List<User> users = userService.findAllUsersForCompany(companyId);
-        List<UserDTO> userDTOS = userConverter.convertToUserResponseDTOs(users);
+        List<UserDTO> userDTOs = userConverter.convertToUserResponseDTOs(users);
         log.info("Finished fetching all users for Company with ID=[{}]", companyId);
-        return ResponseEntity.ok().body(userDTOS);
+        return ResponseEntity.ok().body(userDTOs);
     }
 
     @RequestMapping(value = "/change-password", method = RequestMethod.POST)
