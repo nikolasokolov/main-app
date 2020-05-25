@@ -29,15 +29,5 @@ public interface RestaurantService {
 
     Restaurant getRestaurant(Long restaurantId) throws NotFoundException;
 
-    void addRestaurantForCompany(CompanyDTO companyDTO, Long restaurantId) throws NotFoundException;
-
-    void deleteRestaurantForCompany(Long companyId, Long restaurantId) throws NotFoundException;
-
-    Set<Restaurant> getRestaurantsForCompany(Long companyId) throws NotFoundException;
-
-    List<AvailableRestaurantsRowMapper> getAvailableRestaurantsForCompany(Long companyId);
-
     Restaurant findByUser(User user);
-
-    List<CompanyRowMapper> getCompaniesForRestaurant(Long userId) throws NotFoundException;
 }

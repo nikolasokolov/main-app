@@ -1,21 +1,14 @@
 package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.converter.CompanyConverter;
-import com.graduation.mainapp.converter.RestaurantConverter;
 import com.graduation.mainapp.domain.Company;
-import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.exception.NotFoundException;
-import com.graduation.mainapp.repository.dao.rowmapper.AvailableRestaurantsRowMapper;
-import com.graduation.mainapp.repository.dao.rowmapper.CompanyRowMapper;
-import com.graduation.mainapp.service.CompanyService;
 import com.graduation.mainapp.rest.dto.CompanyDTO;
-import com.graduation.mainapp.rest.dto.RestaurantDTO;
-import com.graduation.mainapp.service.RestaurantService;
+import com.graduation.mainapp.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RestController
@@ -34,9 +26,7 @@ import java.util.Set;
 public class CompanyResource {
 
     private final CompanyService companyService;
-    private final RestaurantService restaurantService;
     private final CompanyConverter companyConverter;
-    private final RestaurantConverter restaurantConverter;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<List<CompanyDTO>> getAllCompanies() {
@@ -88,48 +78,5 @@ public class CompanyResource {
         companyService.delete(companyId);
         log.info("Finished deleting Company with ID=[{}]", companyId);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/add-restaurant/{restaurantId}", method = RequestMethod.POST)
-    public ResponseEntity<?> addRestaurantForCompany(@RequestBody CompanyDTO companyDTO, @PathVariable Long restaurantId) throws NotFoundException {
-        log.info("Started adding Restaurant to Company with ID=[{}]", companyDTO.getId());
-        restaurantService.addRestaurantForCompany(companyDTO, restaurantId);
-        log.info("Finished adding Restaurant to Company with ID=[{}]", companyDTO.getId());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @Transactional
-    @RequestMapping(value = "/{companyId}/restaurants", method = RequestMethod.GET)
-    public ResponseEntity<List<RestaurantDTO>> getRestaurantsForCompany(@PathVariable Long companyId) throws NotFoundException {
-        log.info("Started fetching restaurants for Company with ID=[{}]", companyId);
-        Set<Restaurant> restaurants = restaurantService.getRestaurantsForCompany(companyId);
-        List<RestaurantDTO> restaurantDTOs = restaurantConverter.convertToRestaurantDTOs(restaurants);
-        log.info("Finished fetching restaurants for Company with ID=[{}]", companyId);
-        return ResponseEntity.ok().body(restaurantDTOs);
-    }
-
-    @RequestMapping(value = "/{companyId}/restaurants/{restaurantId}/delete")
-    public ResponseEntity<?> deleteRestaurantForCompany(@PathVariable Long companyId, @PathVariable Long restaurantId) throws NotFoundException {
-        log.info("Started deleting Restaurant with ID=[{}] to Company with ID=[{}]", restaurantId, companyId);
-        restaurantService.deleteRestaurantForCompany(companyId, restaurantId);
-        log.info("Finished deleting Restaurant with ID=[{}] to Company with ID=[{}]", restaurantId, companyId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/{companyId}/available-restaurants", method = RequestMethod.GET)
-    public ResponseEntity<List<RestaurantDTO>> getAvailableRestaurantsForCompany(@PathVariable Long companyId) {
-        log.info("Started fetching available Restaurants for Company with ID=[{}]", companyId);
-        List<AvailableRestaurantsRowMapper> availableRestaurantsForCompany = restaurantService.getAvailableRestaurantsForCompany(companyId);
-        List<RestaurantDTO> restaurantDTOs = restaurantConverter.convertToAvailableRestaurantDTOs(availableRestaurantsForCompany);
-        log.info("Finished fetching available Restaurants for Company with ID=[{}]", companyId);
-        return ResponseEntity.ok().body(restaurantDTOs);
-    }
-
-    @RequestMapping(value = "/users/{userId}/restaurant", method = RequestMethod.GET)
-    public ResponseEntity<List<CompanyRowMapper>> getCompaniesForRestaurant(@PathVariable Long userId) throws NotFoundException {
-        log.info("Started fetching Companies for Restaurant with User with ID=[{}]", userId);
-        List<CompanyRowMapper> companyDTOs = restaurantService.getCompaniesForRestaurant(userId);
-        log.info("Started fetching Companies for Restaurant with User with ID=[{}]", userId);
-        return ResponseEntity.ok().body(companyDTOs);
     }
 }
