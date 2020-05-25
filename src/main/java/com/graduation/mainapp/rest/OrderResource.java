@@ -2,21 +2,14 @@ package com.graduation.mainapp.rest;
 
 import com.graduation.mainapp.converter.OrderConverter;
 import com.graduation.mainapp.domain.Order;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.rest.dto.CompanyOrdersDTO;
 import com.graduation.mainapp.rest.dto.OrderDTO;
-import com.graduation.mainapp.rest.dto.RestaurantDailyOrdersDTO;
 import com.graduation.mainapp.rest.dto.UserOrderDTO;
-import com.graduation.mainapp.exception.NotFoundException;
-import com.graduation.mainapp.service.ExportService;
-import com.graduation.mainapp.service.InvoiceService;
 import com.graduation.mainapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jasperreports.engine.JRException;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -63,7 +54,7 @@ public class OrderResource {
     }
 
     @RequestMapping(value = "/{orderId}/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId) throws NotFoundException {
+    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId) {
         log.info("Started deleting Order with ID=[{}]", orderId);
         orderService.deleteOrder(orderId);
         log.info("Finished deleting Order with ID=[{}]", orderId);

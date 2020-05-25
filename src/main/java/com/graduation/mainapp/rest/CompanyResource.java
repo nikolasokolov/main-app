@@ -75,7 +75,7 @@ public class CompanyResource {
     @RequestMapping(value = "/{companyId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCompany(@PathVariable Long companyId) throws NotFoundException {
         log.info("Started deleting Company with ID=[{}]", companyId);
-        companyService.delete(companyId);
+        companyService.deleteCompany(companyId);
         log.info("Finished deleting Company with ID=[{}]", companyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

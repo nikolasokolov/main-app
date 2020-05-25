@@ -52,9 +52,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public void delete(Long companyId) throws NotFoundException {
-        Company company = getCompany(companyId);
-        companyRepository.delete(company);
+    public void deleteCompany(Long companyId) {
+        companyRepository.deleteById(companyId);
     }
 
     @Override

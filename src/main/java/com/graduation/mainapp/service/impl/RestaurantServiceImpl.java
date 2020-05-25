@@ -2,11 +2,12 @@ package com.graduation.mainapp.service.impl;
 
 import com.graduation.mainapp.converter.UserConverter;
 import com.graduation.mainapp.domain.Company;
+import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
 import com.graduation.mainapp.exception.InvalidLogoException;
 import com.graduation.mainapp.exception.NotFoundException;
-import com.graduation.mainapp.repository.MenuItemRepository;
+import com.graduation.mainapp.repository.OrderRepository;
 import com.graduation.mainapp.repository.RestaurantRepository;
 import com.graduation.mainapp.rest.dto.RestaurantAccountDTO;
 import com.graduation.mainapp.rest.dto.RestaurantDTO;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.graduation.mainapp.util.LogoValidationUtil.validateLogoFormat;
 
@@ -33,8 +35,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final MenuItemRepository menuItemRepository;
     private final UserConverter userConverter;
+    private final OrderRepository orderRepository;
 
     @Override
     public List<Restaurant> getAllRestaurants() {
@@ -67,7 +69,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         for (Company company : companies) {
             company.removeRestaurant(restaurant);
         }
-        menuItemRepository.deleteAllByRestaurantId(restaurantId);
+        List<Long> menuItemIds = restaurant.getMenuItems().stream().map(MenuItem::getId).collect(Collectors.toList());
+        orderRepository.deleteAllByMenuItemIdIn(menuItemIds);
         restaurantRepository.delete(restaurant);
         User user = restaurant.getUser();
         if (Objects.nonNull(user)) {
@@ -97,11 +100,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant getRestaurant(Long restaurantId) throws NotFoundException {
         return restaurantRepository.findById(restaurantId).orElseThrow(
                 () -> new NotFoundException("Restaurant with ID=[" + restaurantId + "] is not found"));
-    }
-
-    @Override
-    public Restaurant findByUser(User user) {
-        return restaurantRepository.findByUser(user);
     }
 
     private Restaurant createRestaurantForUpdate(Restaurant restaurant, RestaurantDTO restaurantDTO) {
