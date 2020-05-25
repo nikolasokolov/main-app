@@ -25,14 +25,14 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/main")
+@RequestMapping(value = "/main/restaurants")
 public class RestaurantResource {
 
     private final RestaurantService restaurantService;
     private final UserService userService;
     private final RestaurantConverter restaurantConverter;
 
-    @RequestMapping(value = "/restaurants", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
         log.info("Started fetching all restaurants");
         List<Restaurant> restaurants = restaurantService.getAllRestaurants();
@@ -41,7 +41,7 @@ public class RestaurantResource {
         return ResponseEntity.ok().body(restaurantDTOs);
     }
 
-    @RequestMapping(value = "/restaurant/new", method = RequestMethod.POST)
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
     public ResponseEntity<RestaurantDTO> createRestaurant(@RequestBody RestaurantDTO restaurantRequestDTO) {
         log.info("Started saving a new restaurant");
         Restaurant restaurant = restaurantConverter.convertToRestaurant(restaurantRequestDTO);
@@ -51,7 +51,7 @@ public class RestaurantResource {
         return ResponseEntity.ok(restaurantDTO);
     }
 
-    @RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{restaurantId}", method = RequestMethod.GET)
     public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable Long restaurantId) throws NotFoundException {
         log.info("Started fetching restaurant with ID=[{}]", restaurantId);
         Restaurant restaurant = restaurantService.getRestaurant(restaurantId);
@@ -60,7 +60,7 @@ public class RestaurantResource {
         return ResponseEntity.ok().body(restaurantDTO);
     }
 
-    @RequestMapping(value = "/restaurant/edit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/edit", method = RequestMethod.PUT)
     public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO restaurantDTO) throws NotFoundException {
         log.info("Started updating restaurant with ID=[{}]", restaurantDTO.getId());
         restaurantService.updateRestaurant(restaurantDTO);
@@ -68,7 +68,7 @@ public class RestaurantResource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/restaurant/{restaurantId}/uploadLogo", method = RequestMethod.POST)
+    @RequestMapping(path = "/{restaurantId}/uploadLogo", method = RequestMethod.POST)
     public ResponseEntity<?> uploadLogo(@PathVariable("restaurantId") Long restaurantId,
                                         @RequestParam("file") MultipartFile logo) throws Exception {
         log.info("Started uploading logo for restaurant with ID=[{}]", restaurantId);
@@ -77,7 +77,7 @@ public class RestaurantResource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/restaurant/{restaurantId}/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{restaurantId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long restaurantId) throws NotFoundException {
         log.info("Started deleting restaurant with ID=[{}]", restaurantId);
         restaurantService.deleteRestaurant(restaurantId);
@@ -85,7 +85,7 @@ public class RestaurantResource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/restaurant/{restaurantId}/account/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/{restaurantId}/account/add", method = RequestMethod.POST)
     public ResponseEntity<?> createAccountForRestaurant(@PathVariable Long restaurantId,
                                                      @RequestBody @Valid RestaurantAccountDTO restaurantAccountDTO) throws Exception {
         log.info("Started creating account for restaurant with ID=[{}]", restaurantId);
@@ -94,7 +94,7 @@ public class RestaurantResource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{userId}/restaurants", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
     public ResponseEntity<List<RestaurantDTO>> getRestaurantsForUser(@PathVariable Long userId) throws Exception {
         log.info("Started fetching restaurants for user with ID=[{}]", userId);
         List<Restaurant> restaurants = userService.getRestaurantsForUser(userId);

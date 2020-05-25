@@ -5,17 +5,16 @@ import com.graduation.mainapp.domain.MenuItem;
 import com.graduation.mainapp.domain.Order;
 import com.graduation.mainapp.domain.Restaurant;
 import com.graduation.mainapp.domain.User;
-import com.graduation.mainapp.rest.dto.CompanyOrdersDTO;
-import com.graduation.mainapp.rest.dto.OrderDTO;
-import com.graduation.mainapp.rest.dto.RestaurantDailyOrdersDTO;
 import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.repository.OrderRepository;
 import com.graduation.mainapp.repository.dao.OrderDAO;
 import com.graduation.mainapp.repository.dao.rowmapper.CompanyOrdersRowMapper;
 import com.graduation.mainapp.repository.dao.rowmapper.RestaurantDailyOrdersRowMapper;
+import com.graduation.mainapp.rest.dto.CompanyOrdersDTO;
+import com.graduation.mainapp.rest.dto.OrderDTO;
+import com.graduation.mainapp.rest.dto.RestaurantDailyOrdersDTO;
 import com.graduation.mainapp.service.MenuItemService;
 import com.graduation.mainapp.service.OrderService;
-import com.graduation.mainapp.service.RestaurantService;
 import com.graduation.mainapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final MenuItemService menuItemService;
     private final OrderDAO orderDAO;
-    private final RestaurantService restaurantService;
     private final OrderConverter orderConverter;
 
     @Override
@@ -65,9 +63,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long orderId) throws NotFoundException {
-        Order order = getOrder(orderId);
-        orderRepository.delete(order);
+    public void deleteOrder(Long orderId) {
+        orderRepository.deleteById(orderId);
     }
 
     @Override
@@ -83,9 +80,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public List<RestaurantDailyOrdersDTO> getDailyOrdersForRestaurant(Long restaurantAccountId) throws NotFoundException {
         User user = userService.getUser(restaurantAccountId);
-        Restaurant restaurant = restaurantService.findByUser(user);
+        Restaurant restaurant = user.getRestaurant();
         List<RestaurantDailyOrdersRowMapper> restaurantDailyOrders = orderDAO.getRestaurantDailyOrders(restaurant.getId());
         return orderConverter.convertToRestaurantDailyOrdersDTOs(restaurantDailyOrders);
     }

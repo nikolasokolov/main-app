@@ -22,7 +22,7 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    List<User> findAllUsersForCompany(Long companyId);
+    List<User> getAllUsersForCompany(Long companyId);
 
     void changePassword(ChangePasswordDTO changePasswordDTO) throws Exception;
 

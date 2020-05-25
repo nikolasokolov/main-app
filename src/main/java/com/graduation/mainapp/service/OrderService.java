@@ -1,11 +1,12 @@
 package com.graduation.mainapp.service;
 
 import com.graduation.mainapp.domain.Order;
+import com.graduation.mainapp.exception.NotFoundException;
 import com.graduation.mainapp.rest.dto.CompanyOrdersDTO;
 import com.graduation.mainapp.rest.dto.OrderDTO;
 import com.graduation.mainapp.rest.dto.RestaurantDailyOrdersDTO;
-import com.graduation.mainapp.exception.NotFoundException;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface OrderService {
@@ -16,7 +17,7 @@ public interface OrderService {
 
     Order getOrder(Long id) throws NotFoundException;
 
-    void deleteOrder(Long orderId) throws NotFoundException;
+    void deleteOrder(Long orderId);
 
     List<CompanyOrdersDTO> getOrdersForCompany(Long companyId);
 

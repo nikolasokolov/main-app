@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import java.util.Set;
@@ -24,7 +25,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"companies"})
+@EqualsAndHashCode(exclude = {"companies", "menuItems"})
 public class Restaurant {
 
     @Id
@@ -52,6 +53,9 @@ public class Restaurant {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "restaurants", fetch = FetchType.LAZY)
     private Set<Company> companies;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "restaurant")
+    private Set<MenuItem> menuItems;
 
     public void addCompany(Company company) {
         companies.add(company);

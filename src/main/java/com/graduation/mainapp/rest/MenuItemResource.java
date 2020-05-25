@@ -21,62 +21,62 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/main")
+@RequestMapping(value = "/main/menu-items")
 public class MenuItemResource {
 
     private final MenuItemService menuItemService;
     private final MenuItemConverter menuItemConverter;
 
-    @RequestMapping(value = "/restaurant/{userId}/menu-items", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
     public ResponseEntity<List<MenuItemDTO>> getRestaurantMenuItems(@PathVariable Long userId) throws NotFoundException {
-        log.info("Started fetching Menu Items for Restaurant with User ID [{}]", userId);
+        log.info("Started fetching Menu Items for Restaurant with User ID=[{}]", userId);
         List<MenuItem> menuItems = menuItemService.getRestaurantMenuItems(userId);
         List<MenuItemDTO> menuItemDTO = menuItemConverter.convertToMenuItemDTOs(menuItems);
-        log.info("Finished fetching Menu Items for Restaurant with User ID [{}]", userId);
+        log.info("Finished fetching Menu Items for Restaurant with User ID=[{}]", userId);
         return new ResponseEntity<>(menuItemDTO, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/restaurant/menu-items/{menuItemId}/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{menuItemId}/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteMenuItem(@PathVariable Long menuItemId) throws NotFoundException {
-        log.info("Started  deleting Menu Item with ID [{}]", menuItemId);
+        log.info("Started  deleting Menu Item with ID=[{}]", menuItemId);
         menuItemService.deleteMenuItem(menuItemId);
-        log.info("Finished deleting Menu Item for with ID [{}]", menuItemId);
+        log.info("Finished deleting Menu Item with ID=[{}]", menuItemId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/restaurant/{userId}/menu-items/add", method = RequestMethod.POST)
-    public ResponseEntity<MenuItemDTO> addMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws NotFoundException {
-        log.info("Received request for adding menu item for restaurant account with ID [{}]", userId);
-        MenuItem menuItem = menuItemService.createMenuItem(userId, menuItemDTO);
-        MenuItemDTO menuItemDTOResponse = menuItemConverter.convertToMenuItemDTO(menuItem);
-        log.info("Successfully added menu item for restaurant account with ID [{}]", userId);
-        return ResponseEntity.ok(menuItemDTOResponse);
-    }
-
-    @RequestMapping(value = "/restaurant/{userId}/menu-items/update", method = RequestMethod.PUT)
-    public ResponseEntity<MenuItemDTO> updateMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemDTO) throws NotFoundException {
-        log.info("Received request for updating menu item for restaurant account with ID [{}]", userId);
-        MenuItem menuItem = menuItemService.updateMenuItem(userId, menuItemDTO);
-        MenuItemDTO menuItemResponseDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
-        log.info("Successfully updated menu item for restaurant account with ID [{}]", userId);
-        return ResponseEntity.ok(menuItemResponseDTO);
-    }
-
-    @RequestMapping(value = "/restaurant/menu-items/{id}", method = RequestMethod.GET)
-    public ResponseEntity<MenuItemDTO> getMenuItem(@PathVariable Long id) throws NotFoundException {
-        log.info("Received request for fetching menu item with ID [{}]", id);
-        MenuItem menuItem = menuItemService.getMenuItem(id);
+    @RequestMapping(value = "/add/users/{userId}", method = RequestMethod.POST)
+    public ResponseEntity<MenuItemDTO> createMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemRequestDTO) throws NotFoundException {
+        log.info("Started creating Menu Item for Restaurant with User ID=[{}]", userId);
+        MenuItem menuItem = menuItemService.createMenuItem(userId, menuItemRequestDTO);
         MenuItemDTO menuItemDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
-        log.info("Finished fetching menu item for with ID [{}]", id);
+        log.info("Finished creating Menu Item for Restaurant with User ID=[{}]", userId);
         return ResponseEntity.ok(menuItemDTO);
     }
 
-    @RequestMapping(value = "/restaurant/{restaurantId}/menu", method = RequestMethod.GET)
+    @RequestMapping(value = "/update/users/{userId}", method = RequestMethod.PUT)
+    public ResponseEntity<MenuItemDTO> updateMenuItem(@PathVariable Long userId, @RequestBody MenuItemDTO menuItemRequestDTO) throws NotFoundException {
+        log.info("Started updating Menu Item for Restaurant with User ID=[{}]", userId);
+        MenuItem menuItem = menuItemService.updateMenuItem(userId, menuItemRequestDTO);
+        MenuItemDTO menuItemDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
+        log.info("Finished updating Menu Item for Restaurant with User ID=[{}]", userId);
+        return ResponseEntity.ok(menuItemDTO);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<MenuItemDTO> getMenuItem(@PathVariable Long id) throws NotFoundException {
+        log.info("Started fetching Menu Item with ID=[{}]", id);
+        MenuItem menuItem = menuItemService.getMenuItem(id);
+        MenuItemDTO menuItemDTO = menuItemConverter.convertToMenuItemDTO(menuItem);
+        log.info("Finished fetching Menu Item with ID=[{}]", id);
+        return ResponseEntity.ok(menuItemDTO);
+    }
+
+    @RequestMapping(value = "/restaurants/{restaurantId}", method = RequestMethod.GET)
     public ResponseEntity<Map<String, List<MenuItemDTO>>> getRestaurantMenu(@PathVariable Long restaurantId) throws NotFoundException {
-        log.info("Started fetching Menu Items for restaurant with ID=[{}]", restaurantId);
+        log.info("Started fetching Menu Items for Restaurant with ID=[{}]", restaurantId);
         List<MenuItem> menuItems = menuItemService.getRestaurantMenu(restaurantId);
         Map<String, List<MenuItemDTO>> typeToMenuItemsDTO = menuItemConverter.createTypeToMenuItemsDTO(menuItems);
-        log.info("Finished fetching Menu Items for restaurant with ID=[{}]", restaurantId);
+        log.info("Finished fetching Menu Items for Restaurant with ID=[{}]", restaurantId);
         return ResponseEntity.ok(typeToMenuItemsDTO);
     }
 }

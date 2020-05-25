@@ -17,7 +17,7 @@ public interface CompanyService {
 
     void saveLogo(Long companyId, MultipartFile logo) throws Exception;
 
-    void delete(Long companyId) throws NotFoundException;
+    void deleteCompany(Long companyId) throws NotFoundException;
 
     void updateCompany(CompanyDTO companyDTO) throws NotFoundException;
 }

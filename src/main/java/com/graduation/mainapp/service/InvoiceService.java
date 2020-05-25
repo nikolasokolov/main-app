@@ -7,5 +7,6 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 
 public interface InvoiceService {
+
     void sendInvoiceToCompany(Long companyId, Long userId) throws NotFoundException, IOException, JRException, MessagingException;
 }
